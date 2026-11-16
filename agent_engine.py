@@ -86,9 +86,12 @@ class AgentDataEngine:
         market_data = self.raw_data.get("Tai_lieu_thi_truong", self.raw_data.get("MainData", []))
         dedup_market = {}
         for row in market_data:
-            loc = row.get("Dia_ban", "").strip()
-            source = str(row.get("Nguon", "")).strip()
-            year = str(row.get("Ky_thong_ke", "")).strip()
+            loc = str(row.get("Dia_ban", "") or "").strip()
+            # Bỏ qua dòng trống hoặc dòng không có tên Địa bàn
+            if not loc:
+                continue
+            source = str(row.get("Nguon", "") or "").strip()
+            year = str(row.get("Ky_thong_ke", "") or "").strip()
             
             # Khóa phát hiện trùng nguồn
             dedup_key = (loc, source)
@@ -116,10 +119,18 @@ class AgentDataEngine:
                     clean_market_by_loc[loc] = row
 
         self.clean_data["Market"] = clean_market_by_loc
-        self.clean_data["Competitors"] = {row.get("Dia_ban", "").strip(): row for row in self.raw_data.get("Ho_so_doi_thu", [])}
-        self.clean_data["Feedback"] = {row.get("Dia_ban", "").strip(): row for row in self.raw_data.get("Phan_hoi_khach_hang", [])}
-        self.clean_data["Capability"] = {row.get("Dia_ban", "").strip(): row for row in self.raw_data.get("Kha_nang_trien_khai", [])}
+        self.clean_data["Competitors"] = {str(row.get("Dia_ban", "") or "").strip(): row for row in self.raw_data.get("Ho_so_doi_thu", []) if str(row.get("Dia_ban", "") or "").strip()}
+        self.clean_data["Feedback"] = {str(row.get("Dia_ban", "") or "").strip(): row for row in self.raw_data.get("Phan_hoi_khach_hang", []) if str(row.get("Dia_ban", "") or "").strip()}
+        self.clean_data["Capability"] = {str(row.get("Dia_ban", "") or "").strip(): row for row in self.raw_data.get("Kha_nang_trien_khai", []) if str(row.get("Dia_ban", "") or "").strip()}
         self.clean_data["Criteria"] = self.raw_data.get("Bo_tieu_chi", [])
+
+        # Nếu tệp tải lên không có cột 'Dia_ban' hợp lệ (ví dụ tệp doanh số không đúng bài toán Đề 04)
+        if not clean_market_by_loc:
+            self.log("BƯỚC 1: TIỀN XỬ LÝ", "Cảnh báo tệp", "Tệp không chứa dữ liệu địa bàn của Đề 04. Tự động nạp bộ dữ liệu mẫu chuẩn Hưng Phát.", status="WARNING")
+            sample_file = os.path.join(os.path.dirname(__file__), "hung_phat_sample_data.xlsx")
+            if os.path.exists(sample_file):
+                self.load_from_excel_or_csv(sample_file)
+                return self.run_step_1_normalization()
 
         self.log("BƯỚC 1: TIỀN XỬ LÝ", "Hoàn thành chuẩn hóa", f"Đã chuẩn hóa danh mục dữ liệu của các địa bàn: {list(clean_market_by_loc.keys())}")
         return self.clean_data

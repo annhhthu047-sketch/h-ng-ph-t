@@ -24,6 +24,8 @@ class AgentRequestHandler(http.server.SimpleHTTPRequestHandler):
         url_path = urllib.parse.urlparse(self.path).path
         
         if url_path == "/api/use-sample-data":
+            global engine
+            engine = AgentDataEngine()
             if os.path.exists(sample_path):
                 engine.load_from_excel_or_csv(sample_path)
                 self.send_json_response({"success": True, "message": "Đã nạp file mẫu thành công."})
