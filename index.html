@@ -843,6 +843,329 @@
             padding-top: 18px;
             border-top: 1.5px solid rgba(186, 230, 253, 0.6);
         }
+        /* ========================================================
+           STYLE CHO DASHBOARD KPI KINH DOANH & PHÂN TÍCH CHUYÊN ĐỀ (MẪU MỚI)
+           ======================================================== */
+        .dash-nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            border-bottom: 2px solid rgba(186, 230, 253, 0.5);
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .dash-nav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 22px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1.5px solid rgba(186, 230, 253, 0.6);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+
+        .dash-nav-tab:hover {
+            transform: translateY(-3px);
+            border-color: var(--sky-btn);
+            background: white;
+            box-shadow: 0 8px 18px rgba(96, 165, 250, 0.22);
+        }
+
+        .dash-nav-tab.active {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border-color: #059669;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+        }
+
+        .dash-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .dash-select-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dash-select-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dash-select-item label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .dash-select {
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dash-select:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+        }
+
+        /* 4 Thẻ KPI Xanh Emerald */
+        .kpi-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .kpi-card-box {
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .kpi-card-box:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: #10b981;
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.18);
+        }
+
+        .kpi-card-box .kpi-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .kpi-card-box .kpi-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #065f46;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .kpi-card-box .kpi-sub {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .kpi-badge-green {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        .kpi-badge-red {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        /* Lưới 4 Biểu Đồ 2x2 */
+        .charts-grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .chart-box-clean {
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            transition: all 0.28s ease;
+        }
+
+        .chart-box-clean:hover {
+            transform: translateY(-4px);
+            border-color: #10b981;
+            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.12);
+        }
+
+        .chart-box-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .chart-box-sub {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        /* Thanh Tiến Độ Ngang (Horizontal Progress Bar) */
+        .bar-contrib-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 12.5px;
+        }
+
+        .bar-contrib-label {
+            width: 80px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .bar-contrib-track {
+            flex: 1;
+            height: 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-contrib-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .bar-contrib-val {
+            width: 115px;
+            text-align: right;
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 12px;
+        }
+
+        /* Box Nhận Định Phân Tích Chuyên Đề (Ảnh 2) */
+        .insight-callout-box {
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 12.5px;
+            color: #166534;
+            line-height: 1.6;
+        }
+
+        .insight-callout-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #15803d;
+            margin-bottom: 6px;
+        }
+
+        .action-card-box {
+            background: white;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.25s ease;
+        }
+
+        .action-card-box:hover {
+            transform: translateX(4px);
+            border-color: #10b981;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+        }
+
+        .action-priority-badge {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        /* Khung Duyệt Bước Này (Ảnh 4) */
+        .approval-form-card {
+            background: white;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 22px;
+            padding: 26px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+        }
+
+        .approval-textarea {
+            width: 100%;
+            height: 90px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1e293b;
+            outline: none;
+            resize: vertical;
+            transition: all 0.2s ease;
+            margin: 10px 0 6px 0;
+            font-family: inherit;
+        }
+
+        .approval-textarea:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-green-submit {
+            background: #047857;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 28px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-green-submit:hover {
+            background: #059669;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 22px rgba(5, 150, 105, 0.35);
+        }
     </style>
 </head>
 <body>
@@ -1118,110 +1441,580 @@
         <!-- ========================================================
              TRANG 3: DASHBOARD PHÂN TÍCH & BẢNG SO SÁNH (EVALUATION)
              ======================================================== -->
+                <!-- ========================================================
+             TRANG 3: BÁO CÁO DASHBOARD & PHÂN TÍCH (THEO MẪU 4 ẢNH)
+             ======================================================== -->
         <div id="page-dash" class="page-view" style="display: none;">
-            <!-- 4 Thẻ Đo Lường Tổng Quan Nổi Bật -->
-            <div class="dash-cards">
-                <div class="dash-box">
-                    <div class="label">Tổng Địa Bàn Đã Nạp</div>
-                    <div class="val" id="metric-locations">4 Địa Bàn</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Địa bàn A, B, C, D</div>
-                </div>
-                <div class="dash-box pink">
-                    <div class="label">Top 2 Địa Bàn Đề Xuất</div>
-                    <div class="val" id="metric-selected">Địa Bàn B & A</div>
-                    <div style="font-size: 11px; color: var(--pink-text); font-weight: 700;">Đủ năng lực triển khai</div>
-                </div>
-                <div class="dash-box">
-                    <div class="label">Bản Ghi Đã Khử Trùng</div>
-                    <div class="val">1 Bản Ghi</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Đồng bộ mốc năm 2024</div>
-                </div>
-                <div class="dash-box pink">
-                    <div class="label">Cảnh Báo Veto Nghiệp Vụ</div>
-                    <div class="val" id="metric-issues">1 Địa Bàn</div>
-                    <div style="font-size: 11px; color: var(--pink-text); font-weight: 700;">Địa bàn C (Onsite 24/7)</div>
-                </div>
+            
+            <!-- THANH ĐIỀU HƯỚNG CÁC TAB BÁO CÁO CHUYÊN ĐỀ -->
+            <div class="dash-nav-tabs">
+                <button class="dash-nav-tab active" id="tab-btn-kpi" onclick="switchReportTab('kpi')">
+                    📊 Dashboard KPI Kinh Doanh
+                </button>
+                <button class="dash-nav-tab" id="tab-btn-special" onclick="switchReportTab('special')">
+                    📑 Phân Tích Chuyên Đề
+                </button>
+                <button class="dash-nav-tab" id="tab-btn-quality" onclick="switchReportTab('quality')">
+                    🔍 Nguồn &amp; Chất Lượng Dữ Liệu
+                </button>
+                <button class="dash-nav-tab" id="tab-btn-locations" onclick="switchReportTab('locations')">
+                    🗺️ Đánh Giá 4 Địa Bàn
+                </button>
+                <button class="dash-nav-tab" id="tab-btn-approve" onclick="switchReportTab('approve')">
+                    ✅ Duyệt Bước Này &amp; Phê Duyệt
+                </button>
             </div>
 
-            <!-- KHỐI BIỂU ĐỒ MINH HỌA TRỰC QUAN HÓA (BƯỚC 3) -->
-            <div style="display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; margin-bottom: 24px;">
-                <!-- Biểu đồ 1: Cột so sánh 3 tiêu chí của 4 Địa bàn -->
-                <div class="chart-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <div>
-                            <h4 style="font-size: 14px; font-weight: 800; color: var(--sky-text);">
-                                📊 So Sánh 3 Trụ Cột Điểm Số Giữa 4 Địa Bàn
-                            </h4>
-                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                                Quy mô (30%) · Độ khớp WMS (35%) · Năng lực triển khai (35%)
-                            </p>
+            <!-- ==========================================
+                 PHẦN 1: DASHBOARD KPI KINH DOANH (ẢNH 1)
+                 ========================================== -->
+            <div id="report-view-kpi" class="report-sub-view">
+                <!-- Tiêu Đề & Bộ Lọc -->
+                <div class="dash-header-row">
+                    <div>
+                        <h3 style="font-size: 20px; font-weight: 800; color: #0f172a;">Dashboard KPI kinh doanh</h3>
+                        <p id="kpi-subtitle" style="font-size: 12px; color: #64748b; font-weight: 600; margin-top: 2px;">
+                            Tháng 04/2026 · 7 dòng · Bán lẻ mẫu
+                        </p>
+                    </div>
+                    <div class="dash-select-group">
+                        <div class="dash-select-item">
+                            <label>Bộ dữ liệu</label>
+                            <select id="select-dataset" class="dash-select" onchange="onDatasetFilterChanged()">
+                                <option value="retail">Bán lẻ mẫu</option>
+                                <option value="hungphat">Hưng Phát (Đề 04)</option>
+                                <option value="marketing">Marketing mẫu</option>
+                            </select>
                         </div>
-                        <span style="font-size: 10.5px; background: var(--sky-panel); color: var(--sky-text); padding: 4px 10px; border-radius: 12px; font-weight: 800;">
-                            Thang 10 điểm
-                        </span>
-                    </div>
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="chart-bar-comparison"></canvas>
-                    </div>
-                </div>
-
-                <!-- Biểu đồ 2: Radar Tương quan Top 2 Địa bàn B & A -->
-                <div class="chart-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <div>
-                            <h4 style="font-size: 14px; font-weight: 800; color: var(--pink-text);">
-                                🎯 Radar Tương Quan: Địa Bàn B vs Địa Bàn A
-                            </h4>
-                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                                So sánh 5 chỉ số then chốt giữa Top 2 địa bàn đề xuất
-                            </p>
+                        <div class="dash-select-item">
+                            <label>Kỳ báo cáo</label>
+                            <select id="select-period" class="dash-select" onchange="onPeriodFilterChanged()">
+                                <option value="2026-04">Tháng 04/2026</option>
+                                <option value="2026-03">Tháng 03/2026</option>
+                                <option value="2026-02">Tháng 02/2026</option>
+                                <option value="2026-01">Tháng 01/2026</option>
+                                <option value="all">Tất cả các kỳ</option>
+                            </select>
                         </div>
-                        <span style="font-size: 10.5px; background: var(--pink-panel); color: var(--pink-text); padding: 4px 10px; border-radius: 12px; font-weight: 800;">
-                            Top 2 Đề Xuất
-                        </span>
                     </div>
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="chart-radar-top2"></canvas>
+                </div>
+
+                <!-- 4 Thẻ KPI Chính (Ảnh 1) -->
+                <div class="kpi-cards-grid">
+                    <div class="kpi-card-box">
+                        <div class="kpi-title">Số đơn hàng</div>
+                        <div class="kpi-value" id="kpi-val-orders">312</div>
+                        <div class="kpi-sub">Số đơn</div>
+                        <div class="kpi-badge-green" id="kpi-badge-orders">▲ -71,4% so với Tháng 03/2026</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-title">Doanh thu</div>
+                        <div class="kpi-value" id="kpi-val-revenue">139.600.000 VND</div>
+                        <div class="kpi-sub">Doanh thu (VND)</div>
+                        <div class="kpi-badge-green" id="kpi-badge-revenue">+39,3% so với Tháng 03/2026</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-title">Lợi nhuận</div>
+                        <div class="kpi-value" id="kpi-val-profit">53.048.000 VND</div>
+                        <div class="kpi-sub">Lợi nhuận gộp (VND)</div>
+                        <div class="kpi-badge-green" id="kpi-badge-profit">+39,3% so với Tháng 03/2026</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-title">Chi phí</div>
+                        <div class="kpi-value" id="kpi-val-cost">86.552.000 VND</div>
+                        <div class="kpi-sub">Chi phí giá vốn (VND)</div>
+                        <div class="kpi-badge-green" id="kpi-badge-cost">+39,3% so với Tháng 03/2026</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 11.5px; color: #64748b; margin-bottom: 20px; font-weight: 500;">
+                    So sánh dựa trên các dòng có ngày trong mỗi tháng. Hãy kiểm tra độ đầy đủ của tháng gần nhất.
+                </div>
+
+                <!-- Lưới 4 Biểu Đồ 2x2 (Ảnh 1) -->
+                <div class="charts-grid-2x2">
+                    <!-- Biểu đồ 1: Doanh thu theo tháng -->
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Doanh thu theo tháng</div>
+                        <div class="chart-box-sub">Doanh thu (VND) · Tối đa 12 tháng có dữ liệu để đối chiếu</div>
+                        <div style="height: 220px; position: relative;">
+                            <canvas id="chart-revenue-trend"></canvas>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #059669; font-weight: 800; cursor: pointer;">
+                            ▶ Số liệu theo tháng (52.3 Tr → 66.8 Tr → 100.2 Tr → 139.6 Tr)
+                        </div>
+                    </div>
+
+                    <!-- Biểu đồ 2: Cơ cấu chi phí theo Kênh -->
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Cơ cấu chi phí</div>
+                        <div class="chart-box-sub">Theo Kênh</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; height: 220px;">
+                            <div style="width: 55%; height: 100%; position: relative;">
+                                <canvas id="chart-cost-donut"></canvas>
+                            </div>
+                            <div style="width: 42%; font-size: 11.5px; display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #047857;">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#047857;"></span> Website (47,1%)
+                                    </div>
+                                    <div style="color: #64748b; font-weight: 700; margin-left: 16px;">40.734.000 VND</div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #10b981;">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;"></span> Cửa hàng (28,9%)
+                                    </div>
+                                    <div style="color: #64748b; font-weight: 700; margin-left: 16px;">25.048.000 VND</div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #84cc16;">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#84cc16;"></span> Đối tác (24%)
+                                    </div>
+                                    <div style="color: #64748b; font-weight: 700; margin-left: 16px;">20.770.000 VND</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Biểu đồ 3: Đóng góp doanh thu theo Kênh -->
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Đóng góp doanh thu</div>
+                        <div class="chart-box-sub">Theo Kênh</div>
+                        <div style="margin-top: 14px;">
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Website</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 78%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">65.700.000 VND</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Cửa hàng</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">40.400.000 VND</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Đối tác</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 40%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val">33.500.000 VND</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 18px; font-weight: 600;">3 nhóm theo giá trị giảm dần.</div>
+                    </div>
+
+                    <!-- Biểu đồ 4: Nhóm làm thay đổi doanh thu (Waterfall/Change) -->
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Nhóm làm thay đổi doanh thu</div>
+                        <div class="chart-box-sub">Tháng 03/2026 → Tháng 04/2026 · Kênh</div>
+                        <div style="font-size: 11.5px; color: #047857; font-weight: 700; margin-bottom: 12px;">
+                            Từ 100.200.000 VND đến 139.600.000 VND · Thay đổi +39.400.000 VND
+                        </div>
+                        <div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Cửa hàng</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 75%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val" style="color:#047857;">+31.700.000 VND</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">(Ô trống)</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 40%; background: #8b5cf6;"></div></div>
+                                <div class="bar-contrib-val" style="color:#7c3aed;">-15.500.000 VND</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Website</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 35%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val" style="color:#047857;">+13.200.000 VND</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Đối tác</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 28%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val" style="color:#047857;">+10.000.000 VND</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 14px; font-weight: 500;">
+                            4 nhóm theo độ lớn thay đổi. Thanh tím biểu thị giá trị âm theo độ lớn tuyệt đối.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Metrics Bar (Ảnh 1) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 16px 24px; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 12.5px; font-weight: 700; color: #334155;">Tỷ lệ lợi nhuận trên doanh thu</span>
+                        <span style="font-size: 16px; font-weight: 800; color: #047857;">38%</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 12.5px; font-weight: 700; color: #334155;">Doanh thu bình quân mỗi đơn</span>
+                        <span style="font-size: 16px; font-weight: 800; color: #065f46;">447.435,8974 VND</span>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-bottom: 24px; font-weight: 500;">
+                    Bộ lọc áp dụng cho các chỉ số trên dashboard. Các phần phân tích tiếp theo sử dụng toàn bộ dữ liệu đã làm sạch.
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 PHẦN 2: PHÂN TÍCH CHUYÊN ĐỀ (ẢNH 2)
+                 ========================================== -->
+            <div id="report-view-special" class="report-sub-view" style="display: none;">
+                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Phân tích chuyên đề</h3>
+
+                <!-- Khối 1: Doanh thu (VND) theo Kênh -->
+                <div class="chart-box-clean" style="margin-bottom: 18px;">
+                    <div class="chart-box-title" style="margin-bottom: 14px;">Doanh thu (VND) theo Kênh</div>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;">
+                        <div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) · Bộ 1 — Bán lẻ mẫu · Kênh</div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Website</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">173.200.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Cửa hàng</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">85.200.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Đối tác</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">85.000.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">(Ô trống)</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 15%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val">15.500.000 đ</div>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 8px;">4 nhóm theo giá trị giảm dần.</div>
+                        </div>
+
+                        <!-- Box Nhận Định Phải -->
+                        <div class="insight-callout-box">
+                            <div class="insight-callout-title">Nhận định</div>
+                            Bộ 1 — Bán lẻ mẫu · Nhóm "Website" có tổng "Doanh thu (VND)" cao nhất trong 4 nhóm theo "Kênh" (173.200.000). Cột này có số liệu ở 20/20 dòng.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khối 2: Chi phí giá vốn (VND) và Chi phí -->
+                <div class="chart-box-clean" style="margin-bottom: 18px;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Chi phí giá vốn (VND) và Chi phí</div>
+                    <div style="font-size: 11.5px; color: #047857; font-weight: 700; margin-bottom: 14px;">
+                        Chi phí giá vốn (VND): Bộ 1 — Bán lẻ mẫu · Tổng "Chi phí giá vốn (VND)" là 222.518.000. Cột này có số liệu ở 20/20 dòng.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;">
+                        <div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Chi phí · Bộ 2 — Marketing mẫu · Chiến dịch</div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Tìm kiếm</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 85%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">8.080.000</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Mạng xã hội</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">4.230.000</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Giới thiệu</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 25%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val">1.480.000</div>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 8px;">3 nhóm theo giá trị giảm dần.</div>
+                        </div>
+
+                        <!-- Box Nhận Định Phải -->
+                        <div class="insight-callout-box">
+                            <div class="insight-callout-title">Nhận định</div>
+                            Bộ 2 — Marketing mẫu · Nhóm "Tìm kiếm" có tổng "Chi phí" cao nhất trong 3 nhóm theo "Chiến dịch" (8.080.000). Cột này có số liệu ở 6/6 dòng.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khối 3: Kết Luận -->
+                <div class="chart-box-clean" style="margin-bottom: 18px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Kết luận</h4>
+                    <ul style="margin-left: 20px; font-size: 12.5px; color: #334155; line-height: 1.8;">
+                        <li>Bộ 1 — Bán lẻ mẫu · Nhóm "Website" có tổng "Doanh thu (VND)" cao nhất trong 4 nhóm theo "Kênh" (173.200.000). Cột này có số liệu ở 20/20 dòng.</li>
+                        <li>Bộ 1 — Bán lẻ mẫu · Tổng "Chi phí giá vốn (VND)" là 222.518.000. Cột này có số liệu ở 20/20 dòng.</li>
+                        <li>Bán lẻ mẫu · Doanh thu 2026-04 tăng so với 2026-03 39.400.000 VND (39.3%). Nhóm "Cửa hàng" thay đổi nhiều nhất theo độ lớn, tăng 31.700.000 VND.</li>
+                    </ul>
+                </div>
+
+                <!-- Khối 4: Đề Xuất Hành Động -->
+                <div class="chart-box-clean" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">Đề xuất hành động</h4>
+                    
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">Rà soát các cột còn thiếu trước kỳ báo cáo tiếp theo</div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 3px;">Bán lẻ mẫu có ô trống sau làm sạch.</div>
+                            <div style="font-size: 11.5px; color: #334155; margin-top: 4px;"><b>Đo lường:</b> Tỷ lệ ô có dữ liệu ở từng cột dùng để tính chỉ số.</div>
+                        </div>
+                        <span class="action-priority-badge">Ưu tiên vừa</span>
+                    </div>
+
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">Theo dõi Doanh thu (VND) theo Kênh ở kỳ tiếp theo</div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 3px;">"Website" đang ở một đầu bảng xếp hạng trong Bộ 1 — Bán lẻ mẫu. So sánh các kỳ có cùng phạm vi trước khi phân bổ nguồn lực.</div>
+                            <div style="font-size: 11.5px; color: #334155; margin-top: 4px;"><b>Đo lường:</b> Doanh thu (VND) theo từng nhóm và mức thay đổi giữa hai kỳ tương đương.</div>
+                        </div>
+                        <span class="action-priority-badge">Ưu tiên vừa</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Bảng Xếp Hạng 4 Địa Bàn Có Căn Cứ Nguồn Dẫn Chứng -->
-            <div class="mirror-panel white">
-                <h3 style="font-size: 15.5px; font-weight: 800; color: var(--sky-text); margin-bottom: 14px;">
-                    📊 Bảng So Sánh & Chấm Điểm 4 Địa Bàn (Bước 3)
-                </h3>
-                <div class="table-wrap">
-                    <table class="styled-table" id="table-score">
-                        <thead>
-                            <tr>
-                                <th>Hạng</th>
-                                <th>Địa Bàn</th>
-                                <th>Quy Mô (30%)</th>
-                                <th>Độ Khớp (35%)</th>
-                                <th>Năng Lực (35%)</th>
-                                <th>Tổng Điểm</th>
-                                <th>Kết Quả Đề Xuất</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 36px; font-weight: 600;">
-                                    Vui lòng nhấn <b>"Dùng Dữ Liệu Mẫu"</b> ở Trang 2 rồi kích hoạt AI Agent.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- ==========================================
+                 PHẦN 3: NGUỒN VÀ CHẤT LƯỢNG DỮ LIỆU (ẢNH 3)
+                 ========================================== -->
+            <div id="report-view-quality" class="report-sub-view" style="display: none;">
+                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Nguồn và chất lượng dữ liệu</h3>
+
+                <!-- 4 Thẻ Tổng Quan Chất Lượng -->
+                <div class="kpi-cards-grid" style="margin-bottom: 20px;">
+                    <div class="kpi-card-box">
+                        <div class="kpi-sub">Bộ dữ liệu</div>
+                        <div class="kpi-value" style="font-size: 28px; color:#0f172a;">2</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-sub">Dòng đã phân tích</div>
+                        <div class="kpi-value" style="font-size: 28px; color:#0f172a;">26</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-sub">Dòng đã loại bỏ</div>
+                        <div class="kpi-value" style="font-size: 28px; color:#0f172a;">2</div>
+                    </div>
+                    <div class="kpi-card-box">
+                        <div class="kpi-sub">Ô còn trống</div>
+                        <div class="kpi-value" style="font-size: 28px; color:#0f172a;">1</div>
+                    </div>
+                </div>
+
+                <!-- Bộ 1: Bán lẻ mẫu -->
+                <div class="chart-box-clean" style="margin-bottom: 18px;">
+                    <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">Bộ 1 — Bán lẻ mẫu</div>
+                    <div style="font-size: 11.5px; color: #64748b; margin-bottom: 14px;">20 dòng · 8 cột · 2 dòng đã loại · 1 ô còn trống</div>
+
+                    <!-- Lưới Khu vực vs Phân bổ -->
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) theo Khu vực</div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Miền Nam</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 90%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">185.500.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Miền Bắc</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 60%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">119.800.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">Miền Trung</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 32%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val">53.600.000 đ</div>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 6px;">3 nhóm theo giá trị giảm dần.</div>
+                        </div>
+
+                        <div class="insight-callout-box">
+                            <div class="insight-callout-title">Phân bổ và độ phủ</div>
+                            <ul style="margin-left: 16px; line-height: 1.6;">
+                                <li>"Miền Nam" có tổng của "Doanh thu (VND)" cao nhất trong 3 nhóm của "Khu vực" (185.500.000).</li>
+                                <li>"Doanh thu (VND)" có giá trị từ 5.400.000 đến 35.700.000, trung bình 17.945.000.</li>
+                                <li>Còn 1 ô trống. "Kênh" thiếu nhiều nhất với 1 trên 20 dòng.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Lưới Thời gian vs Diễn biến -->
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;">
+                        <div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) theo thời gian (Tháng)</div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-01</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 38%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">52.300.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-02</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">66.800.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-03</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 72%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">100.200.000 đ</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-04</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 100%; background: #047857;"></div></div>
+                                <div class="bar-contrib-val">139.600.000 đ</div>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 6px;">4 nhóm theo thứ tự thời gian.</div>
+                        </div>
+
+                        <div class="insight-callout-box">
+                            <div class="insight-callout-title">Diễn biến theo kỳ</div>
+                            Kỳ 2026-01 ghi nhận 52.300.000 đ. Kỳ gần nhất có dữ liệu (2026-04) ghi nhận 139.600.000 đ (tăng trưởng liên tục qua các tháng).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bộ 2: Marketing mẫu -->
+                <div class="chart-box-clean" style="margin-bottom: 20px;">
+                    <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">Bộ 2 — Marketing mẫu</div>
+                    <div style="font-size: 11.5px; color: #64748b; margin-bottom: 14px;">6 dòng · 5 cột · 0 dòng đã loại · 0 ô còn trống</div>
+
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;">
+                        <div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Số chuyển đổi theo Ngày</div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-02-01</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: #059669;"></div></div>
+                                <div class="bar-contrib-val">62</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-03-01</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 80%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-val">58</div>
+                            </div>
+                            <div class="bar-contrib-row">
+                                <div class="bar-contrib-label">2026-01-01</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 58%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-val">42</div>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 6px;">3 nhóm theo giá trị giảm dần.</div>
+                        </div>
+
+                        <div class="insight-callout-box">
+                            <div class="insight-callout-title">Phân bổ và độ phủ</div>
+                            <ul style="margin-left: 16px; line-height: 1.6;">
+                                <li>"2026-02-01" có tổng của "Số chuyển đổi" cao nhất trong 3 nhóm của "Ngày" (62).</li>
+                                <li>"Số chuyển đổi" có giá trị từ 18 đến 39, trung bình 27.</li>
+                                <li>Cả 6 dòng còn lại đều đầy đủ dữ liệu.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Nút Cập Nhật Báo Cáo -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px;">
+                    <span style="font-size: 12px; color: #64748b;">Báo cáo hiện dựa trên số liệu đã tổng hợp. Bạn có thể thử cập nhật lại.</span>
+                    <button class="btn-pill btn-white" onclick="alert('✓ Đã cập nhật lại toàn bộ báo cáo từ nguồn dữ liệu!');" style="font-size: 12px; padding: 10px 20px;">
+                        🔄 Cập nhật báo cáo
+                    </button>
                 </div>
             </div>
 
-            <!-- Thanh Chuyển Trang -->
+            <!-- ==========================================
+                 PHẦN 4: ĐÁNH GIÁ 4 ĐỊA BÀN (ĐỀ 04)
+                 ========================================== -->
+            <div id="report-view-locations" class="report-sub-view" style="display: none;">
+                <!-- 4 Thẻ Đo Lường Tổng Quan Nổi Bật -->
+                <div class="dash-cards" style="margin-bottom: 20px;">
+                    <div class="dash-box">
+                        <div class="label">Tổng Địa Bàn Đã Nạp</div>
+                        <div class="val" id="metric-locations">4 Địa Bàn</div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Địa bàn A, B, C, D</div>
+                    </div>
+                    <div class="dash-box pink">
+                        <div class="label">Top 2 Địa Bàn Đề Xuất</div>
+                        <div class="val" id="metric-selected">Địa Bàn B &amp; A</div>
+                        <div style="font-size: 11px; color: var(--pink-text); font-weight: 700;">Đủ năng lực triển khai</div>
+                    </div>
+                    <div class="dash-box">
+                        <div class="label">Bản Ghi Đã Khử Trùng</div>
+                        <div class="val">1 Bản Ghi</div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Đồng bộ mốc năm 2024</div>
+                    </div>
+                    <div class="dash-box pink">
+                        <div class="label">Cảnh Báo Veto Nghiệp Vụ</div>
+                        <div class="val" id="metric-issues">1 Địa Bàn</div>
+                        <div style="font-size: 11px; color: var(--pink-text); font-weight: 700;">Địa bàn C (Onsite 24/7)</div>
+                    </div>
+                </div>
+
+                <!-- Bảng Xếp Hạng 4 Địa Bàn Có Căn Cứ Nguồn Dẫn Chứng -->
+                <div class="mirror-panel white">
+                    <h3 style="font-size: 15.5px; font-weight: 800; color: var(--sky-text); margin-bottom: 14px;">
+                        📊 Bảng So Sánh &amp; Chấm Điểm 4 Địa Bàn (Bước 3)
+                    </h3>
+                    <div class="table-wrap">
+                        <table class="styled-table" id="table-score">
+                            <thead>
+                                <tr>
+                                    <th>Hạng</th>
+                                    <th>Địa Bàn</th>
+                                    <th>Quy Mô (30%)</th>
+                                    <th>Độ Khớp (35%)</th>
+                                    <th>Năng Lực (35%)</th>
+                                    <th>Tổng Điểm</th>
+                                    <th>Kết Quả Đề Xuất</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 36px; font-weight: 600;">
+                                        Đang tải kết quả...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 PHẦN 5: DUYỆT BƯỚC NÀY & PHÊ DUYỆT (ẢNH 4)
+                 ========================================== -->
+            <div id="report-view-approve" class="report-sub-view" style="display: none;">
+                <div class="approval-form-card">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 12px; background: #dcfce7; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">
+                            ✨
+                        </div>
+                        <div>
+                            <h4 style="font-size: 16px; font-weight: 800; color: #0f172a;">Duyệt bước này</h4>
+                            <p style="font-size: 12px; color: #64748b;">Xác nhận để mở tải xuống</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12.5px; font-weight: 800; color: #334155; margin-bottom: 4px;">
+                            Yêu cầu sửa
+                        </label>
+                        <textarea id="approval-edit-request" class="approval-textarea" placeholder="Ví dụ: Viết tóm tắt ngắn cho quản lý bán hàng."></textarea>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">
+                            Kiểm tra lại bản xem trước sau khi áp dụng yêu cầu sửa.
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+                        <button class="btn-pill btn-white" style="font-size: 12.5px; padding: 10px 22px;" onclick="applyEditSuggestion()">
+                            ✨ Đề xuất chỉnh sửa
+                        </button>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin-bottom: 20px;">
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <button class="btn-pill btn-white" onclick="switchReportTab('special')">
+                            ← Phân tích
+                        </button>
+                        <button class="btn-green-submit" onclick="confirmReportApproval()">
+                            Xác nhận báo cáo ✓
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thanh Chuyển Trang Bên Dưới -->
             <div class="pagination-bar">
                 <button class="btn-pill btn-white" onclick="navigateToPage('page-ingest')">
                     ⬅ Về Trang 2: Nạp Dữ Liệu và Xử Lí
                 </button>
                 <button class="btn-pill btn-pink" onclick="navigateToPage('page-report')">
-                    Sang Trang 4: Xem Báo Cáo HTML Đề Xuất ➔
+                    Sang Trang 4: Báo Cáo Đề Xuất Trưởng Phòng ➔
                 </button>
             </div>
         </div>
@@ -1363,8 +2156,9 @@
                 descEl.innerText = "Khử trùng lặp số liệu, quy đổi cùng mốc năm và đối chiếu độ khớp phần mềm kho";
             } else if (pageId === 'page-dash') {
                 document.getElementById('menu-dash').classList.add('active');
-                titleEl.innerText = "Trang 3: Dashboard Phân Tích & Bảng So Sánh (Bước 3)";
-                descEl.innerText = "Ma trận chấm điểm 3 tiêu chuẩn kèm trích dẫn nguồn tài liệu cụ thể";
+                titleEl.innerText = "Trang 3: Báo Cáo Dashboard & Phân Tích Chuyên Đề";
+                descEl.innerText = "Chỉ số KPI kinh doanh, cơ cấu chi phí, phân tích nguồn dữ liệu và phê duyệt";
+                setTimeout(renderKpiCharts, 150);
             } else if (pageId === 'page-report') {
                 document.getElementById('menu-report').classList.add('active');
                 titleEl.innerText = "Trang 4: Báo Cáo HTML Đề Xuất Trưởng Phòng";
@@ -1600,6 +2394,228 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && sidebarOpen) closeSidebar();
         });
+
+        // ========================================================
+        // JAVASCRIPT CHO DASHBOARD KPI KINH DOANH & BÁO CÁO MẪU
+        // ========================================================
+        let currentReportTab = 'kpi';
+        let revenueTrendChart = null;
+        let costDonutChart = null;
+
+        function switchReportTab(tabId) {
+            currentReportTab = tabId;
+            document.querySelectorAll('.report-sub-view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.dash-nav-tab').forEach(b => b.classList.remove('active'));
+
+            const targetView = document.getElementById('report-view-' + tabId);
+            const targetBtn = document.getElementById('tab-btn-' + tabId);
+            if (targetView) targetView.style.display = 'block';
+            if (targetBtn) targetBtn.classList.add('active');
+
+            if (tabId === 'kpi') {
+                renderKpiCharts();
+            }
+        }
+
+        // Dữ liệu theo từng kỳ báo cáo (Ảnh 1)
+        const KPI_PERIOD_DATA = {
+            "2026-04": {
+                subtitle: "Tháng 04/2026 · 7 dòng · Bán lẻ mẫu",
+                orders: "312",
+                orders_sub: "▲ -71,4% so với Tháng 03/2026",
+                revenue: "139.600.000 VND",
+                revenue_sub: "+39,3% so với Tháng 03/2026",
+                profit: "53.048.000 VND",
+                profit_sub: "+39,3% so với Tháng 03/2026",
+                cost: "86.552.000 VND",
+                cost_sub: "+39,3% so với Tháng 03/2026"
+            },
+            "2026-03": {
+                subtitle: "Tháng 03/2026 · 8 dòng · Bán lẻ mẫu",
+                orders: "1.092",
+                orders_sub: "+45% so với Tháng 02/2026",
+                revenue: "100.200.000 VND",
+                revenue_sub: "+50% so với Tháng 02/2026",
+                profit: "38.076.000 VND",
+                profit_sub: "+50% so với Tháng 02/2026",
+                cost: "62.124.000 VND",
+                cost_sub: "+50% so với Tháng 02/2026"
+            },
+            "2026-02": {
+                subtitle: "Tháng 02/2026 · 6 dòng · Bán lẻ mẫu",
+                orders: "753",
+                orders_sub: "+28% so với Tháng 01/2026",
+                revenue: "66.800.000 VND",
+                revenue_sub: "+27,7% so với Tháng 01/2026",
+                profit: "25.384.000 VND",
+                profit_sub: "+27,7% so với Tháng 01/2026",
+                cost: "41.416.000 VND",
+                cost_sub: "+27,7% so với Tháng 01/2026"
+            },
+            "2026-01": {
+                subtitle: "Tháng 01/2026 · 5 dòng · Bán lẻ mẫu",
+                orders: "588",
+                orders_sub: "Kỳ khởi động",
+                revenue: "52.300.000 VND",
+                revenue_sub: "Mốc so sánh gốc",
+                profit: "19.874.000 VND",
+                profit_sub: "Mốc so sánh gốc",
+                cost: "32.426.000 VND",
+                cost_sub: "Mốc so sánh gốc"
+            },
+            "all": {
+                subtitle: "Toàn bộ 4 kỳ (Tháng 01 - 04/2026) · 26 dòng · Bán lẻ mẫu",
+                orders: "2.745",
+                orders_sub: "Tổng cộng 4 tháng",
+                revenue: "358.900.000 VND",
+                revenue_sub: "Tăng trưởng đều 4 tháng",
+                profit: "136.382.000 VND",
+                profit_sub: "Biên lợi nhuận gộp 38%",
+                cost: "222.518.000 VND",
+                cost_sub: "Tổng giá vốn hàng bán"
+            }
+        };
+
+        function onPeriodFilterChanged() {
+            const p = document.getElementById('select-period').value;
+            const d = KPI_PERIOD_DATA[p] || KPI_PERIOD_DATA["2026-04"];
+            document.getElementById('kpi-subtitle').innerText = d.subtitle;
+            document.getElementById('kpi-val-orders').innerText = d.orders;
+            document.getElementById('kpi-badge-orders').innerText = d.orders_sub;
+            document.getElementById('kpi-val-revenue').innerText = d.revenue;
+            document.getElementById('kpi-badge-revenue').innerText = d.revenue_sub;
+            document.getElementById('kpi-val-profit').innerText = d.profit;
+            document.getElementById('kpi-badge-profit').innerText = d.profit_sub;
+            document.getElementById('kpi-val-cost').innerText = d.cost;
+            document.getElementById('kpi-badge-cost').innerText = d.cost_sub;
+        }
+
+        function onDatasetFilterChanged() {
+            const ds = document.getElementById('select-dataset').value;
+            if (ds === 'hungphat') {
+                switchReportTab('locations');
+            } else if (ds === 'marketing') {
+                switchReportTab('quality');
+            } else {
+                switchReportTab('kpi');
+            }
+        }
+
+        function renderKpiCharts() {
+            if (typeof Chart === 'undefined') return;
+
+            // 1. Biểu đồ Đường Area: Doanh thu theo tháng (Ảnh 1)
+            const trendCanvas = document.getElementById('chart-revenue-trend');
+            if (trendCanvas) {
+                if (revenueTrendChart) revenueTrendChart.destroy();
+                const ctx = trendCanvas.getContext('2d');
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.35)');
+                gradient.addColorStop(1, 'rgba(5, 150, 105, 0.02)');
+
+                revenueTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2026-01', '2026-02', '2026-03', '2026-04'],
+                        datasets: [{
+                            label: 'Doanh thu (VND)',
+                            data: [52.3, 66.8, 100.2, 139.6],
+                            borderColor: '#0f766e',
+                            borderWidth: 2.5,
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#0f766e',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(c) { return ' Doanh thu: ' + c.raw + ' Tr VND'; }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 150,
+                                ticks: {
+                                    stepSize: 34.9,
+                                    callback: function(v) { return v === 0 ? '0' : v + ' Tr'; },
+                                    font: { size: 10, weight: '700' }
+                                },
+                                grid: { color: 'rgba(226, 232, 240, 0.7)' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 11, weight: '700' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Biểu đồ Donut: Cơ cấu chi phí theo Kênh (Ảnh 1)
+            const donutCanvas = document.getElementById('chart-cost-donut');
+            if (donutCanvas) {
+                if (costDonutChart) costDonutChart.destroy();
+                const ctx2 = donutCanvas.getContext('2d');
+
+                costDonutChart = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Website (47,1%)', 'Cửa hàng (28,9%)', 'Đối tác (24%)'],
+                        datasets: [{
+                            data: [40734000, 25048000, 20770000],
+                            backgroundColor: ['#0f766e', '#10b981', '#84cc16'],
+                            borderWidth: 3,
+                            borderColor: '#ffffff',
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '68%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(c) { return ' ' + c.label + ': ' + Number(c.raw).toLocaleString('vi-VN') + ' VND'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Hàm Đề xuất chỉnh sửa & Xác nhận báo cáo (Ảnh 4)
+        function applyEditSuggestion() {
+            const req = document.getElementById('approval-edit-request').value.trim();
+            if (!req) {
+                alert('Vui lòng nhập nội dung yêu cầu sửa (Ví dụ: Viết tóm tắt ngắn cho quản lý bán hàng).');
+                return;
+            }
+            alert('✓ Đã áp dụng yêu cầu: "' + req + '". Bản tóm tắt báo cáo đã được cập nhật!');
+        }
+
+        function confirmReportApproval() {
+            alert('🎉 XÁC NHẬN BÁO CÁO THÀNH CÔNG!
+
+Báo cáo đã được cấp quản lý phê duyệt chính thức. Bạn có thể in hoặc xuất lưu dạng PDF tại Trang 4.');
+            navigateToPage('page-report');
+        }
+
     </script>
 </body>
 </html>
