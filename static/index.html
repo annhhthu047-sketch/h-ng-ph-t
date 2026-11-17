@@ -879,10 +879,10 @@
         }
 
         .dash-nav-tab.active {
-            background: linear-gradient(135deg, #059669, #10b981);
+            background: linear-gradient(135deg, var(--pink-btn), var(--sky-btn));
             color: white;
-            border-color: #059669;
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+            border-color: var(--pink-btn);
+            box-shadow: 0 6px 16px rgba(244, 114, 182, 0.35);
         }
 
         .dash-header-row {
@@ -926,8 +926,8 @@
         }
 
         .dash-select:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+            border-color: var(--sky-btn);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
         }
 
         /* 4 Thẻ KPI Xanh Emerald */
@@ -950,8 +950,8 @@
 
         .kpi-card-box:hover {
             transform: translateY(-6px) scale(1.02);
-            border-color: #10b981;
-            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.18);
+            border-color: var(--sky-btn);
+            box-shadow: var(--hover-float-shadow);
         }
 
         .kpi-card-box .kpi-title {
@@ -964,7 +964,7 @@
         .kpi-card-box .kpi-value {
             font-size: 24px;
             font-weight: 800;
-            color: #065f46;
+            color: var(--sky-text);
             margin-bottom: 4px;
             letter-spacing: -0.5px;
         }
@@ -980,8 +980,8 @@
             display: inline-block;
             font-size: 11px;
             font-weight: 800;
-            color: #047857;
-            background: #ecfdf5;
+            color: var(--sky-text);
+            background: rgba(224, 240, 254, 0.8);
             padding: 3px 8px;
             border-radius: 12px;
         }
@@ -1015,8 +1015,8 @@
 
         .chart-box-clean:hover {
             transform: translateY(-4px);
-            border-color: #10b981;
-            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.12);
+            border-color: var(--sky-btn);
+            box-shadow: var(--hover-float-shadow);
         }
 
         .chart-box-title {
@@ -1073,25 +1073,25 @@
 
         /* Box Nhận Định Phân Tích Chuyên Đề (Ảnh 2) */
         .insight-callout-box {
-            background: #f0fdf4;
-            border: 1.5px solid #bbf7d0;
+            background: linear-gradient(135deg, rgba(253, 226, 237, 0.5), rgba(224, 240, 254, 0.6));
+            border: 1.5px solid var(--sky-border);
             border-radius: 16px;
             padding: 16px;
             font-size: 12.5px;
-            color: #166534;
+            color: var(--text-dark);
             line-height: 1.6;
         }
 
         .insight-callout-title {
             font-size: 12.5px;
             font-weight: 800;
-            color: #15803d;
+            color: var(--pink-text);
             margin-bottom: 6px;
         }
 
         .action-card-box {
             background: white;
-            border: 1.5px solid #bbf7d0;
+            border: 1.5px solid var(--sky-border);
             border-radius: 16px;
             padding: 16px 20px;
             margin-bottom: 12px;
@@ -1103,13 +1103,13 @@
 
         .action-card-box:hover {
             transform: translateX(4px);
-            border-color: #10b981;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+            border-color: var(--pink-btn);
+            box-shadow: 0 4px 14px rgba(244, 114, 182, 0.2);
         }
 
         .action-priority-badge {
-            background: #dcfce7;
-            color: #15803d;
+            background: var(--sky-panel);
+            color: var(--sky-text);
             font-size: 10.5px;
             font-weight: 800;
             padding: 4px 10px;
@@ -1119,11 +1119,12 @@
 
         /* Khung Duyệt Bước Này (Ảnh 4) */
         .approval-form-card {
-            background: white;
-            border: 1.5px solid #bbf7d0;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1.5px solid var(--sky-border);
             border-radius: 22px;
             padding: 26px;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+            box-shadow: var(--mirror-shadow);
+            backdrop-filter: blur(12px);
         }
 
         .approval-textarea {
@@ -1142,12 +1143,12 @@
         }
 
         .approval-textarea:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            border-color: var(--sky-btn);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
         }
 
         .btn-green-submit {
-            background: #047857;
+            background: linear-gradient(135deg, var(--pink-btn), var(--sky-btn));
             color: white;
             border: none;
             border-radius: 24px;
@@ -1162,9 +1163,120 @@
         }
 
         .btn-green-submit:hover {
-            background: #059669;
+            background: linear-gradient(135deg, var(--pink-btn-hover), var(--sky-btn-hover));
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 22px rgba(5, 150, 105, 0.35);
+            box-shadow: var(--hover-float-shadow);
+        }
+
+        /* ========================================================
+           BẢNG DỮ LIỆU CHỈNH SỬA TRỰC TIẾP (DATA INSPECTOR) - TRANG 2
+           ======================================================== */
+        .data-inspector-panel {
+            background: rgba(255, 255, 255, 0.88);
+            border: 2px solid var(--sky-border);
+            border-radius: 22px;
+            padding: 22px;
+            margin-top: 20px;
+            box-shadow: var(--mirror-shadow);
+            display: none;
+        }
+        .data-inspector-panel.show { display: block; }
+
+        .data-inspector-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .error-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .error-tag.red { background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; }
+        .error-tag.yellow { background: #fffbeb; color: #d97706; border: 1.5px solid #fde68a; }
+        .error-tag.green { background: rgba(224, 240, 254, 0.6); color: var(--sky-text); border: 1.5px solid var(--sky-border); }
+
+        .editable-table-wrap {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1.5px solid var(--sky-border);
+            background: white;
+        }
+
+        table.editable-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        table.editable-table th {
+            background: linear-gradient(135deg, rgba(253, 226, 237, 0.5), rgba(224, 240, 254, 0.6));
+            color: var(--sky-text);
+            font-weight: 800;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--sky-border);
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        table.editable-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        table.editable-table td[contenteditable="true"] {
+            cursor: text;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        table.editable-table td[contenteditable="true"]:focus {
+            background: rgba(96, 165, 250, 0.08);
+            box-shadow: inset 0 0 0 2px var(--sky-btn);
+            border-radius: 6px;
+        }
+
+        table.editable-table td.cell-error {
+            background: rgba(254, 202, 202, 0.3);
+            border-left: 3px solid #ef4444;
+        }
+
+        table.editable-table td.cell-warning {
+            background: rgba(254, 240, 138, 0.3);
+            border-left: 3px solid #f59e0b;
+        }
+
+        table.editable-table td.cell-fixed {
+            background: rgba(224, 240, 254, 0.3);
+            border-left: 3px solid var(--sky-btn);
+            animation: fixFlash 0.6s ease;
+        }
+
+        @keyframes fixFlash {
+            0% { background: rgba(96, 165, 250, 0.4); }
+            100% { background: rgba(224, 240, 254, 0.3); }
+        }
+
+        table.editable-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        table.editable-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(253, 226, 237, 0.3), rgba(224, 240, 254, 0.3));
         }
     </style>
 </head>
@@ -1213,16 +1325,10 @@
                 <span class="nav-badge">P2</span>
             </div>
 
-            <!-- Nút Trang 3: Dashboard & Bảng So Sánh -->
+            <!-- Nút Trang 3: Dashboard & Báo Cáo Tổng Hợp -->
             <div class="nav-item" id="menu-dash" onclick="navigateToPage('page-dash')">
-                <span>📊 Dashboard & Xếp Hạng</span>
+                <span>📊 Dashboard & Báo Cáo</span>
                 <span class="nav-badge">P3</span>
-            </div>
-
-            <!-- Nút Trang 4: Báo Cáo HTML & Kế Hoạch -->
-            <div class="nav-item" id="menu-report" onclick="navigateToPage('page-report')">
-                <span>📑 Báo Cáo HTML Đề Xuất</span>
-                <span class="nav-badge">P4</span>
             </div>
 
             <div class="menu-title">Nhật Ký Truy Vết</div>
@@ -1413,6 +1519,65 @@
                 </div>
             </div>
 
+
+            <!-- BẢNG KIỂM TRA & CHỈNH SỬA DỮ LIỆU TRỰC TIẾP -->
+            <div class="data-inspector-panel" id="data-inspector">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 38px; height: 38px; border-radius: 14px; background: linear-gradient(135deg, #f472b6, #60a5fa); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: 0 4px 12px rgba(96, 165, 250, 0.35);">
+                            🔍
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text-dark);">
+                                Kiểm Tra &amp; Chỉnh Sửa Dữ Liệu Thủ Công
+                            </h4>
+                            <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px;">
+                                Bấm trực tiếp vào ô để sửa. Hệ thống tự động phát hiện lỗi định dạng, giá trị bất thường.
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn-pill btn-pink" style="font-size: 11.5px; padding: 8px 18px;" onclick="autoFixAllErrors()">
+                        🔧 Tự Động Sửa Tất Cả Lỗi
+                    </button>
+                </div>
+
+                <!-- Toolbar trạng thái lỗi -->
+                <div class="data-inspector-toolbar" id="error-toolbar">
+                    <span class="error-tag red" id="error-count-tag">⚠ 0 lỗi nghiêm trọng</span>
+                    <span class="error-tag yellow" id="warning-count-tag">⚡ 0 cảnh báo</span>
+                    <span class="error-tag green" id="ok-count-tag">✓ 0 ô hợp lệ</span>
+                    <button class="btn-pill btn-white" style="font-size: 11px; padding: 6px 14px; margin-left: auto;" onclick="scanDataErrors()">
+                        🔄 Quét lại lỗi
+                    </button>
+                </div>
+
+                <!-- Bảng dữ liệu chỉnh sửa được -->
+                <div class="editable-table-wrap">
+                    <table class="editable-table" id="editable-data-table">
+                        <thead>
+                            <tr id="editable-table-head">
+                                <th>#</th>
+                                <th>Cột 1</th>
+                            </tr>
+                        </thead>
+                        <tbody id="editable-table-body">
+                            <tr>
+                                <td colspan="2" style="text-align: center; color: var(--text-muted); padding: 28px;">
+                                    Nạp dữ liệu trước để xem và chỉnh sửa tại đây.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+                    <span style="font-size: 11px; color: var(--text-muted);" id="inspector-status">Sẵn sàng kiểm tra dữ liệu.</span>
+                    <button class="btn-pill btn-sky" style="font-size: 11.5px; padding: 8px 18px;" onclick="applyDataEditsAndRerun()">
+                        ✅ Áp Dụng Thay Đổi &amp; Chạy Lại Phân Tích
+                    </button>
+                </div>
+            </div>
+
             <!-- Cảnh Báo Human In The Loop -->
             <div class="hitl-alert-box" id="hitl-box">
                 <h4 style="font-size: 13.5px; font-weight: 800; color: var(--pink-text); margin-bottom: 6px;">
@@ -1460,8 +1625,11 @@
                 <button class="dash-nav-tab" id="tab-btn-locations" onclick="switchReportTab('locations')">
                     🗺️ Đánh Giá 4 Địa Bàn
                 </button>
+                <button class="dash-nav-tab" id="tab-btn-report" onclick="switchReportTab('report')">
+                    📋 Báo Cáo Tổng Hợp &amp; Xuất HTML
+                </button>
                 <button class="dash-nav-tab" id="tab-btn-approve" onclick="switchReportTab('approve')">
-                    ✅ Duyệt Bước Này &amp; Phê Duyệt
+                    ✅ Duyệt &amp; Phê Duyệt
                 </button>
             </div>
 
@@ -1964,6 +2132,142 @@
                 </div>
             </div>
 
+
+            <!-- ==========================================
+                 PHẦN 6: BÁO CÁO TỔNG HỢP & XUẤT HTML
+                 ========================================== -->
+            <div id="report-view-report" class="report-sub-view" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-size: 20px; font-weight: 800; color: var(--text-dark);">
+                            <span class="hero-title-gradient" style="font-size: 20px;">Báo Cáo Tổng Hợp Đề Xuất</span>
+                        </h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                            Kính gửi: Trưởng phòng Phát triển Kinh doanh - Công ty Hưng Phát
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-pill btn-pink" style="font-size: 12px; padding: 10px 20px;" onclick="exportFullHTMLReport()">
+                            📥 Xuất File HTML Báo Cáo
+                        </button>
+                        <button class="btn-pill btn-white" onclick="window.print()">
+                            🖨️ In / Lưu PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 1: KPI Tóm Tắt Mini -->
+                <div class="mirror-panel" style="background: linear-gradient(135deg, rgba(253, 226, 237, 0.4), rgba(224, 240, 254, 0.5)); margin-bottom: 20px;">
+                    <h4 style="font-size: 14.5px; font-weight: 800; color: var(--sky-text); margin-bottom: 14px;">📊 Tóm Tắt KPI Kinh Doanh</h4>
+                    <div class="kpi-cards-grid">
+                        <div class="kpi-card-box">
+                            <div class="kpi-title">Tổng Doanh thu</div>
+                            <div class="kpi-value">358.900.000</div>
+                            <div class="kpi-sub">VND (4 kỳ)</div>
+                        </div>
+                        <div class="kpi-card-box">
+                            <div class="kpi-title">Lợi nhuận gộp</div>
+                            <div class="kpi-value">136.382.000</div>
+                            <div class="kpi-sub">VND (Biên 38%)</div>
+                        </div>
+                        <div class="kpi-card-box">
+                            <div class="kpi-title">Địa bàn đề xuất</div>
+                            <div class="kpi-value" style="color: var(--pink-text);">B &amp; A</div>
+                            <div class="kpi-sub">Top 2 / 4 địa bàn</div>
+                        </div>
+                        <div class="kpi-card-box">
+                            <div class="kpi-title">Rủi ro Veto</div>
+                            <div class="kpi-value" style="color: #ef4444;">1</div>
+                            <div class="kpi-sub">Địa bàn C (loại trừ)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Biểu đồ minh họa -->
+                <div class="charts-grid-2x2" style="margin-bottom: 20px;">
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Doanh thu theo tháng</div>
+                        <div class="chart-box-sub">Xu hướng tăng trưởng liên tục 4 kỳ</div>
+                        <div style="height: 200px; position: relative;">
+                            <canvas id="report-chart-trend"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-box-clean">
+                        <div class="chart-box-title">Phân bổ chi phí theo kênh</div>
+                        <div class="chart-box-sub">Website dẫn đầu 47.1%</div>
+                        <div style="height: 200px; position: relative;">
+                            <canvas id="report-chart-pie"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Nội dung báo cáo đề xuất (gộp từ Trang 4 cũ) -->
+                <div class="report-paper" style="margin-bottom: 20px;">
+                    <div class="report-section">
+                        <h4>1. Bối Cảnh Quyết Định</h4>
+                        <p>
+                            Đội ngũ triển khai chỉ đủ nguồn lực phục vụ duy nhất <b>01 đợt mở rộng</b>. 
+                            Hệ thống AI Agent đã tự động thẩm định dữ liệu 4 địa bàn, loại bỏ trùng lặp và đối chiếu nhu cầu với danh mục giải pháp WMS.
+                        </p>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>2. Kết Luận: Lựa Chọn 2 Địa Bàn Ưu Tiên</h4>
+                        <ul style="margin-left: 20px; margin-top: 4px;">
+                            <li><b>Địa bàn B (Hạng 1 - 8.45/10):</b> Tốc độ tăng trưởng bán lẻ nhanh (22%), nhu cầu kho nông sản bách hóa khớp hoàn toàn giải pháp WMS, khách hàng đồng thuận mô hình đào tạo từ xa kết hợp video chuẩn hóa.</li>
+                            <li><b>Địa bàn A (Hạng 2 - 8.09/10):</b> Quy mô thị trường lớn (1.200 cửa hàng), cự ly gần (80km), độ khớp sản phẩm cao cho chuỗi mini-mart, hỗ trợ trực tiếp nhanh chóng trong ngày.</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>3. Giải Trình Lý Do Chưa Ưu Tiên Các Địa Bàn Còn Lại</h4>
+                        <ul style="margin-left: 20px; margin-top: 4px;">
+                            <li><b>Địa bàn C:</b> Vi phạm điều kiện tiên quyết (Veto) - Khách hàng yêu cầu đội ngũ kỹ thuật trực tại chỗ 24/7, cự ly 500km vượt quá khả năng nhân sự hiện tại.</li>
+                            <li><b>Địa bàn D:</b> Quy mô nhỏ (400 cửa hàng), phân tán, nhu cầu phần mềm thô sơ, chưa sẵn sàng ứng dụng WMS chuyên sâu.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4>4. Kế Hoạch Khảo Sát Thực Địa Chi Tiết</h4>
+                        <div class="table-wrap" style="margin-top: 10px;">
+                            <table class="styled-table" id="report-survey-plan-table">
+                                <thead>
+                                    <tr>
+                                        <th>Địa Bàn</th>
+                                        <th>Nhóm Khách Tiếp Cận</th>
+                                        <th>Thông Tin Cần Xác Minh</th>
+                                        <th>Người Phụ Trách</th>
+                                        <th>Thời Gian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-survey-plan-body">
+                                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">Chưa có dữ liệu.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Đề xuất hành động (cũng hiển thị ở đây) -->
+                <div class="chart-box-clean" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px;">💡 Đề Xuất Hành Động Tiếp Theo</h4>
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">Rà soát các cột còn thiếu trước kỳ báo cáo tiếp theo</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Bán lẻ mẫu có ô trống sau làm sạch.</div>
+                        </div>
+                        <span class="action-priority-badge">Ưu tiên vừa</span>
+                    </div>
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">Theo dõi Doanh thu (VND) theo Kênh ở kỳ tiếp theo</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">"Website" đang dẫn đầu Bộ 1. So sánh các kỳ có cùng phạm vi trước khi phân bổ nguồn lực.</div>
+                        </div>
+                        <span class="action-priority-badge">Ưu tiên vừa</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- ==========================================
                  PHẦN 5: DUYỆT BƯỚC NÀY & PHÊ DUYỆT (ẢNH 4)
                  ========================================== -->
@@ -2013,8 +2317,8 @@
                 <button class="btn-pill btn-white" onclick="navigateToPage('page-ingest')">
                     ⬅ Về Trang 2: Nạp Dữ Liệu và Xử Lí
                 </button>
-                <button class="btn-pill btn-pink" onclick="navigateToPage('page-report')">
-                    Sang Trang 4: Báo Cáo Đề Xuất Trưởng Phòng ➔
+                <button class="btn-pill btn-pink" onclick="switchReportTab('report')">
+                    📋 Xem Báo Cáo Tổng Hợp & Xuất HTML ➔
                 </button>
             </div>
         </div>
@@ -2115,8 +2419,8 @@
 
             <!-- Thanh Chuyển Trang -->
             <div class="pagination-bar">
-                <button class="btn-pill btn-white" onclick="navigateToPage('page-report')">
-                    ⬅ Về Trang 4: Báo Cáo Đề Xuất
+                <button class="btn-pill btn-white" onclick="navigateToPage('page-dash')">
+                    ⬅ Về Trang 3: Dashboard & Báo Cáo
                 </button>
                 <button class="btn-pill btn-pink" onclick="navigateToPage('page-home')">
                     Về Lại Trang Chủ 🏠
@@ -2157,12 +2461,8 @@
             } else if (pageId === 'page-dash') {
                 document.getElementById('menu-dash').classList.add('active');
                 titleEl.innerText = "Trang 3: Báo Cáo Dashboard & Phân Tích Chuyên Đề";
-                descEl.innerText = "Chỉ số KPI kinh doanh, cơ cấu chi phí, phân tích nguồn dữ liệu và phê duyệt";
+                descEl.innerText = "Dashboard KPI, phân tích chuyên đề, báo cáo tổng hợp và xuất file HTML";
                 setTimeout(renderKpiCharts, 150);
-            } else if (pageId === 'page-report') {
-                document.getElementById('menu-report').classList.add('active');
-                titleEl.innerText = "Trang 4: Báo Cáo HTML Đề Xuất Trưởng Phòng";
-                descEl.innerText = "Văn bản đề xuất lựa chọn 2 địa bàn và kế hoạch khảo sát thực địa tiếp theo";
             } else if (pageId === 'page-audit') {
                 document.getElementById('menu-audit').classList.add('active');
                 titleEl.innerText = "Nhật Ký Truy Vết Hoạt Động Của Agent (Audit Log)";
@@ -2177,6 +2477,7 @@
             if (f) {
                 currentFile = f;
                 document.getElementById('file-status-pill').innerText = "✓ Đã nhận tệp: " + f.name;
+                showDataInspector();
             }
         }
 
@@ -2203,6 +2504,7 @@
             } catch (err) {}
             // Client-side fallback (khi chạy trên Vercel/GitHub Pages tĩnh)
             alert("✓ Đã nạp thành công bộ dữ liệu mẫu Đề 04!");
+            showDataInspector();
         }
 
         async function loadSampleDatasetAndGo() {
@@ -2415,6 +2717,9 @@
             if (tabId === 'kpi') {
                 renderKpiCharts();
             }
+            if (tabId === 'report') {
+                renderReportCharts();
+            }
         }
 
         // Dữ liệu theo từng kỳ báo cáo (Ảnh 1)
@@ -2612,6 +2917,298 @@
         function confirmReportApproval() {
             alert('🎉 XÁC NHẬN BÁO CÁO THÀNH CÔNG!\n\nBáo cáo đã được cấp quản lý phê duyệt chính thức. Bạn có thể in hoặc xuất lưu dạng PDF tại Trang 4.');
             navigateToPage('page-report');
+        }
+
+
+        // ========================================================
+        // DATA INSPECTOR - KIỂM TRA & CHỈNH SỬA DỮ LIỆU (TRANG 2)
+        // ========================================================
+        const SAMPLE_DATA_ROWS = [
+            { stt: 1, kenh: 'Website', san_pham: 'Áo thun', khu_vuc: 'Miền Nam', doanh_thu: '35.700.000', chi_phi: '21.420.000', so_don: 85, ngay: '2026-04-05' },
+            { stt: 2, kenh: 'Cửa hàng', san_pham: 'Sơ mi', khu_vuc: 'Miền Bắc', doanh_thu: '28.500.000', chi_phi: '17.100.000', so_don: 62, ngay: '2026-04-08' },
+            { stt: 3, kenh: 'Đối tác', san_pham: 'Quần jean', khu_vuc: 'Miền Trung', doanh_thu: '19.200.000', chi_phi: '11.520.000', so_don: 45, ngay: '2026-04-12' },
+            { stt: 4, kenh: 'Website', san_pham: 'Giày dép', khu_vuc: 'Miền Nam', doanh_thu: '15.800.000', chi_phi: '9.480.000', so_don: 38, ngay: '2026-04-15' },
+            { stt: 5, kenh: '', san_pham: 'Phụ kiện', khu_vuc: 'Miền Bắc', doanh_thu: '12.400.000', chi_phi: '7.440.000', so_don: 30, ngay: '2026-04-18' },
+            { stt: 6, kenh: 'Cửa hàng', san_pham: 'Áo khoác', khu_vuc: 'Miền Nam', doanh_thu: 'abc', chi_phi: '10.512.000', so_don: 42, ngay: '2026-13-20' },
+            { stt: 7, kenh: 'Website', san_pham: 'Túi xách', khu_vuc: 'Miền Trung', doanh_thu: '28.000.000', chi_phi: '16.800.000', so_don: -5, ngay: '2026-04-25' }
+        ];
+
+        let inspectorData = [];
+
+        function showDataInspector() {
+            const panel = document.getElementById('data-inspector');
+            panel.classList.add('show');
+            inspectorData = JSON.parse(JSON.stringify(SAMPLE_DATA_ROWS));
+            renderInspectorTable();
+            scanDataErrors();
+        }
+
+        function renderInspectorTable() {
+            const cols = ['stt', 'kenh', 'san_pham', 'khu_vuc', 'doanh_thu', 'chi_phi', 'so_don', 'ngay'];
+            const colNames = ['#', 'Kênh', 'Sản phẩm', 'Khu vực', 'Doanh thu (VND)', 'Chi phí (VND)', 'Số đơn', 'Ngày'];
+            const thead = document.getElementById('editable-table-head');
+            thead.innerHTML = colNames.map(c => '<th>' + c + '</th>').join('');
+
+            const tbody = document.getElementById('editable-table-body');
+            tbody.innerHTML = '';
+            inspectorData.forEach((row, ri) => {
+                const tr = document.createElement('tr');
+                cols.forEach((col, ci) => {
+                    const td = document.createElement('td');
+                    td.textContent = row[col] || '';
+                    if (ci > 0) {
+                        td.setAttribute('contenteditable', 'true');
+                        td.dataset.row = ri;
+                        td.dataset.col = col;
+                        td.addEventListener('blur', function() {
+                            inspectorData[ri][col] = this.textContent.trim();
+                            scanDataErrors();
+                        });
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function scanDataErrors() {
+            let errors = 0, warnings = 0, ok = 0;
+            const tbody = document.getElementById('editable-table-body');
+            const rows = tbody.querySelectorAll('tr');
+
+            rows.forEach((tr, ri) => {
+                const tds = tr.querySelectorAll('td');
+                tds.forEach((td, ci) => {
+                    td.classList.remove('cell-error', 'cell-warning', 'cell-fixed');
+                    if (ci === 0) return;
+                    const val = td.textContent.trim();
+                    const col = td.dataset.col;
+
+                    if (!val || val === '') {
+                        td.classList.add('cell-warning');
+                        td.title = '⚡ Ô trống - thiếu dữ liệu';
+                        warnings++;
+                    } else if ((col === 'doanh_thu' || col === 'chi_phi') && isNaN(val.replace(/[.,]/g, ''))) {
+                        td.classList.add('cell-error');
+                        td.title = '⚠ Lỗi: Giá trị không phải số';
+                        errors++;
+                    } else if (col === 'so_don' && parseInt(val) < 0) {
+                        td.classList.add('cell-error');
+                        td.title = '⚠ Lỗi: Số đơn không thể âm';
+                        errors++;
+                    } else if (col === 'ngay') {
+                        const parts = val.split('-');
+                        if (parts.length === 3) {
+                            const m = parseInt(parts[1]);
+                            const d = parseInt(parts[2]);
+                            if (m < 1 || m > 12 || d < 1 || d > 31) {
+                                td.classList.add('cell-error');
+                                td.title = '⚠ Lỗi: Ngày/tháng không hợp lệ';
+                                errors++;
+                            } else { ok++; }
+                        } else { ok++; }
+                    } else {
+                        ok++;
+                    }
+                });
+            });
+
+            document.getElementById('error-count-tag').textContent = '⚠ ' + errors + ' lỗi nghiêm trọng';
+            document.getElementById('warning-count-tag').textContent = '⚡ ' + warnings + ' cảnh báo';
+            document.getElementById('ok-count-tag').textContent = '✓ ' + ok + ' ô hợp lệ';
+            document.getElementById('inspector-status').textContent = errors === 0 && warnings === 0 
+                ? '✅ Tất cả dữ liệu hợp lệ, sẵn sàng phân tích!' 
+                : '⚠ Phát hiện ' + errors + ' lỗi và ' + warnings + ' cảnh báo. Nhấn nút sửa lỗi hoặc chỉnh tay.';
+        }
+
+        function autoFixAllErrors() {
+            inspectorData.forEach((row, ri) => {
+                // Fix: ô trống kênh → gán "Chưa xác định"
+                if (!row.kenh || row.kenh === '') row.kenh = 'Chưa xác định';
+                // Fix: doanh thu/chi phí không phải số → xóa ký tự lạ
+                ['doanh_thu', 'chi_phi'].forEach(col => {
+                    if (isNaN(String(row[col]).replace(/[.,]/g, ''))) row[col] = '0';
+                });
+                // Fix: số đơn âm → đổi dấu
+                if (parseInt(row.so_don) < 0) row.so_don = Math.abs(parseInt(row.so_don));
+                // Fix: ngày tháng sai → sửa tháng 13 thành tháng 12
+                if (row.ngay) {
+                    const parts = row.ngay.split('-');
+                    if (parts.length === 3) {
+                        let m = parseInt(parts[1]);
+                        let d = parseInt(parts[2]);
+                        if (m > 12) m = 12;
+                        if (m < 1) m = 1;
+                        if (d > 31) d = 28;
+                        if (d < 1) d = 1;
+                        row.ngay = parts[0] + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                    }
+                }
+            });
+            renderInspectorTable();
+
+            // Flash fixed cells
+            const tbody = document.getElementById('editable-table-body');
+            tbody.querySelectorAll('td').forEach(td => {
+                if (td.dataset.col) td.classList.add('cell-fixed');
+            });
+            setTimeout(() => scanDataErrors(), 100);
+            alert('🔧 Đã tự động sửa tất cả lỗi!\n\n• Ô trống → "Chưa xác định"\n• Giá trị không phải số → 0\n• Số đơn âm → đổi dấu dương\n• Tháng 13 → tháng 12');
+        }
+
+        function applyDataEditsAndRerun() {
+            scanDataErrors();
+            const errTag = document.getElementById('error-count-tag').textContent;
+            if (errTag.includes('0 lỗi')) {
+                alert('✅ Dữ liệu đã được cập nhật! Đang chạy lại phân tích...');
+                executeAIAgentAndGoDash();
+            } else {
+                alert('⚠ Vẫn còn lỗi trong dữ liệu. Vui lòng sửa hết lỗi trước khi chạy lại.');
+            }
+        }
+
+        // ========================================================
+        // XUẤT BÁO CÁO HTML ĐẦY ĐỦ
+        // ========================================================
+        function exportFullHTMLReport() {
+            const reportHTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Báo Cáo Tổng Hợp - Hưng Phát AI Agent</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 40px auto; padding: 30px; color: #1e293b; line-height: 1.7; }
+        h1 { color: #db2777; font-size: 24px; border-bottom: 3px solid #f9bad4; padding-bottom: 10px; }
+        h2 { color: #0284c7; font-size: 18px; margin-top: 28px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0; }
+        .kpi-card { background: #f0f7ff; border: 1.5px solid #b9e1fd; border-radius: 14px; padding: 16px; text-align: center; }
+        .kpi-val { font-size: 22px; font-weight: 800; color: #0284c7; }
+        .kpi-label { font-size: 11px; color: #64748b; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th { background: #fde2ed; color: #db2777; padding: 10px 14px; text-align: left; font-size: 12px; }
+        td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; }
+        .badge-ok { background: #e0f0fe; color: #0284c7; }
+        .badge-veto { background: #fef2f2; color: #ef4444; }
+        .insight { background: linear-gradient(135deg, #fff1f6, #f0f7ff); border: 1.5px solid #b9e1fd; border-radius: 14px; padding: 16px; margin: 14px 0; }
+        .footer { margin-top: 40px; text-align: center; color: #64748b; font-size: 11px; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+    </style>
+</head>
+<body>
+    <h1>🏢 Báo Cáo Đề Xuất Khảo Sát Mở Rộng Địa Bàn Kinh Doanh</h1>
+    <p>Kính gửi: Trưởng phòng Phát triển Kinh doanh - Công ty Hưng Phát</p>
+    <p>Thực hiện bởi: Hệ thống AI Agent Đánh giá Thị trường Tự động (Đề án 04)</p>
+
+    <h2>📊 Tóm Tắt KPI Kinh Doanh</h2>
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Tổng Doanh thu</div><div class="kpi-val">358.9 Tr</div></div>
+        <div class="kpi-card"><div class="kpi-label">Lợi nhuận gộp</div><div class="kpi-val">136.4 Tr</div></div>
+        <div class="kpi-card"><div class="kpi-label">Biên lợi nhuận</div><div class="kpi-val">38%</div></div>
+        <div class="kpi-card"><div class="kpi-label">Số đơn (kỳ 04)</div><div class="kpi-val">312</div></div>
+    </div>
+
+    <h2>📋 Kết Luận: 2 Địa Bàn Ưu Tiên</h2>
+    <table>
+        <tr><th>Hạng</th><th>Địa Bàn</th><th>Quy Mô</th><th>Độ Khớp</th><th>Năng Lực</th><th>Tổng Điểm</th><th>Kết Quả</th></tr>
+        <tr><td>#1</td><td><b>Địa bàn B</b></td><td>6.92/10</td><td>9.2/10</td><td>9/10</td><td><b>8.45</b></td><td><span class="badge badge-ok">⭐ Ưu Tiên</span></td></tr>
+        <tr><td>#2</td><td><b>Địa bàn A</b></td><td>6.84/10</td><td>7.94/10</td><td>9/10</td><td><b>7.98</b></td><td><span class="badge badge-ok">⭐ Ưu Tiên</span></td></tr>
+        <tr><td>#3</td><td>Địa bàn D</td><td>2.4/10</td><td>3.3/10</td><td>5.5/10</td><td>3.8</td><td><span class="badge" style="background:#fffbeb;color:#d97706;">Chờ giai đoạn sau</span></td></tr>
+        <tr><td>#4</td><td>Địa bàn C</td><td>7.28/10</td><td>4.5/10</td><td>2/10</td><td>4.46</td><td><span class="badge badge-veto">VETO (Loại trừ)</span></td></tr>
+    </table>
+
+    <div class="insight">
+        <b>💡 Nhận định AI:</b> Địa bàn B có độ khớp sản phẩm rất cao (85%) và mô hình triển khai hybrid giúp tối ưu chi phí. Địa bàn A có quy mô lớn nhất (1.150 CH) và nằm trong bán kính hỗ trợ nhanh.
+    </div>
+
+    <h2>⚠ Giải Trình Loại Trừ</h2>
+    <ul>
+        <li><b>Địa bàn C:</b> Vi phạm điều kiện tiên quyết (Veto) – yêu cầu kỹ thuật viên onsite 24/7, cự ly 500km, vượt quá quân số đội triển khai.</li>
+        <li><b>Địa bàn D:</b> Quy mô nhỏ (400 CH), phân tán, chưa sẵn sàng ứng dụng WMS chuyên sâu.</li>
+    </ul>
+
+    <h2>📅 Kế Hoạch Khảo Sát Thực Địa</h2>
+    <table>
+        <tr><th>Địa Bàn</th><th>Nhóm Khách</th><th>Thông Tin Cần Xác Minh</th><th>Người Phụ Trách</th><th>Thời Gian</th></tr>
+        <tr><td>Địa bàn B</td><td>Chuỗi bán lẻ nông sản/kho lạnh</td><td>Quy trình kiểm đếm kho & khả năng đào tạo online</td><td>KD Khu vực B & Hỗ trợ KT</td><td>Tuần 2-3 sau duyệt</td></tr>
+        <tr><td>Địa bàn A</td><td>Chuỗi mini-mart quy mô 5-20 điểm</td><td>Hạ tầng IT tại quầy & sẵn sàng chuyển đổi kho</td><td>KD Khu vực A & KS Triển khai</td><td>Tuần 1-2 sau duyệt</td></tr>
+    </table>
+
+    <div class="footer">
+        <p>Báo cáo được tạo tự động bởi <b>Hưng Phát AI Agent v2.5</b> · Dữ liệu trích xuất từ hồ sơ đã thẩm định</p>
+        <p>Ngày xuất: ` + new Date().toLocaleDateString('vi-VN') + ` · Tổng cộng 4 địa bàn đã phân tích</p>
+    </div>
+</body>
+</html>`;
+
+            const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'BaoCao_HungPhat_AI_Agent_' + new Date().toISOString().slice(0,10) + '.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('📥 Đã tải xuống file báo cáo HTML!\n\nFile bao gồm:\n• Tóm tắt KPI kinh doanh\n• Bảng xếp hạng 4 địa bàn\n• Nhận định AI\n• Kế hoạch khảo sát thực địa');
+        }
+
+        // Render biểu đồ cho tab Báo Cáo Tổng Hợp
+        let reportTrendChart = null;
+        let reportPieChart = null;
+
+        function renderReportCharts() {
+            if (typeof Chart === 'undefined') return;
+
+            const trendCanvas = document.getElementById('report-chart-trend');
+            if (trendCanvas) {
+                if (reportTrendChart) reportTrendChart.destroy();
+                const ctx = trendCanvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+                gradient.addColorStop(0, 'rgba(244, 114, 182, 0.3)');
+                gradient.addColorStop(1, 'rgba(96, 165, 250, 0.05)');
+                reportTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['T01/2026', 'T02/2026', 'T03/2026', 'T04/2026'],
+                        datasets: [{
+                            label: 'Doanh thu (Tr VND)',
+                            data: [52.3, 66.8, 100.2, 139.6],
+                            borderColor: '#f472b6',
+                            borderWidth: 2.5,
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#f472b6',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { min: 0, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } }
+                    }
+                });
+            }
+
+            const pieCanvas = document.getElementById('report-chart-pie');
+            if (pieCanvas) {
+                if (reportPieChart) reportPieChart.destroy();
+                reportPieChart = new Chart(pieCanvas.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Website (47.1%)', 'Cửa hàng (28.9%)', 'Đối tác (24%)'],
+                        datasets: [{
+                            data: [40734000, 25048000, 20770000],
+                            backgroundColor: ['#f472b6', '#60a5fa', '#a78bfa'],
+                            borderWidth: 3, borderColor: '#fff', hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '65%',
+                        plugins: { legend: { position: 'bottom', labels: { font: { size: 11, weight: 700 } } } }
+                    }
+                });
+            }
         }
 
     </script>
