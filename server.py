@@ -72,8 +72,11 @@ class AgentRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "success": True,
                     "audit_log": engine.audit_log,
                     "conflicts": conflicts_res,
-                    "ranking": eval_res["ranking"],
-                    "recommendations": eval_res["recommendations"]
+                    "ranking": eval_res.get("ranking", []),
+                    "recommendations": eval_res.get("recommendations", {}),
+                    "is_general_dataset": getattr(engine, "is_general_dataset", False),
+                    "general_stats": getattr(engine, "general_stats", {}),
+                    "clean_records": getattr(engine, "clean_records", [])
                 }
                 self.send_json_response(response_data)
 

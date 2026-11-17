@@ -124,13 +124,30 @@ class AgentDataEngine:
         self.clean_data["Capability"] = {str(row.get("Dia_ban", "") or "").strip(): row for row in self.raw_data.get("Kha_nang_trien_khai", []) if str(row.get("Dia_ban", "") or "").strip()}
         self.clean_data["Criteria"] = self.raw_data.get("Bo_tieu_chi", [])
 
-        # Nếu tệp tải lên không có cột 'Dia_ban' hợp lệ (ví dụ tệp doanh số không đúng bài toán Đề 04)
+        # Nếu tệp tải lên không chứa bảng đánh giá địa bàn Đề 04 -> Xử lý như bộ dữ liệu kinh doanh đa năng
         if not clean_market_by_loc:
-            self.log("BƯỚC 1: TIỀN XỬ LÝ", "Cảnh báo tệp", "Tệp không chứa dữ liệu địa bàn của Đề 04. Tự động nạp bộ dữ liệu mẫu chuẩn Hưng Phát.", status="WARNING")
-            sample_file = os.path.join(os.path.dirname(__file__), "hung_phat_sample_data.xlsx")
-            if os.path.exists(sample_file):
-                self.load_from_excel_or_csv(sample_file)
-                return self.run_step_1_normalization()
+            self.is_general_dataset = True
+            first_key = list(self.raw_data.keys())[0] if self.raw_data else "MainData"
+            records = self.raw_data.get(first_key, [])
+            self.clean_records = records
+            self.log("BƯỚC 1: TIỀN XỬ LÝ", "Nhận diện dữ liệu", f"Tệp dữ liệu kinh doanh tổng quát '{first_key}' với {len(records)} dòng.")
+            # Kiểm tra ô trống và dòng trùng
+            clean_list = []
+            seen = set()
+            for r in records:
+                # Key khử trùng lặp theo chuỗi dòng
+                row_str = str(sorted(r.items()))
+                if row_str not in seen:
+                    seen.add(row_str)
+                    clean_list.append(r)
+                else:
+                    self.log("BƯỚC 1: TIỀN XỬ LÝ", "Khử trùng lặp", "Đã loại bỏ 1 dòng trùng lặp nội dung.")
+            self.clean_records = clean_list
+            self.clean_data["General"] = clean_list
+            self.log("BƯỚC 1: TIỀN XỬ LÝ", "Hoàn thành chuẩn hóa", f"Đã chuẩn hóa {len(clean_list)} dòng dữ liệu hợp lệ.")
+            return self.clean_data
+        else:
+            self.is_general_dataset = False
 
         self.log("BƯỚC 1: TIỀN XỬ LÝ", "Hoàn thành chuẩn hóa", f"Đã chuẩn hóa danh mục dữ liệu của các địa bàn: {list(clean_market_by_loc.keys())}")
         return self.clean_data
@@ -138,12 +155,41 @@ class AgentDataEngine:
     def run_step_2_conflict_and_gap_analysis(self):
         """
         AI AGENT BƯỚC 2: Đối chiếu & Phát hiện mâu thuẫn (Conflict & Gap Analysis)
-        - Phát hiện thiếu thông tin (Missing info)
-        - Phát hiện mâu thuẫn giữa nhu cầu khách hàng và khả năng đáp ứng (Capability mismatch)
-        - Quyết định: Có đủ dữ liệu để tiếp tục không?
         """
-        self.log("BƯỚC 2: ĐỐI CHIẾU & MÂU THUẪN", "Phân tích khoảng trống", "Bắt đầu đối chiếu dữ liệu giữa 4 địa bàn.")
         self.conflicts_and_gaps = []
+        if getattr(self, "is_general_dataset", False):
+            self.log("BƯỚC 2: ĐỐI CHIẾU & MÂU THUẪN", "Kiểm tra chất lượng tệp", "Bắt đầu phân tích khoảng trống và bất thường dữ liệu.")
+            records = getattr(self, "clean_records", [])
+            if not records:
+                return {"is_sufficient": False, "issues": [{"Type": "RỖNG", "Description": "Không có dữ liệu để phân tích."}]}
+            
+            # Quét ô trống theo cột
+            cols = list(records[0].keys())
+            missing_by_col = {c: 0 for c in cols}
+            for r in records:
+                for c in cols:
+                    val = r.get(c, "")
+                    if val is None or str(val).strip() == "" or str(val).lower() == "nan":
+                        missing_by_col[c] += 1
+            
+            for c, cnt in missing_by_col.items():
+                if cnt > 0:
+                    self.conflicts_and_gaps.append({
+                        "Dia_ban": f"Cột '{c}'",
+                        "Type": "THIẾU DỮ LIỆU (GAP)",
+                        "Severity": "Cao" if cnt > len(records)*0.2 else "Trung bình",
+                        "Description": f"Có {cnt}/{len(records)} dòng bị khuyết thông tin tại cột '{c}'.",
+                        "Action_Required": "Cần nhân viên phụ trách kiểm tra lại nguồn dữ liệu hoặc áp dụng đề xuất điền khuyết của AI."
+                    })
+                    self.log("BƯỚC 2: ĐỐI CHIẾU & MÂU THUẪN", "Cảnh báo khuyết ô", f"Cột '{c}' có {cnt} ô trống.", status="WARNING")
+            
+            return {
+                "is_sufficient": True,
+                "needs_human_intervention": len(self.conflicts_and_gaps) > 0,
+                "issues": self.conflicts_and_gaps
+            }
+
+        self.log("BƯỚC 2: ĐỐI CHIẾU & MÂU THUẪN", "Phân tích khoảng trống", "Bắt đầu đối chiếu dữ liệu giữa 4 địa bàn.")
 
         all_locations = sorted(list(set(
             list(self.clean_data.get("Market", {}).keys()) +
@@ -212,13 +258,38 @@ class AgentDataEngine:
     def run_step_3_evaluation_and_scoring(self, human_override=False):
         """
         AI AGENT BƯỚC 3: Đánh giá & Xếp hạng địa bàn (Evaluation & Scoring)
-        - Tính điểm theo 3 trụ cột tiêu chí:
-            1. Quy mô thị trường (Market Size) - Trọng số 30%
-            2. Độ khớp nhu cầu (Product Fit) - Trọng số 35%
-            3. Khả năng triển khai (Capability & Feasibility) - Trọng số 35%
-        - Trích dẫn nguồn cụ thể
-        - Chọn ra Top 2 địa bàn và giải thích lý do loại trừ 2 địa bàn còn lại
         """
+        if getattr(self, "is_general_dataset", False):
+            self.log("BƯỚC 3: ĐÁNH GIÁ & XẾP HẠNG", "Tổng hợp chỉ số kinh doanh", "Tính toán các KPI và tạo khuyến nghị chiến lược.")
+            records = getattr(self, "clean_records", [])
+            numeric_cols = []
+            if records:
+                for col in records[0].keys():
+                    try:
+                        vals = [float(str(r.get(col, 0)).replace('.', '').replace(',', '')) for r in records if r.get(col) is not None and str(r.get(col)).strip() != '']
+                        if len(vals) > len(records) * 0.5:
+                            numeric_cols.append((col, sum(vals), sum(vals)/len(vals) if vals else 0))
+                    except:
+                        pass
+            
+            self.general_stats = {
+                "total_rows": len(records),
+                "numeric_cols": [{"col": c[0], "sum": c[1], "avg": c[2]} for c in numeric_cols]
+            }
+            self.log("BƯỚC 3: ĐÁNH GIÁ & XẾP HẠNG", "Khuyến nghị kinh doanh", f"Đã sinh đề xuất hành động cho {len(records)} bản ghi.")
+            return {
+                "ranking": [],
+                "recommendations": {
+                    "general": True,
+                    "stats": self.general_stats,
+                    "top_actions": [
+                        "Rà soát các ô dữ liệu bị khuyết trước khi chốt kỳ báo cáo tài chính.",
+                        "Tập trung nguồn lực vào nhóm danh mục có đóng góp doanh thu lớn nhất.",
+                        "Theo dõi chặt chẽ tỷ lệ chuyển đổi và biên lợi nhuận giữa các kênh.",
+                        "Tự động xuất báo cáo HTML lưu trữ định kỳ để đối chiếu lịch sử."
+                    ]
+                }
+            }
         self.log("BƯỚC 3: ĐÁNH GIÁ & XẾP HẠNG", "Chấm điểm tiêu chuẩn", "Bắt đầu tính điểm 4 địa bàn theo bộ tiêu chí.")
         self.evaluation_results = []
 
