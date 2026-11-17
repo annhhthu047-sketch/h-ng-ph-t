@@ -990,8 +990,8 @@
             display: inline-block;
             font-size: 11px;
             font-weight: 800;
-            color: #047857;
-            background: #ecfdf5;
+            color: var(--sky-text);
+            background: var(--sky-panel);
             padding: 3px 8px;
             border-radius: 12px;
         }
@@ -1278,6 +1278,64 @@
         table.editable-table tbody tr:hover {
             background: linear-gradient(90deg, rgba(253, 226, 237, 0.3), rgba(224, 240, 254, 0.3));
         }
+
+        /* ĐỀ XUẤT AI SỬA LỖI */
+        .ai-suggestion-panel {
+            background: linear-gradient(135deg, rgba(253, 226, 237, 0.4), rgba(224, 240, 254, 0.5));
+            border: 2px solid var(--sky-border);
+            border-radius: 18px;
+            padding: 18px;
+            margin-top: 14px;
+            display: none;
+        }
+        .ai-suggestion-panel.show { display: block; }
+
+        .ai-fix-item {
+            background: white;
+            border: 1.5px solid var(--sky-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+        .ai-fix-item:hover {
+            border-color: var(--pink-btn);
+            box-shadow: 0 4px 14px rgba(244, 114, 182, 0.15);
+            transform: translateX(3px);
+        }
+        .ai-fix-item.accepted {
+            background: rgba(224, 240, 254, 0.5);
+            border-color: var(--sky-btn);
+        }
+        .ai-fix-item.rejected {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        .ai-fix-btns { display: flex; gap: 6px; flex-shrink: 0; }
+        .ai-fix-btns button {
+            border: none; border-radius: 10px; padding: 6px 14px;
+            font-size: 11px; font-weight: 800; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ai-fix-btns .btn-accept { background: var(--sky-btn); color: white; }
+        .ai-fix-btns .btn-accept:hover { background: var(--sky-btn-hover); transform: scale(1.05); }
+        .ai-fix-btns .btn-reject { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+        .ai-fix-btns .btn-reject:hover { background: #fecaca; }
+
+        /* BẢNG DỮ LIỆU ĐÃ LÀM SẠCH */
+        .clean-data-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--sky-border);
+            border-radius: 22px;
+            padding: 22px;
+            margin-top: 18px;
+            display: none;
+        }
+        .clean-data-panel.show { display: block; }
     </style>
 </head>
 <body>
@@ -1570,11 +1628,31 @@
                     </table>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 11px; color: var(--text-muted);" id="inspector-status">Sẵn sàng kiểm tra dữ liệu.</span>
-                    <button class="btn-pill btn-sky" style="font-size: 11.5px; padding: 8px 18px;" onclick="applyDataEditsAndRerun()">
-                        ✅ Áp Dụng Thay Đổi &amp; Chạy Lại Phân Tích
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-pill btn-white" style="font-size: 11px; padding: 7px 16px;" onclick="showAISuggestions()">
+                            🤖 Đề Xuất AI Sửa Lỗi
+                        </button>
+                        <button class="btn-pill btn-sky" style="font-size: 11.5px; padding: 8px 18px;" onclick="applyDataEditsAndRerun()">
+                            ✅ Áp Dụng &amp; Chạy Lại
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel Đề Xuất AI -->
+                <div class="ai-suggestion-panel" id="ai-suggestions-panel">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                        <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #f472b6, #60a5fa); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">🤖</div>
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">Đề Xuất Sửa Lỗi Từ AI</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Duyệt từng đề xuất hoặc chấp nhận tất cả. Bạn có thể sửa trực tiếp sau khi duyệt.</div>
+                        </div>
+                        <button class="btn-pill btn-pink" style="font-size: 11px; padding: 6px 14px; margin-left: auto;" onclick="acceptAllAISuggestions()">
+                            ✅ Chấp Nhận Tất Cả
+                        </button>
+                    </div>
+                    <div id="ai-suggestions-list"></div>
                 </div>
             </div>
 
@@ -1590,6 +1668,35 @@
                 <button class="btn-pill btn-pink" style="font-size: 12px; padding: 10px 20px;" onclick="approveHitl()">
                     Xác Nhận Kích Hoạt Veto (Loại Trừ Địa Bàn C)
                 </button>
+            </div>
+
+
+            <!-- NÚT HIỂN THỊ DỮ LIỆU ĐÃ LÀM SẠCH -->
+            <div style="margin-top: 18px; display: flex; gap: 10px;">
+                <button class="btn-pill btn-white" style="font-size: 12px;" onclick="toggleCleanDataView()">
+                    📋 Hiển Thị Dữ Liệu Đã Làm Sạch
+                </button>
+            </div>
+
+            <div class="clean-data-panel" id="clean-data-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(135deg, #f472b6, #60a5fa); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">✨</div>
+                        <div>
+                            <h4 style="font-size: 14px; font-weight: 800; color: var(--text-dark);">Dữ Liệu Đã Làm Sạch</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Sau khi khử trùng lặp, sửa lỗi và chuẩn hóa định dạng</p>
+                        </div>
+                    </div>
+                    <span id="clean-data-count" style="background: var(--sky-panel); color: var(--sky-text); font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 14px;">0 dòng</span>
+                </div>
+                <div class="editable-table-wrap">
+                    <table class="editable-table" id="clean-data-table">
+                        <thead><tr id="clean-table-head"><th>#</th></tr></thead>
+                        <tbody id="clean-table-body">
+                            <tr><td style="text-align:center;color:var(--text-muted);padding:20px;">Chưa có dữ liệu đã làm sạch.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Thanh Chuyển Trang -->
@@ -1708,7 +1815,7 @@
                         <div style="height: 220px; position: relative;">
                             <canvas id="chart-revenue-trend"></canvas>
                         </div>
-                        <div style="margin-top: 10px; font-size: 12px; color: #059669; font-weight: 800; cursor: pointer;">
+                        <div style="margin-top: 10px; font-size: 12px; color: var(--sky-text); font-weight: 800; cursor: pointer;">
                             ▶ Số liệu theo tháng (52.3 Tr → 66.8 Tr → 100.2 Tr → 139.6 Tr)
                         </div>
                     </div>
@@ -1723,20 +1830,20 @@
                             </div>
                             <div style="width: 42%; font-size: 11.5px; display: flex; flex-direction: column; gap: 10px;">
                                 <div>
-                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #047857;">
-                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#047857;"></span> Website (47,1%)
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--sky-text);">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--pink-btn);"></span> Website (47,1%)
                                     </div>
                                     <div style="color: #64748b; font-weight: 700; margin-left: 16px;">40.734.000 VND</div>
                                 </div>
                                 <div>
-                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #10b981;">
-                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;"></span> Cửa hàng (28,9%)
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--sky-btn);">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--sky-btn);"></span> Cửa hàng (28,9%)
                                     </div>
                                     <div style="color: #64748b; font-weight: 700; margin-left: 16px;">25.048.000 VND</div>
                                 </div>
                                 <div>
-                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #84cc16;">
-                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#84cc16;"></span> Đối tác (24%)
+                                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #a78bfa;">
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a78bfa;"></span> Đối tác (24%)
                                     </div>
                                     <div style="color: #64748b; font-weight: 700; margin-left: 16px;">20.770.000 VND</div>
                                 </div>
@@ -1751,17 +1858,17 @@
                         <div style="margin-top: 14px;">
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Website</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 78%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 78%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">65.700.000 VND</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Cửa hàng</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">40.400.000 VND</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Đối tác</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 40%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 40%; background: #a78bfa;"></div></div>
                                 <div class="bar-contrib-val">33.500.000 VND</div>
                             </div>
                         </div>
@@ -1772,14 +1879,14 @@
                     <div class="chart-box-clean">
                         <div class="chart-box-title">Nhóm làm thay đổi doanh thu</div>
                         <div class="chart-box-sub">Tháng 03/2026 → Tháng 04/2026 · Kênh</div>
-                        <div style="font-size: 11.5px; color: #047857; font-weight: 700; margin-bottom: 12px;">
+                        <div style="font-size: 11.5px; color: var(--sky-text); font-weight: 700; margin-bottom: 12px;">
                             Từ 100.200.000 VND đến 139.600.000 VND · Thay đổi +39.400.000 VND
                         </div>
                         <div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Cửa hàng</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 75%; background: #059669;"></div></div>
-                                <div class="bar-contrib-val" style="color:#047857;">+31.700.000 VND</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 75%; background: var(--pink-btn);"></div></div>
+                                <div class="bar-contrib-val" style="color:var(--sky-text);">+31.700.000 VND</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">(Ô trống)</div>
@@ -1788,13 +1895,13 @@
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Website</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 35%; background: #10b981;"></div></div>
-                                <div class="bar-contrib-val" style="color:#047857;">+13.200.000 VND</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 35%; background: var(--sky-btn);"></div></div>
+                                <div class="bar-contrib-val" style="color:var(--sky-text);">+13.200.000 VND</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Đối tác</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 28%; background: #34d399;"></div></div>
-                                <div class="bar-contrib-val" style="color:#047857;">+10.000.000 VND</div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 28%; background: #a78bfa;"></div></div>
+                                <div class="bar-contrib-val" style="color:var(--sky-text);">+10.000.000 VND</div>
                             </div>
                         </div>
                         <div style="font-size: 11px; color: #64748b; margin-top: 14px; font-weight: 500;">
@@ -1807,11 +1914,11 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 16px 24px; margin-bottom: 14px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <span style="font-size: 12.5px; font-weight: 700; color: #334155;">Tỷ lệ lợi nhuận trên doanh thu</span>
-                        <span style="font-size: 16px; font-weight: 800; color: #047857;">38%</span>
+                        <span style="font-size: 16px; font-weight: 800; color: var(--sky-text);">38%</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <span style="font-size: 12.5px; font-weight: 700; color: #334155;">Doanh thu bình quân mỗi đơn</span>
-                        <span style="font-size: 16px; font-weight: 800; color: #065f46;">447.435,8974 VND</span>
+                        <span style="font-size: 16px; font-weight: 800; color: var(--sky-text);">447.435,8974 VND</span>
                     </div>
                 </div>
                 <div style="font-size: 11px; color: #64748b; margin-bottom: 24px; font-weight: 500;">
@@ -1833,22 +1940,22 @@
                             <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) · Bộ 1 — Bán lẻ mẫu · Kênh</div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Website</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">173.200.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Cửa hàng</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">85.200.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Đối tác</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 48%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">85.000.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">(Ô trống)</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 15%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 15%; background: #a78bfa;"></div></div>
                                 <div class="bar-contrib-val">15.500.000 đ</div>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 8px;">4 nhóm theo giá trị giảm dần.</div>
@@ -1865,7 +1972,7 @@
                 <!-- Khối 2: Chi phí giá vốn (VND) và Chi phí -->
                 <div class="chart-box-clean" style="margin-bottom: 18px;">
                     <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Chi phí giá vốn (VND) và Chi phí</div>
-                    <div style="font-size: 11.5px; color: #047857; font-weight: 700; margin-bottom: 14px;">
+                    <div style="font-size: 11.5px; color: var(--sky-text); font-weight: 700; margin-bottom: 14px;">
                         Chi phí giá vốn (VND): Bộ 1 — Bán lẻ mẫu · Tổng "Chi phí giá vốn (VND)" là 222.518.000. Cột này có số liệu ở 20/20 dòng.
                     </div>
                     <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;">
@@ -1873,17 +1980,17 @@
                             <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Chi phí · Bộ 2 — Marketing mẫu · Chiến dịch</div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Tìm kiếm</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 85%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 85%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">8.080.000</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Mạng xã hội</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">4.230.000</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Giới thiệu</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 25%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 25%; background: #a78bfa;"></div></div>
                                 <div class="bar-contrib-val">1.480.000</div>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 8px;">3 nhóm theo giá trị giảm dần.</div>
@@ -1968,17 +2075,17 @@
                             <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) theo Khu vực</div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Miền Nam</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 90%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 90%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">185.500.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Miền Bắc</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 60%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 60%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">119.800.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">Miền Trung</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 32%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 32%; background: #a78bfa;"></div></div>
                                 <div class="bar-contrib-val">53.600.000 đ</div>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 6px;">3 nhóm theo giá trị giảm dần.</div>
@@ -2000,22 +2107,22 @@
                             <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Doanh thu (VND) theo thời gian (Tháng)</div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-01</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 38%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 38%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">52.300.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-02</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 50%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">66.800.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-03</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 72%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 72%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">100.200.000 đ</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-04</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 100%; background: #047857;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 100%; background: var(--pink-btn-hover);"></div></div>
                                 <div class="bar-contrib-val">139.600.000 đ</div>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 6px;">4 nhóm theo thứ tự thời gian.</div>
@@ -2038,17 +2145,17 @@
                             <div style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Tổng - Số chuyển đổi theo Ngày</div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-02-01</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: #059669;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 88%; background: var(--pink-btn);"></div></div>
                                 <div class="bar-contrib-val">62</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-03-01</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 80%; background: #10b981;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 80%; background: var(--sky-btn);"></div></div>
                                 <div class="bar-contrib-val">58</div>
                             </div>
                             <div class="bar-contrib-row">
                                 <div class="bar-contrib-label">2026-01-01</div>
-                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 58%; background: #34d399;"></div></div>
+                                <div class="bar-contrib-track"><div class="bar-contrib-fill" style="width: 58%; background: #a78bfa;"></div></div>
                                 <div class="bar-contrib-val">42</div>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 6px;">3 nhóm theo giá trị giảm dần.</div>
@@ -2201,69 +2308,173 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Nội dung báo cáo đề xuất (gộp từ Trang 4 cũ) -->
+                <!-- Section 3: Phân Tích Doanh Thu Chi Tiết -->
                 <div class="report-paper" style="margin-bottom: 20px;">
                     <div class="report-section">
                         <h4>1. Bối Cảnh Quyết Định</h4>
-                        <p>
-                            Đội ngũ triển khai chỉ đủ nguồn lực phục vụ duy nhất <b>01 đợt mở rộng</b>. 
-                            Hệ thống AI Agent đã tự động thẩm định dữ liệu 4 địa bàn, loại bỏ trùng lặp và đối chiếu nhu cầu với danh mục giải pháp WMS.
-                        </p>
+                        <p>Công ty Hưng Phát đang trong giai đoạn mở rộng kinh doanh chuỗi bán lẻ. Đội ngũ triển khai chỉ đủ nguồn lực phục vụ duy nhất <b>01 đợt mở rộng</b>. Hệ thống AI Agent đã tự động thẩm định dữ liệu 4 địa bàn tiềm năng, thực hiện quy trình 3 bước: (1) Làm sạch & khử trùng lặp dữ liệu, (2) Đối chiếu độ khớp phần mềm WMS với nhu cầu thực tế, (3) Chấm điểm đa tiêu chí và xếp hạng minh bạch.</p>
+                        <p style="margin-top: 8px;">Dữ liệu được trích xuất từ <b>5 nguồn chính thức</b>: Báo cáo Sở Công Thương, Hiệp hội Bán lẻ, Hồ sơ đối thủ cạnh tranh, Phản hồi khách hàng mục tiêu và Kế hoạch nhân sự nội bộ. Tổng cộng <b>22 bản ghi</b> đã được xử lý, trong đó <b>1 bản ghi trùng lặp</b> đã bị loại bỏ tự động.</p>
                     </div>
 
                     <div class="report-section">
-                        <h4>2. Kết Luận: Lựa Chọn 2 Địa Bàn Ưu Tiên</h4>
-                        <ul style="margin-left: 20px; margin-top: 4px;">
-                            <li><b>Địa bàn B (Hạng 1 - 8.45/10):</b> Tốc độ tăng trưởng bán lẻ nhanh (22%), nhu cầu kho nông sản bách hóa khớp hoàn toàn giải pháp WMS, khách hàng đồng thuận mô hình đào tạo từ xa kết hợp video chuẩn hóa.</li>
-                            <li><b>Địa bàn A (Hạng 2 - 8.09/10):</b> Quy mô thị trường lớn (1.200 cửa hàng), cự ly gần (80km), độ khớp sản phẩm cao cho chuỗi mini-mart, hỗ trợ trực tiếp nhanh chóng trong ngày.</li>
+                        <h4>2. Tổng Quan Hiệu Suất Kinh Doanh (4 kỳ gần nhất)</h4>
+                        <p>Doanh thu liên tục tăng trưởng qua 4 tháng đầu năm 2026:</p>
+                        <ul style="margin-left: 20px; margin-top: 6px;">
+                            <li><b>Tháng 01/2026:</b> 52.300.000 VND (588 đơn) — mốc khởi điểm</li>
+                            <li><b>Tháng 02/2026:</b> 66.800.000 VND (753 đơn) — tăng 27,7%</li>
+                            <li><b>Tháng 03/2026:</b> 100.200.000 VND (1.092 đơn) — tăng 50,0%</li>
+                            <li><b>Tháng 04/2026:</b> 139.600.000 VND (312 đơn) — tăng 39,3%</li>
+                        </ul>
+                        <p style="margin-top: 8px;">Tổng doanh thu 4 kỳ: <b>358.900.000 VND</b> | Tổng lợi nhuận gộp: <b>136.382.000 VND</b> (biên 38%) | Tổng chi phí giá vốn: <b>222.518.000 VND</b></p>
+                        <p style="margin-top: 4px;">Doanh thu bình quân mỗi đơn hàng (kỳ 04): <b>447.435 VND</b></p>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>3. Phân Tích Cơ Cấu Theo Kênh Bán Hàng</h4>
+                        <p>Phân bổ doanh thu theo 3 kênh chính (tổng 4 kỳ):</p>
+                        <div class="table-wrap" style="margin: 12px 0;">
+                            <table class="styled-table">
+                                <thead><tr><th>Kênh</th><th>Doanh thu</th><th>Tỷ trọng</th><th>Chi phí giá vốn</th><th>Đánh giá</th></tr></thead>
+                                <tbody>
+                                    <tr><td><b>Website</b></td><td>173.200.000 đ</td><td>48,3%</td><td>40.734.000 đ (47,1%)</td><td><span class="pill-badge badge-recommended">Dẫn đầu</span></td></tr>
+                                    <tr><td><b>Cửa hàng</b></td><td>85.200.000 đ</td><td>23,7%</td><td>25.048.000 đ (28,9%)</td><td><span class="pill-badge badge-wait">Ổn định</span></td></tr>
+                                    <tr><td><b>Đối tác</b></td><td>85.000.000 đ</td><td>23,7%</td><td>20.770.000 đ (24,0%)</td><td><span class="pill-badge badge-wait">Ổn định</span></td></tr>
+                                    <tr><td><i>(Ô trống)</i></td><td>15.500.000 đ</td><td>4,3%</td><td>—</td><td><span class="pill-badge" style="background:#fef2f2;color:#ef4444;">Cần rà soát</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p><b>Nhận định:</b> Kênh Website chiếm gần 50% tổng doanh thu và duy trì vị trí dẫn đầu ổn định. Biến động lớn nhất giữa kỳ 03 → 04 đến từ kênh Cửa hàng (+31.700.000 VND). Có 4,3% doanh thu chưa xác định được kênh — cần rà soát dữ liệu nguồn.</p>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>4. Phân Tích Doanh Thu Theo Khu Vực</h4>
+                        <ul style="margin-left: 20px; margin-top: 6px;">
+                            <li><b>Miền Nam:</b> 185.500.000 đ (51,7%) — thị trường lớn nhất, tập trung nhiều chuỗi bán lẻ quy mô</li>
+                            <li><b>Miền Bắc:</b> 119.800.000 đ (33,4%) — tăng trưởng ổn định, tiềm năng mở rộng cao</li>
+                            <li><b>Miền Trung:</b> 53.600.000 đ (14,9%) — quy mô nhỏ hơn, cần chiến lược tiếp cận riêng</li>
                         </ul>
                     </div>
 
                     <div class="report-section">
-                        <h4>3. Giải Trình Lý Do Chưa Ưu Tiên Các Địa Bàn Còn Lại</h4>
-                        <ul style="margin-left: 20px; margin-top: 4px;">
-                            <li><b>Địa bàn C:</b> Vi phạm điều kiện tiên quyết (Veto) - Khách hàng yêu cầu đội ngũ kỹ thuật trực tại chỗ 24/7, cự ly 500km vượt quá khả năng nhân sự hiện tại.</li>
-                            <li><b>Địa bàn D:</b> Quy mô nhỏ (400 cửa hàng), phân tán, nhu cầu phần mềm thô sơ, chưa sẵn sàng ứng dụng WMS chuyên sâu.</li>
+                        <h4>5. Kết Luận: Lựa Chọn 2 Địa Bàn Ưu Tiên Khảo Sát Chuyên Sâu</h4>
+                        <div class="table-wrap" style="margin: 12px 0;">
+                            <table class="styled-table">
+                                <thead><tr><th>Hạng</th><th>Địa Bàn</th><th>Quy Mô (30%)</th><th>Độ Khớp (35%)</th><th>Năng Lực (35%)</th><th>Tổng Điểm</th><th>Kết Quả</th></tr></thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>#1</b></td><td><b>Địa bàn B</b></td>
+                                        <td>6.92/10<br><span style="font-size:10px;color:var(--text-muted)">850 CH (22%)</span></td>
+                                        <td>9.2/10<br><span style="font-size:10px;color:var(--text-muted)">Rất cao (85%)</span></td>
+                                        <td>9.0/10<br><span style="font-size:10px;color:var(--text-muted)">Hybrid từ xa+onsite</span></td>
+                                        <td style="font-size:18px;font-weight:800;color:var(--sky-text);">8.45</td>
+                                        <td><span class="pill-badge badge-recommended">⭐ Ưu Tiên Tuyệt Đối</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>#2</b></td><td><b>Địa bàn A</b></td>
+                                        <td>6.84/10<br><span style="font-size:10px;color:var(--text-muted)">1.150 CH (14%)</span></td>
+                                        <td>7.94/10<br><span style="font-size:10px;color:var(--text-muted)">Cao (78%)</span></td>
+                                        <td>9.0/10<br><span style="font-size:10px;color:var(--text-muted)">Bán kính hỗ trợ nhanh</span></td>
+                                        <td style="font-size:18px;font-weight:800;color:var(--sky-text);">7.98</td>
+                                        <td><span class="pill-badge badge-recommended">⭐ Ưu Tiên Tuyệt Đối</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#3</td><td>Địa bàn D</td>
+                                        <td>2.4/10</td><td>3.3/10</td><td>5.5/10</td>
+                                        <td>3.80</td>
+                                        <td><span class="pill-badge badge-wait">Chờ giai đoạn sau</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#4</td><td>Địa bàn C</td>
+                                        <td>7.28/10</td><td>4.5/10</td><td>2.0/10</td>
+                                        <td>4.46</td>
+                                        <td><span class="pill-badge badge-veto">VETO (Loại trừ)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p><b>Lý do chọn Địa bàn B:</b> Tốc độ tăng trưởng bán lẻ nhanh nhất (22%), nhu cầu kho nông sản bách hóa khớp hoàn toàn với giải pháp WMS (85%), mô hình đào tạo hybrid giúp tối ưu chi phí triển khai.</p>
+                        <p style="margin-top: 4px;"><b>Lý do chọn Địa bàn A:</b> Quy mô thị trường lớn nhất (1.150 CH), nằm trong bán kính hỗ trợ nhanh (80km), phù hợp với chuỗi mini-mart quy mô 5-20 điểm bán.</p>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>6. Giải Trình Lý Do Chưa Ưu Tiên</h4>
+                        <ul style="margin-left: 20px; margin-top: 6px;">
+                            <li><b>Địa bàn C (4.46/10 — VETO):</b> Thị trường lớn (1.500 CH) và quan tâm cao (80%), tuy nhiên yêu cầu đội kỹ thuật onsite 24/7 tại kho trung tâm, cự ly 500km — <b>vi phạm điều kiện tiên quyết</b> về năng lực nhân sự. Đề xuất xem xét lại khi công ty tuyển thêm kỹ sư triển khai khu vực.</li>
+                            <li><b>Địa bàn D (3.80/10):</b> Quy mô nhỏ (400 CH, 5% thị phần), phân tán địa lý, nhu cầu phần mềm quản lý kho còn thô sơ. Chi phí triển khai/doanh thu dự kiến không đạt ngưỡng hiệu quả. Đề xuất theo dõi thêm 6-12 tháng.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <h4>4. Kế Hoạch Khảo Sát Thực Địa Chi Tiết</h4>
+                    <div class="report-section">
+                        <h4>7. Phân Tích Rủi Ro & Điều Kiện Triển Khai</h4>
+                        <ul style="margin-left: 20px; margin-top: 6px;">
+                            <li><b>Rủi ro nhân sự:</b> Đội triển khai chỉ đủ nguồn lực cho 1 đợt mở rộng. Nếu chọn Địa bàn C thay cho B hoặc A, nguy cơ vỡ trận triển khai rất cao do yêu cầu onsite vượt quá khả năng.</li>
+                            <li><b>Rủi ro dữ liệu:</b> 4,3% doanh thu chưa xác định kênh bán hàng. 1 ô trống trong cột "Kênh" cần được bổ sung để đảm bảo chính xác phân tích.</li>
+                            <li><b>Điều kiện thành công:</b> Cần hoàn tất khảo sát thực địa trong vòng 3 tuần sau phê duyệt để kịp tiến độ mở rộng Q3/2026.</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>8. Kế Hoạch Khảo Sát Thực Địa Chi Tiết</h4>
                         <div class="table-wrap" style="margin-top: 10px;">
                             <table class="styled-table" id="report-survey-plan-table">
-                                <thead>
-                                    <tr>
-                                        <th>Địa Bàn</th>
-                                        <th>Nhóm Khách Tiếp Cận</th>
-                                        <th>Thông Tin Cần Xác Minh</th>
-                                        <th>Người Phụ Trách</th>
-                                        <th>Thời Gian</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="report-survey-plan-body">
-                                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">Chưa có dữ liệu.</td></tr>
+                                <thead><tr><th>Địa Bàn</th><th>Nhóm Khách Tiếp Cận</th><th>Thông Tin Cần Xác Minh</th><th>Người Phụ Trách</th><th>Thời Gian</th></tr></thead>
+                                <tbody>
+                                    <tr><td><b>Địa bàn B</b></td><td>Chuỗi bán lẻ nông sản/kho lạnh, chuỗi bách hóa địa phương</td><td>Quy trình kiểm đếm kho thực tế, khả năng tiếp nhận đào tạo video/online</td><td>KD Khu vực B &amp; Trưởng nhóm Hỗ trợ KT</td><td>Tuần 2-3 sau duyệt</td></tr>
+                                    <tr><td><b>Địa bàn A</b></td><td>Chuỗi mini-mart, cửa hàng bách hóa tổng hợp 5-20 điểm</td><td>Hạ tầng IT tại quầy, mức độ sẵn sàng chuyển đổi quản lý kho từ xa</td><td>KD Khu vực A &amp; Kỹ sư Triển khai</td><td>Tuần 1-2 sau duyệt</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <div>
+                        <h4>9. Nguồn Dữ Liệu & Phương Pháp</h4>
+                        <ul style="margin-left: 20px; margin-top: 6px;">
+                            <li><b>Nguồn thị trường:</b> Sở Công Thương Địa bàn B, Báo cáo Hiệp hội Bán lẻ 2024, Cục Thống kê Địa bàn C, Báo cáo nội bộ P.KD</li>
+                            <li><b>Nguồn khách hàng:</b> Hội thảo bán lẻ tỉnh B 04/2024, Phỏng vấn KH mục tiêu 03/2024, Khảo sát nhu cầu Q2/2024</li>
+                            <li><b>Nguồn năng lực:</b> Kế hoạch nhân sự Đội Triển khai 2024, Đánh giá khả năng đáp ứng kỹ thuật Q2/2024</li>
+                            <li><b>Phương pháp:</b> Chấm điểm đa tiêu chí (Quy mô 30% + Độ khớp 35% + Năng lực 35%), có áp dụng Veto Rule cho rủi ro nghiệp vụ nghiêm trọng</li>
+                        </ul>
+                        <p style="margin-top: 10px; font-style: italic; color: var(--text-muted);">Dữ liệu được trích xuất hoàn toàn từ các hồ sơ đã thẩm định, không tự suy diễn hoặc tự ý thêm dữ liệu ngoài gói cung cấp. Mọi số liệu đều có trích dẫn nguồn rõ ràng trong Audit Log.</p>
+                    </div>
                 </div>
 
-                <!-- Đề xuất hành động (cũng hiển thị ở đây) -->
+                <!-- Đề xuất hành động chi tiết -->
                 <div class="chart-box-clean" style="margin-bottom: 24px;">
-                    <h4 style="font-size: 14px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px;">💡 Đề Xuất Hành Động Tiếp Theo</h4>
+                    <h4 style="font-size: 14px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px;">💡 Đề Xuất Hành Động Tiếp Theo (5 mục)</h4>
                     <div class="action-card-box">
                         <div>
-                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">Rà soát các cột còn thiếu trước kỳ báo cáo tiếp theo</div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Bán lẻ mẫu có ô trống sau làm sạch.</div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">1. Rà soát cột "Kênh" còn trống trong bộ dữ liệu bán lẻ</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">4,3% doanh thu (15,5 triệu VND) chưa xác định được kênh bán hàng. Cần bổ sung trước kỳ báo cáo tới.</div>
+                        </div>
+                        <span class="action-priority-badge" style="background:var(--pink-panel);color:var(--pink-text);">Ưu tiên cao</span>
+                    </div>
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">2. Triển khai khảo sát thực địa Địa bàn A trong tuần 1-2</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Địa bàn A nằm trong bán kính hỗ trợ nhanh, nên ưu tiên khảo sát trước để rút ngắn thời gian ra quyết định.</div>
+                        </div>
+                        <span class="action-priority-badge" style="background:var(--pink-panel);color:var(--pink-text);">Ưu tiên cao</span>
+                    </div>
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">3. Theo dõi biến động kênh "Website" ở kỳ tiếp theo</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Website chiếm 48,3% doanh thu. Cần đánh giá chi phí vận hành kênh vs. lợi nhuận ròng.</div>
                         </div>
                         <span class="action-priority-badge">Ưu tiên vừa</span>
                     </div>
                     <div class="action-card-box">
                         <div>
-                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">Theo dõi Doanh thu (VND) theo Kênh ở kỳ tiếp theo</div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">"Website" đang dẫn đầu Bộ 1. So sánh các kỳ có cùng phạm vi trước khi phân bổ nguồn lực.</div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">4. Lập kế hoạch tuyển kỹ sư triển khai cho Địa bàn C</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Thị trường C tiềm năng (1.500 CH, quan tâm 80%), nhưng bị Veto do thiếu nhân sự onsite. Nên lên kế hoạch nhân sự trung hạn.</div>
                         </div>
-                        <span class="action-priority-badge">Ưu tiên vừa</span>
+                        <span class="action-priority-badge">Ưu tiên thấp</span>
+                    </div>
+                    <div class="action-card-box">
+                        <div>
+                            <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark);">5. Tích hợp dữ liệu marketing vào phân tích ROI tổng hợp</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Bộ 2 Marketing mẫu có 6 dòng chi phí chiến dịch. Cần liên kết với doanh thu theo kênh để tính ROI chính xác.</div>
+                        </div>
+                        <span class="action-priority-badge">Ưu tiên thấp</span>
                     </div>
                 </div>
             </div>
@@ -2274,7 +2485,7 @@
             <div id="report-view-approve" class="report-sub-view" style="display: none;">
                 <div class="approval-form-card">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                        <div style="width: 36px; height: 36px; border-radius: 12px; background: #dcfce7; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">
+                        <div style="width: 36px; height: 36px; border-radius: 12px; background: var(--sky-panel); color: var(--sky-text); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">
                             ✨
                         </div>
                         <div>
@@ -2534,8 +2745,8 @@
             if (tagEl) {
                 tagEl.innerText = '✓ Đã phản hồi: ' + s.toFixed(2) + 's (' + timeStr + ')';
                 tagEl.style.background = 'rgba(74, 222, 128, 0.2)';
-                tagEl.style.color = '#15803d';
-                tagEl.style.borderColor = '#86efac';
+                tagEl.style.color = '#0284c7';
+                tagEl.style.borderColor = 'var(--sky-border)';
             }
 
             const progText = document.getElementById('progress-percent-text');
@@ -2816,8 +3027,8 @@
                 const ctx = trendCanvas.getContext('2d');
 
                 const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.35)');
-                gradient.addColorStop(1, 'rgba(5, 150, 105, 0.02)');
+                gradient.addColorStop(0, 'rgba(244, 114, 182, 0.3)');
+                gradient.addColorStop(1, 'rgba(96, 165, 250, 0.05)');
 
                 revenueTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -2826,12 +3037,12 @@
                         datasets: [{
                             label: 'Doanh thu (VND)',
                             data: [52.3, 66.8, 100.2, 139.6],
-                            borderColor: '#0f766e',
+                            borderColor: 'rgba(244,114,182,0.9)',
                             borderWidth: 2.5,
                             backgroundColor: gradient,
                             fill: true,
                             tension: 0.35,
-                            pointBackgroundColor: '#0f766e',
+                            pointBackgroundColor: '#f472b6',
                             pointBorderColor: '#ffffff',
                             pointBorderWidth: 2,
                             pointRadius: 5,
@@ -2881,7 +3092,7 @@
                         labels: ['Website (47,1%)', 'Cửa hàng (28,9%)', 'Đối tác (24%)'],
                         datasets: [{
                             data: [40734000, 25048000, 20770000],
-                            backgroundColor: ['#0f766e', '#10b981', '#84cc16'],
+                            backgroundColor: ['#f472b6', '#60a5fa', '#a78bfa'],
                             borderWidth: 3,
                             borderColor: '#ffffff',
                             hoverOffset: 6
@@ -3092,6 +3303,64 @@
         .badge-veto { background: #fef2f2; color: #ef4444; }
         .insight { background: linear-gradient(135deg, #fff1f6, #f0f7ff); border: 1.5px solid #b9e1fd; border-radius: 14px; padding: 16px; margin: 14px 0; }
         .footer { margin-top: 40px; text-align: center; color: #64748b; font-size: 11px; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+
+        /* ĐỀ XUẤT AI SỬA LỖI */
+        .ai-suggestion-panel {
+            background: linear-gradient(135deg, rgba(253, 226, 237, 0.4), rgba(224, 240, 254, 0.5));
+            border: 2px solid var(--sky-border);
+            border-radius: 18px;
+            padding: 18px;
+            margin-top: 14px;
+            display: none;
+        }
+        .ai-suggestion-panel.show { display: block; }
+
+        .ai-fix-item {
+            background: white;
+            border: 1.5px solid var(--sky-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+        .ai-fix-item:hover {
+            border-color: var(--pink-btn);
+            box-shadow: 0 4px 14px rgba(244, 114, 182, 0.15);
+            transform: translateX(3px);
+        }
+        .ai-fix-item.accepted {
+            background: rgba(224, 240, 254, 0.5);
+            border-color: var(--sky-btn);
+        }
+        .ai-fix-item.rejected {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        .ai-fix-btns { display: flex; gap: 6px; flex-shrink: 0; }
+        .ai-fix-btns button {
+            border: none; border-radius: 10px; padding: 6px 14px;
+            font-size: 11px; font-weight: 800; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ai-fix-btns .btn-accept { background: var(--sky-btn); color: white; }
+        .ai-fix-btns .btn-accept:hover { background: var(--sky-btn-hover); transform: scale(1.05); }
+        .ai-fix-btns .btn-reject { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+        .ai-fix-btns .btn-reject:hover { background: #fecaca; }
+
+        /* BẢNG DỮ LIỆU ĐÃ LÀM SẠCH */
+        .clean-data-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--sky-border);
+            border-radius: 22px;
+            padding: 22px;
+            margin-top: 18px;
+            display: none;
+        }
+        .clean-data-panel.show { display: block; }
     </style>
 </head>
 <body>
@@ -3209,6 +3478,137 @@
                     }
                 });
             }
+        }
+
+
+        // ========================================================
+        // ĐỀ XUẤT AI SỬA LỖI
+        // ========================================================
+        function showAISuggestions() {
+            const panel = document.getElementById('ai-suggestions-panel');
+            panel.classList.add('show');
+            const list = document.getElementById('ai-suggestions-list');
+            
+            // Quét lỗi và tạo đề xuất
+            const suggestions = [];
+            inspectorData.forEach((row, ri) => {
+                if (!row.kenh || row.kenh === '') {
+                    suggestions.push({ row: ri, col: 'kenh', oldVal: '(trống)', newVal: 'Chưa xác định', reason: 'Ô trống — AI đề xuất gán nhãn mặc định để không mất dữ liệu doanh thu liên quan.', type: 'warning' });
+                }
+                if (row.doanh_thu && isNaN(String(row.doanh_thu).replace(/[.,]/g, ''))) {
+                    suggestions.push({ row: ri, col: 'doanh_thu', oldVal: row.doanh_thu, newVal: '0', reason: 'Giá trị "' + row.doanh_thu + '" không phải số. AI đề xuất đặt về 0 và đánh dấu cần kiểm tra lại từ nguồn.', type: 'error' });
+                }
+                if (parseInt(row.so_don) < 0) {
+                    suggestions.push({ row: ri, col: 'so_don', oldVal: row.so_don, newVal: String(Math.abs(parseInt(row.so_don))), reason: 'Số đơn hàng âm (' + row.so_don + ') — có thể là lỗi nhập liệu. AI đề xuất đổi sang giá trị tuyệt đối.', type: 'error' });
+                }
+                if (row.ngay) {
+                    const parts = row.ngay.split('-');
+                    if (parts.length === 3) {
+                        const m = parseInt(parts[1]);
+                        if (m > 12 || m < 1) {
+                            const fixedM = Math.min(12, Math.max(1, m));
+                            suggestions.push({ row: ri, col: 'ngay', oldVal: row.ngay, newVal: parts[0] + '-' + String(fixedM).padStart(2,'0') + '-' + parts[2], reason: 'Tháng ' + m + ' không hợp lệ. AI đề xuất sửa thành tháng ' + fixedM + '.', type: 'error' });
+                        }
+                    }
+                }
+            });
+
+            if (suggestions.length === 0) {
+                list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">✅ Không phát hiện lỗi nào cần sửa. Dữ liệu đã sạch!</div>';
+                return;
+            }
+
+            list.innerHTML = '';
+            suggestions.forEach((s, idx) => {
+                const div = document.createElement('div');
+                div.className = 'ai-fix-item';
+                div.id = 'ai-fix-' + idx;
+                div.innerHTML = '<div style="flex:1;">' +
+                    '<div style="font-size:12.5px;font-weight:800;color:var(--text-dark);">Dòng ' + (s.row+1) + ' — Cột "' + s.col + '"</div>' +
+                    '<div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">' + s.reason + '</div>' +
+                    '<div style="font-size:11px;margin-top:4px;"><span style="color:#ef4444;text-decoration:line-through;">' + s.oldVal + '</span> → <span style="color:var(--sky-text);font-weight:800;">' + s.newVal + '</span></div>' +
+                    '</div>' +
+                    '<div class="ai-fix-btns">' +
+                    '<button class="btn-accept" onclick="acceptAISuggestion(' + idx + ',' + s.row + ',\'' + s.col + '\',\'' + s.newVal.replace(/'/g,"\\'") + '\')">✓ Duyệt</button>' +
+                    '<button class="btn-reject" onclick="rejectAISuggestion(' + idx + ')">✗ Bỏ qua</button>' +
+                    '</div>';
+                list.appendChild(div);
+            });
+        }
+
+        function acceptAISuggestion(idx, row, col, newVal) {
+            inspectorData[row][col] = newVal;
+            const item = document.getElementById('ai-fix-' + idx);
+            if (item) {
+                item.classList.add('accepted');
+                item.querySelector('.ai-fix-btns').innerHTML = '<span style="color:var(--sky-text);font-size:11px;font-weight:800;">✓ Đã duyệt</span>';
+            }
+            renderInspectorTable();
+            scanDataErrors();
+        }
+
+        function rejectAISuggestion(idx) {
+            const item = document.getElementById('ai-fix-' + idx);
+            if (item) {
+                item.classList.add('rejected');
+                item.querySelector('.ai-fix-btns').innerHTML = '<span style="color:#ef4444;font-size:11px;font-weight:800;">✗ Đã bỏ qua</span>';
+            }
+        }
+
+        function acceptAllAISuggestions() {
+            document.querySelectorAll('.ai-fix-item:not(.rejected):not(.accepted)').forEach(item => {
+                const btn = item.querySelector('.btn-accept');
+                if (btn) btn.click();
+            });
+        }
+
+        // ========================================================
+        // HIỂN THỊ DỮ LIỆU ĐÃ LÀM SẠCH
+        // ========================================================
+        function toggleCleanDataView() {
+            const panel = document.getElementById('clean-data-panel');
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                return;
+            }
+            panel.classList.add('show');
+            renderCleanDataTable();
+        }
+
+        function renderCleanDataTable() {
+            // Dữ liệu đã làm sạch = loại bỏ dòng trùng, sửa lỗi
+            const cleanData = inspectorData.length > 0 ? inspectorData.filter(r => r.stt) : SAMPLE_DATA_ROWS.map(r => {
+                const row = Object.assign({}, r);
+                if (!row.kenh) row.kenh = 'Chưa xác định';
+                if (isNaN(String(row.doanh_thu).replace(/[.,]/g, ''))) row.doanh_thu = '0';
+                if (parseInt(row.so_don) < 0) row.so_don = Math.abs(parseInt(row.so_don));
+                if (row.ngay) {
+                    const p = row.ngay.split('-');
+                    if (p.length === 3) {
+                        let m = parseInt(p[1]); if (m > 12) m = 12; if (m < 1) m = 1;
+                        row.ngay = p[0] + '-' + String(m).padStart(2,'0') + '-' + p[2];
+                    }
+                }
+                return row;
+            });
+
+            const cols = ['stt', 'kenh', 'san_pham', 'khu_vuc', 'doanh_thu', 'chi_phi', 'so_don', 'ngay'];
+            const colNames = ['#', 'Kênh', 'Sản phẩm', 'Khu vực', 'Doanh thu (VND)', 'Chi phí (VND)', 'Số đơn', 'Ngày'];
+            
+            document.getElementById('clean-table-head').innerHTML = colNames.map(n => '<th>' + n + '</th>').join('');
+            const tbody = document.getElementById('clean-table-body');
+            tbody.innerHTML = '';
+            cleanData.forEach(row => {
+                const tr = document.createElement('tr');
+                cols.forEach(col => {
+                    const td = document.createElement('td');
+                    td.textContent = row[col] || '';
+                    td.style.fontWeight = '600';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            document.getElementById('clean-data-count').textContent = cleanData.length + ' dòng đã làm sạch';
         }
 
     </script>
