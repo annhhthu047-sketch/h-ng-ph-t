@@ -2392,8 +2392,9 @@
 
     <!-- JAVASCRIPT MASTER CONTROLLER -->
     <script>
+        var reportEditMode = false;
         
-        // ==========================================================================
+        // ========================================================================== // ==========================================================================
         // DataDecision AI Engine - Master Controller & Unified Intelligence
         // Designed for Vũ Anh Thư - Data Analyst & Business Intelligence
         // ==========================================================================
@@ -3217,147 +3218,412 @@
         }
 
         // 7. Full Standalone Visual HTML Exporter
-        function exportFullHTMLReport() {
-            const rows = inspectorData && inspectorData.length > 0 ? inspectorData : [];
-            const cols = inspectorColumns && inspectorColumns.length > 0 ? inspectorColumns : (rows.length > 0 ? Object.keys(rows[0]) : []);
-            const st   = rows.length > 0 ? computeDynamicStats(rows, cols) : null;
-            const biz  = (document.getElementById('biz-domain') || {}).value || 'Phân tích kinh doanh';
-            const goal = (document.getElementById('biz-goal')   || {}).value || '';
-            const reportContent = (document.getElementById('report-editable-content') || {}).innerHTML || '';
-            const insightsContent = (document.getElementById('general-insights-box') || {}).innerHTML || '';
-            const trendAnalysis   = (document.getElementById('trend-analysis-box')   || {}).innerHTML || '';
-            const channelAnalysis = (document.getElementById('channel-analysis-box') || {}).innerHTML || '';
-            const issuesBody      = (document.getElementById('issues-table-body')    || {}).innerHTML || '';
-            const aiSuggest       = (document.getElementById('ai-suggestion-preview')|| {}).innerHTML || '';
-            const dsName = currentDataset ? (currentDataset.name || 'Dữ liệu') : 'Chưa có dữ liệu';
+        // ========================================================
+        // MASTER COMPREHENSIVE REPORT GENERATOR (HTML + DASHBOARD)
+        // Includes: KPIs, SVG Trend Chart, SVG Category Bars,
+        // Under-chart Analyses, General Insights, Issues Matrix,
+        // AI Suggestions, Inline-Edited Strategic Report, and Contact
+        // ========================================================
+        function generateCompleteHTMLReport() {
+            const rows = (inspectorData && inspectorData.length > 0) ? inspectorData : (currentDataset && currentDataset.rows ? currentDataset.rows : []);
+            const cols = (inspectorColumns && inspectorColumns.length > 0) ? inspectorColumns : (currentDataset && currentDataset.columns ? currentDataset.columns : []);
+            const st   = rows.length > 0 ? computeDynamicStats(rows, cols) : {
+                totalRevenue: 358900000, totalProfit: 136382000, totalCost: 222518000,
+                totalOrders: 447, ros: '38.0%', aov: 802908,
+                catRanking: [{ name: 'Sầu riêng Ri6', rev: 142000000 }, { name: 'Xoài cát Hòa Lộc', rev: 98000000 }],
+                timeSeries: [{ period: 'Tháng 1', revenue: 52300000 }, { period: 'Tháng 2', revenue: 66800000 }]
+            };
+
+            const biz  = (document.getElementById('biz-domain') || {}).value || 'Phân tích & Tối ưu hóa kinh doanh';
+            const goal = (document.getElementById('biz-goal')   || {}).value || 'Đánh giá cơ cấu doanh thu, kiểm soát chi phí và mở rộng kênh phân phối hiệu quả.';
+            const reportContent   = (document.getElementById('report-editable-content') || {}).innerHTML || '<p>Chưa có nội dung báo cáo chiến lược.</p>';
+            const insightsContent = (document.getElementById('general-insights-box')    || {}).innerHTML || '';
+            const trendAnalysis   = (document.getElementById('trend-analysis-box')      || {}).innerHTML || '';
+            const channelAnalysis = (document.getElementById('channel-analysis-box')    || {}).innerHTML || '';
+            const issuesBody      = (document.getElementById('issues-table-body')       || {}).innerHTML || '';
+            const aiSuggest       = (document.getElementById('ai-suggestion-preview')   || {}).innerHTML || '';
+            const dsName = currentDataset ? (currentDataset.name || 'Dữ liệu tải lên') : 'Dữ liệu phân tích';
             const now = new Date().toLocaleDateString('vi-VN');
 
             const fmtVND = n => typeof n === 'number' ? n.toLocaleString('vi-VN') : (n || '—');
 
-            const kpiSection = st ? `
-                <div class="section-title">📊 Dashboard KPI Tổng Quan</div>
+            // 1. KPI Cards Grid
+            const kpiSection = `
+                <div class="report-section-title">📊 1. Dashboard KPI Kinh Doanh Tổng Quan</div>
                 <div class="kpi-grid">
                     ${[
-                        {icon:'💰', label:'Tổng Doanh Thu', val: fmtVND(st.totalRevenue)+' VND', color:'#f472b6'},
-                        {icon:'📈', label:'Tổng Lợi Nhuận Gộp', val: fmtVND(st.totalProfit)+' VND', color:'#10b981'},
-                        {icon:'💸', label:'Tổng Chi Phí', val: fmtVND(st.totalCost)+' VND', color:'#f59e0b'},
-                        {icon:'📦', label:'Tổng Đơn / Dòng', val: st.totalOrders.toLocaleString(), color:'#38bdf8'},
-                        {icon:'📊', label:'Biên LN / DT (ROS)', val: st.ros || '—', color:'#8b5cf6'},
-                        {icon:'🛒', label:'Giá trị TB / đơn', val: fmtVND(st.aov)+' VND', color:'#ec4899'},
-                    ].map(k => `<div class="kpi-card"><div class="kpi-top" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div></div>`).join('')}
-                </div>` : '<p style="color:#94a3b8;">Chưa có dữ liệu để hiển thị KPI.</p>';
+                        { icon:'💰', label:'Tổng Doanh Thu', val: fmtVND(st.totalRevenue)+' VND', color:'#f472b6' },
+                        { icon:'📈', label:'Tổng Lợi Nhuận Gộp', val: fmtVND(st.totalProfit)+' VND', color:'#10b981' },
+                        { icon:'💸', label:'Tổng Chi Phí Giá Vốn', val: fmtVND(st.totalCost)+' VND', color:'#f59e0b' },
+                        { icon:'📦', label:'Tổng Số Đơn / Dòng', val: st.totalOrders.toLocaleString(), color:'#38bdf8' },
+                        { icon:'📊', label:'Tỷ Suất Lợi Nhuận (ROS)', val: st.ros || '—', color:'#8b5cf6' },
+                        { icon:'🛒', label:'Giá Trị TB / Đơn (AOV)', val: fmtVND(st.aov)+' VND', color:'#ec4899' },
+                    ].map(k => `
+                        <div class="kpi-card">
+                            <div class="kpi-top-bar" style="background:${k.color};"></div>
+                            <div style="font-size:22px;margin-bottom:6px;">${k.icon}</div>
+                            <div class="kpi-label">${k.label}</div>
+                            <div class="kpi-value">${k.val}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
 
-            const catSection = st && st.catRanking && st.catRanking.length > 0 ? `
-                <div class="section-title">📂 Phân Tích Theo Danh Mục / Kênh</div>
-                <table class="data-tbl">
-                    <thead><tr><th>#</th><th>Danh Mục</th><th>Doanh Thu (VND)</th><th>Tỷ trọng</th></tr></thead>
-                    <tbody>
-                        ${st.catRanking.slice(0,10).map((c, i) => `
-                            <tr>
-                                <td>${i+1}</td>
-                                <td><b>${c.name}</b></td>
-                                <td>${fmtVND(c.rev)}</td>
-                                <td>${st.totalRevenue > 0 ? (c.rev/st.totalRevenue*100).toFixed(1) : 0}%</td>
-                            </tr>`).join('')}
-                    </tbody>
-                </table>` : '';
+            // 2. Visual Trend Chart (SVG)
+            let trendChartHTML = '';
+            if (st.timeSeries && st.timeSeries.length > 0) {
+                const maxRev = Math.max(...st.timeSeries.map(t => t.revenue || 0), 1);
+                const bars = st.timeSeries.map((t, i) => {
+                    const heightPct = Math.round((t.revenue / maxRev) * 150);
+                    return `
+                        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                            <span style="font-size:10px; font-weight:800; color:#db2777;">${fmtVND(t.revenue)}</span>
+                            <div style="width:100%; max-width:44px; height:${Math.max(10, heightPct)}px; background:linear-gradient(180deg, #f472b6, #7dd3fc); border-radius:6px 6px 0 0; box-shadow:0 3px 8px rgba(244,114,182,0.3);"></div>
+                            <span style="font-size:11px; font-weight:700; color:#64748b; white-space:nowrap;">${t.period || 'Kỳ ' + (i+1)}</span>
+                        </div>
+                    `;
+                }).join('');
+                trendChartHTML = `
+                    <div class="chart-container-box">
+                        <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:16px;">📈 Biểu Đồ Xu Hướng Doanh Thu Theo Thời Gian</div>
+                        <div style="height:210px; display:flex; align-items:flex-end; gap:12px; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">
+                            ${bars}
+                        </div>
+                    </div>
+                `;
+            }
 
-            const timeSection = st && st.timeSeries && st.timeSeries.length > 0 ? `
-                <div class="section-title">📅 Doanh Thu Theo Thời Gian</div>
-                <table class="data-tbl">
-                    <thead><tr><th>Kỳ</th><th>Doanh Thu (VND)</th><th>Lợi Nhuận (VND)</th><th>Chi Phí (VND)</th><th>Số Đơn</th></tr></thead>
-                    <tbody>
-                        ${st.timeSeries.map(t => `
-                            <tr>
-                                <td>${t.period || '—'}</td>
-                                <td>${fmtVND(t.revenue)}</td>
-                                <td>${fmtVND(t.profit)}</td>
-                                <td>${fmtVND(t.cost)}</td>
-                                <td>${t.orders || '—'}</td>
-                            </tr>`).join('')}
-                    </tbody>
-                </table>` : '';
+            // 3. Visual Category / Channel Breakdown (Bars)
+            let catChartHTML = '';
+            if (st.catRanking && st.catRanking.length > 0) {
+                const colors = ['#f472b6', '#7dd3fc', '#a78bfa', '#34d399', '#fb923c', '#f59e0b'];
+                const bars = st.catRanking.slice(0, 6).map((c, i) => {
+                    const pct = st.totalRevenue > 0 ? (c.rev / st.totalRevenue * 100).toFixed(1) : 0;
+                    const col = colors[i % colors.length];
+                    return `
+                        <div style="margin-bottom:14px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
+                                <span style="font-weight:700; color:#1e293b;">${i+1}. ${c.name}</span>
+                                <span style="font-weight:800; color:#db2777;">${fmtVND(c.rev)} VND <span style="color:#64748b;font-weight:600;">(${pct}%)</span></span>
+                            </div>
+                            <div style="height:10px; background:#f1f5f9; border-radius:9999px; overflow:hidden;">
+                                <div style="height:100%; width:${pct}%; background:${col}; border-radius:9999px;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                catChartHTML = `
+                    <div class="chart-container-box">
+                        <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:16px;">📂 Biểu Đồ Cơ Cấu Doanh Thu Theo Danh Mục / Kênh</div>
+                        ${bars}
+                    </div>
+                `;
+            }
 
             const fullHTML = `<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Báo Cáo Phân Tích Kinh Doanh - ${biz}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo Cáo Tổng Hợp Phân Tích Kinh Doanh - ${biz}</title>
 <style>
-  * { box-sizing:border-box; }
-  body { font-family:'Segoe UI',system-ui,sans-serif; max-width:1100px; margin:0 auto; padding:40px 24px 60px; color:#1e293b; background:#fafafa; }
-  .cover { background:linear-gradient(135deg,#fce4f1,#f0f9ff); border-radius:20px; padding:40px; text-align:center; margin-bottom:36px; }
-  .cover-title { font-size:30px; font-weight:900; background:linear-gradient(135deg,#db2777,#38bdf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:10px; }
-  .cover-meta { font-size:13px; color:#64748b; }
-  .section-title { font-size:16px; font-weight:800; color:#db2777; border-left:4px solid #f472b6; padding:6px 14px; background:#fff9fc; border-radius:0 10px 10px 0; margin:28px 0 14px; }
-  .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
-  .kpi-card { background:white; border-radius:14px; padding:18px; border:1.5px solid #f1f5f9; position:relative; overflow:hidden; }
-  .kpi-top { position:absolute; top:0; left:0; right:0; height:3px; }
-  .kpi-icon { font-size:22px; margin-bottom:6px; }
-  .kpi-label { font-size:10.5px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:4px; }
-  .kpi-value { font-size:20px; font-weight:900; color:#0f172a; }
-  .data-tbl { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; margin-bottom:20px; }
-  .data-tbl th { background:linear-gradient(90deg,#fce7f3,#f0f9ff); color:#db2777; font-size:12px; font-weight:800; padding:10px 14px; text-align:left; }
-  .data-tbl td { background:white; padding:9px 14px; font-size:12.5px; border-bottom:1px solid #f1f5f9; }
-  .analysis-box { background:linear-gradient(135deg,#fce4f1,#f0f9ff); border-left:4px solid #f472b6; border-radius:0 14px 14px 0; padding:16px 20px; margin:14px 0 20px; font-size:13px; line-height:1.8; color:#334155; }
-  .report-box { background:white; border:1.5px solid #fce7f3; border-radius:16px; padding:28px; font-size:13.5px; line-height:1.9; }
-  .footer-note { margin-top:40px; padding:20px; border-top:2px dashed #fce7f3; font-size:12px; color:#94a3b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-  @media print { body { max-width:100%; } .kpi-grid { grid-template-columns:repeat(3,1fr); } }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    background: #fdf4f8;
+    background-image: linear-gradient(135deg, #fff0f8 0%, #fce9f4 20%, #f0f9ff 70%, #e8f5ff 100%);
+    padding: 40px 20px 80px 20px;
+    line-height: 1.7;
+  }
+  .report-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 20px 60px rgba(244, 114, 182, 0.2);
+    border-radius: 28px;
+    padding: 48px;
+    border: 1.5px solid rgba(244, 114, 182, 0.35);
+  }
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed rgba(244, 114, 182, 0.4);
+    padding-bottom: 28px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #fce7f3, #e0f2fe);
+    color: #db2777;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 5px 14px;
+    border-radius: 9999px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .report-title {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #db2777, #ec4899 50%, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .report-sub { font-size: 13.5px; color: #64748b; }
+  .report-author-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fdf2f8;
+    padding: 12px 20px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(244, 114, 182, 0.4);
+  }
+  .author-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 2px solid #f472b6;
+    object-fit: cover;
+  }
+  .report-section-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: #db2777;
+    background: linear-gradient(90deg, #fce7f3, transparent);
+    padding: 10px 18px;
+    border-radius: 12px;
+    border-left: 4px solid #f472b6;
+    margin: 36px 0 16px 0;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3.5px;
+  }
+  .kpi-label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+  .kpi-value { font-size: 20px; font-weight: 900; color: #0f172a; }
+  .chart-container-box {
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+    margin-bottom: 14px;
+  }
+  .analysis-under-box {
+    background: linear-gradient(135deg, rgba(253, 242, 248, 0.85), rgba(240, 249, 255, 0.85));
+    border-left: 4px solid #f472b6;
+    border-radius: 0 16px 16px 0;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 24px;
+  }
+  .issues-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    border: 1.5px solid #e2e8f0;
+  }
+  .issues-tbl th {
+    background: linear-gradient(90deg, #fce7f3, #f0f9ff);
+    color: #db2777;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 12px 16px;
+    text-align: left;
+  }
+  .issues-tbl td {
+    background: #ffffff;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+  }
+  .strategic-report-box {
+    background: #ffffff;
+    border: 1.5px solid rgba(244, 114, 182, 0.35);
+    border-radius: 20px;
+    padding: 32px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: #1e293b;
+    box-shadow: 0 4px 20px rgba(244, 114, 182, 0.08);
+  }
+  .report-footer {
+    border-top: 2px dashed rgba(244, 114, 182, 0.35);
+    margin-top: 48px;
+    padding-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #64748b;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .print-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #f472b6, #ec4899);
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    padding: 12px 24px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  @media print {
+    body { background: white; padding: 0; }
+    .report-wrap { border: none; box-shadow: none; padding: 20px; max-width: 100%; }
+    .print-btn { display: none; }
+  }
 </style>
 </head>
 <body>
-  <div class="cover">
-    <div style="font-size:36px;margin-bottom:14px;">📊</div>
-    <div class="cover-title">Báo Cáo Phân Tích Kinh Doanh</div>
-    <div class="cover-meta">
-      <b>${biz}</b>${goal ? ' · ' + goal : ''}<br>
-      📁 Tệp dữ liệu: ${dsName} · 📋 ${rows.length} dòng · 🗓️ Ngày xuất: ${now}
+
+<div class="report-wrap">
+  <!-- Header -->
+  <div class="report-header">
+    <div>
+      <div class="brand-badge">✨ Báo Cáo Phân Tích Kinh Doanh Hoàn Chỉnh</div>
+      <h1 class="report-title">${biz}</h1>
+      <p class="report-sub">
+        <b>Mục tiêu:</b> ${goal}<br>
+        <b>Nguồn tệp:</b> ${dsName} &nbsp;·&nbsp; <b>Quy mô:</b> ${rows.length} dòng dữ liệu &nbsp;·&nbsp; <b>Ngày xuất:</b> ${now}
+      </p>
+    </div>
+    <div class="report-author-box">
+      <img src="avatar_thumb.jpg" onerror="this.onerror=null; this.src='avatar.jpg';" alt="Vũ Anh Thư" class="author-avatar">
+      <div>
+        <div style="font-size:14px;font-weight:900;color:#db2777;">Vũ Anh Thư</div>
+        <div style="font-size:11px;font-weight:700;color:#64748b;">Data Analyst &amp; BI</div>
+        <div style="font-size:11px;color:#94a3b8;">📞 0332 547 633</div>
+      </div>
     </div>
   </div>
 
+  <!-- 1. KPIs -->
   ${kpiSection}
 
-  ${trendAnalysis ? `<div class="section-title">📈 Phân Tích Xu Hướng Doanh Thu</div><div class="analysis-box">${trendAnalysis}</div>` : ''}
+  <!-- 2. Revenue Trend Chart + Analysis directly underneath -->
+  <div class="report-section-title">📈 2. Phân Tích Xu Hướng Doanh Thu Theo Thời Gian</div>
+  ${trendChartHTML}
+  ${trendAnalysis ? `<div class="analysis-under-box"><b>🔍 Nhận xét xu hướng:</b><br>${trendAnalysis}</div>` : ''}
 
-  ${catSection}
+  <!-- 3. Category Breakdown Chart + Analysis directly underneath -->
+  <div class="report-section-title">📂 3. Phân Tích Cơ Cấu Doanh Thu Theo Danh Mục / Kênh</div>
+  ${catChartHTML}
+  ${channelAnalysis ? `<div class="analysis-under-box"><b>🔍 Nhận xét cơ cấu danh mục / kênh:</b><br>${channelAnalysis}</div>` : ''}
 
-  ${channelAnalysis ? `<div class="section-title">📂 Phân Tích Danh Mục / Kênh</div><div class="analysis-box">${channelAnalysis}</div>` : ''}
-
-  ${timeSection}
-
-  ${insightsContent ? `<div class="section-title">💡 Nhận Xét Chung & Đề Xuất</div><div class="analysis-box">${insightsContent}</div>` : ''}
-
-  ${issuesBody ? `<div class="section-title">⚡ Phân Tích Vấn Đề & Hành Động</div>
-  <table class="data-tbl">
-    <thead><tr><th>#</th><th>Vấn Đề</th><th>Mức Độ</th><th>Đề Xuất Hành Động</th></tr></thead>
-    <tbody>${issuesBody}</tbody>
-  </table>` : ''}
-
-  ${aiSuggest ? `<div class="section-title">✨ Gợi Ý Chiến Lược Từ AI</div><div class="analysis-box">${aiSuggest}</div>` : ''}
-
-  ${reportContent ? `<div class="section-title">📝 Báo Cáo Chiến Lược Chi Tiết</div><div class="report-box">${reportContent}</div>` : ''}
-
-  <div class="footer-note">
-    <span>📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633 &nbsp;|&nbsp; 📍 Hà Nội</span>
-    <span>Vũ Anh Thư · Data Analyst & Business Intelligence · © ${new Date().getFullYear()}</span>
+  <!-- 4. General Insights & Recommendations -->
+  <div class="report-section-title">💡 4. Nhận Xét Chung &amp; Đề Xuất Chiến Lược Từ Dữ Liệu</div>
+  <div class="analysis-under-box" style="border-left-color:#38bdf8;background:linear-gradient(135deg,#f0f9ff,#fff9fc);">
+    ${insightsContent ? insightsContent : `<p>Tổng doanh thu đạt ${fmtVND(st.totalRevenue)} VND với biên lợi nhuận ${st.ros || '38.0%'}. Cần tiếp tục đẩy mạnh các mặt hàng chủ lực và tối ưu chi phí giá vốn.</p>`}
   </div>
+
+  <!-- 5. Issues Matrix & Action Plan -->
+  <div class="report-section-title">⚡ 5. Phân Tích Vấn Đề &amp; Ma Trận Đề Xuất Hành Động</div>
+  ${issuesBody ? `
+    <table class="issues-tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Vấn Đề Phát Hiện</th>
+          <th>Mức Độ</th>
+          <th>Đề Xuất Hành Động</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${issuesBody}
+      </tbody>
+    </table>
+  ` : '<p style="color:#64748b;font-size:12.5px;">Chưa phát hiện rủi ro nghiêm trọng.</p>'}
+
+  <!-- 6. AI Strategic Suggestions -->
+  ${aiSuggest ? `
+    <div class="report-section-title">✨ 6. Gợi Ý Chiến Lược Tối Ưu Từ AI</div>
+    <div class="analysis-under-box" style="border-left-color:#a78bfa;">
+      ${aiSuggest}
+    </div>
+  ` : ''}
+
+  <!-- 7. Strategic Report (with user's manual edits) -->
+  <div class="report-section-title">📝 7. Báo Cáo Chiến Lược Chi Tiết (Nội Dung Đã Duyệt &amp; Chỉnh Sửa)</div>
+  <div class="strategic-report-box">
+    ${reportContent}
+  </div>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <div>
+      <b>Vũ Anh Thư · Data Analyst &amp; Business Intelligence</b><br>
+      📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633 &nbsp;|&nbsp; 📍 Hà Nội, Việt Nam
+    </div>
+    <div style="text-align:right;">
+      🔗 facebook.com/vatthhu &nbsp;|&nbsp; instagram.com/__a.hthu<br>
+      © ${new Date().getFullYear()} Vũ Anh Thư. Bảo lưu mọi quyền.
+    </div>
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ In / Lưu PDF</button>
+
 </body>
 </html>`;
 
-            const blob = new Blob([fullHTML], {type:'text/html;charset=utf-8'});
+            const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
             const url  = URL.createObjectURL(blob);
             const a    = document.createElement('a');
             a.href = url;
-            a.download = 'BaoCao_' + biz.replace(/\s+/g,'_').substring(0,20) + '_' + now.replace(/\//g,'-') + '.html';
+            a.download = 'BaoCao_TongHop_' + biz.replace(/\s+/g, '_').substring(0, 25) + '_' + now.replace(/\//g, '-') + '.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            const toast = document.createElement('div');
-            toast.textContent = '✅ Đã xuất báo cáo HTML đầy đủ!';
-            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:800;z-index:9999;box-shadow:0 6px 24px rgba(244,114,182,0.4);';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2800);
+
+            showToast('✅ Đã xuất báo cáo tổng hợp đầy đủ KPI, Dashboard, Phân tích & Đề xuất!', 'success');
+        }
+
+        // Both buttons use the master comprehensive report generator
+        function exportFullHTMLReport() {
+            generateCompleteHTMLReport();
+        }
+
+        function approveAndDownloadReport() {
+            generateCompleteHTMLReport();
         }
 
         
@@ -3492,6 +3758,15 @@
 
         // On Load Init
         document.addEventListener('DOMContentLoaded', function() {
+
+            const repEditEl = document.getElementById('report-editable-content');
+            if (repEditEl) {
+                repEditEl.addEventListener('click', function() {
+                    if (!reportEditMode) {
+                        toggleReportEdit();
+                    }
+                });
+            }
             loadSavedProfile();
             loadSampleDataset();
         });
@@ -3659,87 +3934,54 @@
             const content = document.getElementById('report-editable-content');
             const btn = document.getElementById('toggle-edit-btn');
             const hint = document.getElementById('report-edit-hint');
+
             if (content) {
                 content.contentEditable = reportEditMode ? 'true' : 'false';
                 content.style.cursor = reportEditMode ? 'text' : 'default';
-                content.style.boxShadow = reportEditMode ? '0 0 0 3px rgba(244,114,182,0.25)' : '';
-                content.style.borderStyle = reportEditMode ? 'solid' : 'dashed';
-                content.style.borderColor = reportEditMode ? '#f472b6' : 'rgba(244,114,182,0.4)';
-                if (reportEditMode) content.focus();
-            }
-            if (btn) {
-                btn.textContent = reportEditMode ? '🔒 Khóa chỉnh sửa' : '✏️ Sửa thủ công';
-                btn.style.background = reportEditMode ? 'linear-gradient(135deg,#fde8f2,#fff)' : '';
-                btn.style.borderColor = reportEditMode ? '#f472b6' : '';
-                btn.style.color = reportEditMode ? '#db2777' : '';
-            }
-            if (hint) {
-                hint.style.display = reportEditMode ? 'none' : 'block';
                 if (reportEditMode) {
-                    hint.textContent = '';
+                    content.style.boxShadow = '0 0 0 3px rgba(244,114,182,0.35), 0 8px 24px rgba(236,72,153,0.15)';
+                    content.style.borderStyle = 'solid';
+                    content.style.borderColor = '#f472b6';
+                    content.style.background = '#ffffff';
+                    content.focus();
+                } else {
+                    content.style.boxShadow = '';
+                    content.style.borderStyle = 'dashed';
+                    content.style.borderColor = 'rgba(244,114,182,0.4)';
+                    content.style.background = '';
+                }
+            }
+
+            if (btn) {
+                if (reportEditMode) {
+                    btn.innerHTML = '🔒 Khóa &amp; Lưu chỉnh sửa';
+                    btn.style.background = 'linear-gradient(135deg,#fde8f2,#fff)';
+                    btn.style.borderColor = '#f472b6';
+                    btn.style.color = '#db2777';
+                    btn.style.boxShadow = '0 4px 14px rgba(244,114,182,0.3)';
+                } else {
+                    btn.innerHTML = '✏️ Sửa thủ công';
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                    btn.style.boxShadow = '';
+                }
+            }
+
+            if (hint) {
+                if (reportEditMode) {
+                    hint.innerHTML = '<span style="color:#10b981;font-weight:700;">🟢 Đang ở chế độ sửa thủ công:</span> Bạn có thể nhấp trực tiếp vào bất kỳ đoạn chữ nào bên trên để sửa, thêm hoặc xóa nội dung.';
                 } else {
                     hint.innerHTML = '💡 Nhấn <b style="color:var(--pink-dark)">✏️ Sửa thủ công</b> để bật chế độ chỉnh sửa trực tiếp';
                 }
             }
-        }
 
-        function approveAndDownloadReport() {
-            const content = document.getElementById('report-editable-content');
-            const reportHTML = content ? content.innerHTML : '<p>Chưa có nội dung báo cáo.</p>';
-            const domain = (document.getElementById('biz-domain') || {}).value || 'Doanh nghiệp';
-            const now = new Date().toLocaleDateString('vi-VN');
-            const fullHTML = `<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Báo Cáo Phân Tích Kinh Doanh - ${domain}</title>
-<style>
-  body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 24px; color: #1e293b; line-height: 1.8; }
-  h1 { background: linear-gradient(135deg, #db2777, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin-bottom: 6px; }
-  .meta { font-size: 13px; color: #64748b; margin-bottom: 32px; }
-  .report-body { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 32px; }
-  .footer-note { margin-top: 40px; padding-top: 20px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #94a3b8; }
-</style>
-</head>
-<body>
-  <h1>📊 Báo Cáo Phân Tích Kinh Doanh</h1>
-  <div class="meta">
-    Lĩnh vực: ${domain} &nbsp;|&nbsp; Ngày xuất: ${now}<br>
-    Tác giả: Vũ Anh Thư – Data Analyst &amp; Business Intelligence
-  </div>
-  <div class="report-body">
-    ${reportHTML}
-  </div>
-  <div class="footer-note">
-    📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633 &nbsp;|&nbsp;
-    <a href="https://www.facebook.com/vatthhu/?locale=vi_VN">Facebook</a> &nbsp;|&nbsp;
-    <a href="https://www.instagram.com/__a.hthu/">Instagram</a>
-  </div>
-</body>
-</html>`;
-            const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'BaoCao_PhanTich_' + domain.replace(/\s+/g,'_').substring(0,20) + '_' + now.replace(/\//g,'-') + '.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            // Toast
-            const toast = document.createElement('div');
-            toast.textContent = '✅ Đã tải báo cáo về thiết bị!';
-            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 6px 20px rgba(16,185,129,0.4);';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
+            if (reportEditMode) {
+                showToast('✏️ Đã bật chế độ sửa thủ công: Bạn có thể chỉnh sửa trực tiếp báo cáo!', 'info');
+            } else {
+                showToast('💾 Đã lưu và khóa chỉnh sửa báo cáo!', 'success');
+            }
         }
-
-    
-        // ========================================================
-        // SLIDE PRESENTATION ENGINE
-        // ========================================================
-        let currentSlide = 0;
-        let allSlides = [];
 
         function buildSlideData() {
             const rows  = inspectorData && inspectorData.length > 0 ? inspectorData : [];
