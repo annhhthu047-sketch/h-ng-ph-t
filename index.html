@@ -1332,6 +1332,120 @@
         }
         .toolbar-sep { width: 1px; height: 20px; background: rgba(244,114,182,0.2); margin: 0 4px; }
 
+    
+        /* ===== AUTH / LOGIN MODAL ===== */
+        #auth-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+        .auth-card {
+            width: 440px;
+            max-width: calc(100vw - 32px);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1.5px solid rgba(255, 255, 255, 0.95);
+            border-radius: 26px;
+            padding: 32px 30px;
+            box-shadow: 0 25px 70px rgba(236, 72, 153, 0.28), 0 10px 30px rgba(125, 211, 252, 0.2);
+            position: relative;
+            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #f472b6, #ec4899, #7dd3fc);
+        }
+        body.dark-mode .auth-card {
+            background: rgba(24, 14, 36, 0.94) !important;
+            border-color: rgba(244, 114, 182, 0.3) !important;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 10px 30px rgba(236, 72, 153, 0.25) !important;
+            color: #f1f5f9 !important;
+        }
+        .auth-tab-bar {
+            display: flex;
+            background: rgba(241, 245, 249, 0.8);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        body.dark-mode .auth-tab-bar {
+            background: rgba(30, 15, 45, 0.85) !important;
+            border-color: rgba(244, 114, 182, 0.2) !important;
+        }
+        .auth-tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 11px;
+            background: transparent;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .auth-tab-btn.active {
+            background: white;
+            color: var(--pink-dark);
+            box-shadow: 0 3px 12px rgba(244, 114, 182, 0.25);
+        }
+        body.dark-mode .auth-tab-btn.active {
+            background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+            color: white !important;
+        }
+        .auth-input-group {
+            margin-bottom: 16px;
+        }
+        .auth-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        body.dark-mode .auth-label {
+            color: #cbd5e1 !important;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 11px 16px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            font-size: 13px;
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.95);
+            outline: none;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+        .auth-input:focus {
+            border-color: var(--pink-btn);
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25);
+            background: #fff;
+        }
+        body.dark-mode .auth-input {
+            background: rgba(18, 10, 28, 0.9) !important;
+            border-color: rgba(244, 114, 182, 0.3) !important;
+            color: #f1f5f9 !important;
+        }
+        body.dark-mode .auth-input:focus {
+            border-color: var(--pink-btn) !important;
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.35) !important;
+        }
+
     </style>
 </head>
 <body>
@@ -1344,6 +1458,89 @@
     <div class="app-container">
 
         <!-- ===== 1. TOP HEADER (ẢNH 1) ===== -->
+        
+    <!-- ===== MODAL TẠO TÀI KHOẢN & ĐĂNG NHẬP (TRONG SUỐT TONE HỒNG XANH) ===== -->
+    <div id="auth-modal">
+        <div class="auth-card">
+            <!-- Close button -->
+            <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;transition:transform 0.2s;" onmouseenter="this.style.transform='scale(1.2)'" onmouseleave="this.style.transform='scale(1)'">✕</button>
+
+            <!-- Brand header in modal -->
+            <div style="text-align:center;margin-bottom:20px;">
+                <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:900;font-size:24px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(244,114,182,0.4);border:2.5px solid white;margin-bottom:12px;">
+                    ✨
+                </div>
+                <div style="font-size:11px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                    DataDecision AI · Vũ Anh Thư
+                </div>
+                <h3 id="auth-modal-title" style="font-size:20px;font-weight:900;color:var(--text-dark);letter-spacing:-0.3px;margin-bottom:6px;">
+                    Tạo Tài Khoản Người Dùng
+                </h3>
+                <p id="auth-modal-desc" style="font-size:12px;color:var(--text-muted);line-height:1.5;">
+                    Đăng nhập hoặc đăng ký để lưu trữ lịch sử báo cáo & trải nghiệm trợ lý AI
+                </p>
+            </div>
+
+            <!-- Tab bar: Tạo tài khoản / Đăng nhập -->
+            <div class="auth-tab-bar">
+                <button type="button" class="auth-tab-btn active" id="auth-tab-register" onclick="switchAuthMode('register')">
+                    ✨ Tạo tài khoản
+                </button>
+                <button type="button" class="auth-tab-btn" id="auth-tab-login" onclick="switchAuthMode('login')">
+                    🔑 Đăng nhập
+                </button>
+            </div>
+
+            <!-- Form fields -->
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <!-- Họ và tên (chỉ bắt buộc khi đăng ký) -->
+                <div class="auth-input-group" id="group-auth-name">
+                    <label class="auth-label" for="auth-name">
+                        👤 Họ và tên <span style="color:#ef4444;">*</span>
+                    </label>
+                    <input type="text" id="auth-name" class="auth-input" placeholder="Ví dụ: Vũ Anh Thư, Nguyễn Văn A..." autocomplete="name">
+                </div>
+
+                <!-- Số điện thoại hoặc Gmail (yêu cầu người dùng) -->
+                <div class="auth-input-group">
+                    <label class="auth-label" for="auth-contact">
+                        📱 Số điện thoại hoặc Gmail <span style="color:#ef4444;">*</span>
+                    </label>
+                    <input type="text" id="auth-contact" class="auth-input" placeholder="Ví dụ: 0332547633 hoặc email@gmail.com" required autocomplete="username">
+                </div>
+
+                <!-- Mật khẩu / Mã PIN -->
+                <div class="auth-input-group">
+                    <label class="auth-label" for="auth-password" style="display:flex;justify-content:space-between;">
+                        <span>🔒 Mật khẩu / Mã bảo mật</span>
+                        <span style="font-size:10.5px;font-weight:600;color:var(--text-muted);">(Tùy chọn)</span>
+                    </label>
+                    <input type="password" id="auth-password" class="auth-input" placeholder="Để trống nếu muốn vào nhanh..." autocomplete="current-password">
+                </div>
+
+                <!-- Ghi nhớ đăng nhập -->
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;font-size:12px;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-muted);">
+                        <input type="checkbox" id="auth-remember" checked style="accent-color:var(--pink-btn);">
+                        <span>Ghi nhớ đăng nhập trên máy này</span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="auth-submit-btn" class="btn-pink-glass" style="width:100%;justify-content:center;padding:12px;font-size:14px;font-weight:800;border-radius:14px;margin-bottom:12px;">
+                    ✨ Tạo Tài Khoản &amp; Bắt Đầu Ngay
+                </button>
+
+                <!-- Guest skip option -->
+                <div style="text-align:center;">
+                    <button type="button" onclick="continueAsGuest()" style="background:none;border:none;color:var(--text-muted);font-size:12px;font-weight:700;cursor:pointer;padding:6px;text-decoration:underline;transition:color 0.2s;" onmouseenter="this.style.color='var(--pink-dark)'" onmouseleave="this.style.color='var(--text-muted)'">
+                        Tiếp tục với tư cách Khách (Dùng thử ngay) →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
         <!-- Edit Profile Modal -->
         <div id="profile-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
             <div style="background:#fff; border-radius:24px; padding:32px 28px; width:400px; max-width:calc(100vw - 32px); box-shadow:0 24px 60px rgba(236,72,153,0.25); position:relative;">
@@ -1396,7 +1593,7 @@
                     <span id="dark-mode-icon" style="font-size:13px;margin-right:5px;">🌙</span>
                     <span id="dark-mode-label" style="font-size:11.5px;">Giao diện Tối</span>
                 </div>
-                <div class="header-badge-pill" style="cursor:pointer;font-weight:800;background:linear-gradient(135deg,#fde8f2,#f0f9ff);color:var(--pink-dark);" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ">
+                <div class="header-badge-pill" style="cursor:pointer;font-weight:800;background:linear-gradient(135deg,#fde8f2,#f0f9ff);color:var(--pink-dark);" onclick="openUserMenu()" title="Tài khoản / Đổi tài khoản" id="header-account-pill">
                     👤 <span id="header-name-badge">Vũ Anh Thư</span>
                 </div>
             </div>
@@ -4494,6 +4691,187 @@
         }
 
         // Initialize slide editor when navigating to page-slides
-        </script>
+        
+        // ========================================================
+        // AUTHENTICATION & LOGIN / REGISTER SYSTEM
+        // ========================================================
+        let currentAuthMode = 'register'; // 'register' or 'login'
+
+        function openAuthModal(mode = 'register') {
+            const modal = document.getElementById('auth-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                switchAuthMode(mode);
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function switchAuthMode(mode) {
+            currentAuthMode = mode;
+            const tabReg = document.getElementById('auth-tab-register');
+            const tabLog = document.getElementById('auth-tab-login');
+            const groupName = document.getElementById('group-auth-name');
+            const titleEl = document.getElementById('auth-modal-title');
+            const descEl = document.getElementById('auth-modal-desc');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (mode === 'register') {
+                if (tabReg) tabReg.classList.add('active');
+                if (tabLog) tabLog.classList.remove('active');
+                if (groupName) groupName.style.display = 'block';
+                if (titleEl) titleEl.textContent = 'Tạo Tài Khoản Người Dùng';
+                if (descEl) descEl.textContent = 'Đăng ký nhanh với Họ tên và SĐT hoặc Gmail để sử dụng đầy đủ tính năng AI';
+                if (submitBtn) submitBtn.innerHTML = '✨ Tạo Tài Khoản &amp; Bắt Đầu Ngay';
+            } else {
+                if (tabLog) tabLog.classList.add('active');
+                if (tabReg) tabReg.classList.remove('active');
+                if (groupName) groupName.style.display = 'none';
+                if (titleEl) titleEl.textContent = 'Đăng Nhập Hệ Thống';
+                if (descEl) descEl.textContent = 'Nhập Số điện thoại hoặc Gmail đã đăng ký để vào hệ thống';
+                if (submitBtn) submitBtn.innerHTML = '🔑 Đăng Nhập Vào Hệ Thống';
+            }
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const contact = (document.getElementById('auth-contact') || {}).value.trim();
+            let name = (document.getElementById('auth-name') || {}).value.trim();
+
+            if (!contact) {
+                alert('Vui lòng nhập Số điện thoại hoặc Gmail!');
+                return;
+            }
+
+            if (currentAuthMode === 'register' && !name) {
+                // If name empty, derive name from contact (e.g. from email or phone)
+                name = contact.includes('@') ? contact.split('@')[0] : ('Người dùng ' + contact.slice(-4));
+            } else if (!name) {
+                name = 'Vũ Anh Thư';
+            }
+
+            // Save user session to localStorage
+            const userSession = {
+                name: name,
+                contact: contact,
+                loggedIn: true,
+                loginTime: new Date().toISOString()
+            };
+            localStorage.setItem('user_session', JSON.stringify(userSession));
+
+            // Apply user info to UI
+            applyUserSessionToUI(userSession);
+
+            closeAuthModal();
+
+            // Welcome toast
+            showToast(`🎉 Chào mừng ${name} đã đăng nhập thành công!`, 'success');
+        }
+
+        function continueAsGuest() {
+            closeAuthModal();
+            // Store that user visited as guest so it doesn't pop up again this session
+            sessionStorage.setItem('guest_session', '1');
+            showToast('👋 Đang tiếp tục với tư cách Khách. Bạn có thể đăng nhập bất cứ lúc nào!', 'info');
+        }
+
+        function applyUserSessionToUI(session) {
+            if (!session) return;
+            const name = session.name || 'Vũ Anh Thư';
+            const contact = session.contact || 'anhthuvu8307@gmail.com';
+
+            // Header name badge
+            const badge = document.getElementById('header-name-badge');
+            if (badge) badge.textContent = name;
+
+            // Header author name
+            const author = document.getElementById('header-display-name');
+            if (author) author.textContent = name;
+
+            // Header initials
+            const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'AT';
+            const initEl = document.getElementById('header-avatar-initials');
+            if (initEl) initEl.textContent = initials;
+            const modalInit = document.getElementById('modal-avatar-initials');
+            if (modalInit) modalInit.textContent = initials;
+
+            // If contact is an email, update email link in header if desired
+            if (contact.includes('@')) {
+                const mailPill = document.querySelector('a.header-badge-pill[href^="mailto:"]');
+                if (mailPill) {
+                    mailPill.href = 'mailto:' + contact;
+                    mailPill.innerHTML = '✉️ ' + contact;
+                }
+            } else if (/^[0-9+]+$/.test(contact.replace(/\s+/g, ''))) {
+                const phonePills = document.querySelectorAll('.header-badge-pill');
+                phonePills.forEach(p => {
+                    if (p.textContent.includes('📞')) {
+                        p.innerHTML = '📞 ' + contact;
+                    }
+                });
+            }
+        }
+
+        function openUserMenu() {
+            const curSession = localStorage.getItem('user_session');
+            if (curSession) {
+                const s = JSON.parse(curSession);
+                const action = confirm(`Tài khoản hiện tại: ${s.name} (${s.contact})\n\n• Nhấn OK để chỉnh sửa hồ sơ / đổi ảnh\n• Nhấn Cancel để đăng xuất hoặc chuyển tài khoản.`);
+                if (action) {
+                    openProfileModal();
+                } else {
+                    const logout = confirm('Bạn có muốn Đăng xuất và đổi tài khoản khác không?');
+                    if (logout) {
+                        localStorage.removeItem('user_session');
+                        showToast('Đã đăng xuất tài khoản.', 'info');
+                        openAuthModal('login');
+                    }
+                }
+            } else {
+                openAuthModal('register');
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            const bg = type === 'success'
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : (type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #f472b6, #7dd3fc)');
+            toast.style.cssText = `position:fixed;bottom:90px;right:24px;background:${bg};color:white;padding:12px 22px;border-radius:14px;font-size:13px;font-weight:800;z-index:999999;box-shadow:0 8px 30px rgba(0,0,0,0.25);animation:popIn 0.35s ease;`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.4s';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // Auto show Auth Modal on first visit if not logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('user_session');
+            if (saved) {
+                try {
+                    const s = JSON.parse(saved);
+                    applyUserSessionToUI(s);
+                } catch(e) {}
+            } else if (!sessionStorage.getItem('guest_session')) {
+                // First time visitor: show auth modal after 800ms
+                setTimeout(() => {
+                    openAuthModal('register');
+                }, 800);
+            }
+        });
+
+        // Close auth modal on backdrop click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('auth-modal');
+            if (modal && e.target === modal) closeAuthModal();
+        });
+
+    </script>
 </body>
 </html>
