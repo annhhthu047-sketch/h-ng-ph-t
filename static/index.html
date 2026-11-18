@@ -1549,8 +1549,8 @@
                 <p style="font-size:12px;color:#64748b;margin-bottom:20px;">Cập nhật tên hiển thị và ảnh đại diện</p>
                 <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;">
                     <div id="modal-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(244,114,182,0.4);border:3px solid white;position:relative;overflow:hidden;" onclick="document.getElementById('avatar-file-input').click()" title="Nhấn để đổi ảnh">
-                        <span id="modal-avatar-initials">AT</span>
-                        <img id="modal-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+                        <span id="modal-avatar-initials" style="display:none;">AT</span>
+                        <img id="modal-avatar-img" src="avatar_thumb.jpg" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null; this.src='avatar.jpg';" />
                     </div>
                     <span style="font-size:11px;color:#94a3b8;">Nhấn vào ảnh để thay đổi</span>
                     <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" onchange="previewAvatarFile(this)">
@@ -1570,8 +1570,8 @@
             <div class="header-left">
                 <!-- Clickable avatar with image support -->
                 <div id="header-avatar-btn" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ" style="position:relative;cursor:pointer;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(236,72,153,0.35);border:2px solid white;overflow:hidden;flex-shrink:0;transition:transform 0.2s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
-                    <span id="header-avatar-initials">AT</span>
-                    <img id="header-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+                    <span id="header-avatar-initials" style="display:none;">AT</span>
+                    <img id="header-avatar-img" src="avatar_thumb.jpg" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null; this.src='avatar.jpg';" />
                 </div>
                 <div class="header-brand-info">
                     <span class="header-author-name" id="header-display-name">Vũ Anh Thư</span>
@@ -2275,8 +2275,8 @@
                 <!-- Cột 1: Thông Tin Doanh Nghiệp -->
                 <div>
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-                        <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #f472b6, #ec4899); color:white; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:13px;">
-                            VT
+                        <div style="width:42px; height:42px; border-radius:50%; border:2px solid #f472b6; overflow:hidden; box-shadow:0 3px 12px rgba(244,114,182,0.4); flex-shrink:0;">
+                            <img src="avatar_thumb.jpg" alt="Vũ Anh Thư - Data Analyst & BI" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.onerror=null; this.src='avatar.jpg';">
                         </div>
                         <div>
                             <div class="footer-brand-title">Vũ Anh Thư</div>
@@ -3492,6 +3492,7 @@
 
         // On Load Init
         document.addEventListener('DOMContentLoaded', function() {
+            loadSavedProfile();
             loadSampleDataset();
         });
     
@@ -3503,66 +3504,156 @@
             const modal = document.getElementById('profile-modal');
             if (modal) {
                 modal.style.display = 'flex';
-                // Sync current name
-                const curName = document.getElementById('header-display-name').textContent;
-                document.getElementById('modal-display-name').value = curName;
+                // Sync current name from header or storage
+                const headerName = document.getElementById('header-display-name');
+                const curName = headerName ? headerName.textContent.trim() : 'Vũ Anh Thư';
+                const inputName = document.getElementById('modal-display-name');
+                if (inputName) inputName.value = curName;
+
+                // Sync current avatar image
+                const headerImg = document.getElementById('header-avatar-img');
+                const modalImg = document.getElementById('modal-avatar-img');
+                const modalInit = document.getElementById('modal-avatar-initials');
+                if (headerImg && headerImg.src && headerImg.style.display !== 'none' && modalImg) {
+                    modalImg.src = headerImg.src;
+                    modalImg.style.display = 'block';
+                    if (modalInit) modalInit.style.display = 'none';
+                }
             }
         }
+
         function closeProfileModal() {
             const modal = document.getElementById('profile-modal');
             if (modal) modal.style.display = 'none';
         }
+
         function previewAvatarFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const imgEl = document.getElementById('modal-avatar-img');
                     const initEl = document.getElementById('modal-avatar-initials');
-                    if (imgEl) { imgEl.src = e.target.result; imgEl.style.display = 'block'; }
+                    if (imgEl) {
+                        imgEl.src = e.target.result;
+                        imgEl.style.display = 'block';
+                    }
                     if (initEl) initEl.style.display = 'none';
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
         function saveProfileChanges() {
-            const newName = document.getElementById('modal-display-name').value.trim() || 'Vũ Anh Thư';
-            // Update header name displays
+            const newName = (document.getElementById('modal-display-name') || {}).value.trim() || 'Vũ Anh Thư';
+            const modalImg = document.getElementById('modal-avatar-img');
+            const avatarSrc = (modalImg && modalImg.src && modalImg.style.display !== 'none') ? modalImg.src : '';
+
+            // 1. Update header displays
             const headerName = document.getElementById('header-display-name');
             const headerBadge = document.getElementById('header-name-badge');
             if (headerName) headerName.textContent = newName;
             if (headerBadge) headerBadge.textContent = newName;
-            // Update avatar initials
-            const initials = newName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+            const initials = newName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'AT';
             const headerInit = document.getElementById('header-avatar-initials');
-            const modalInit = document.getElementById('modal-avatar-initials');
-            if (headerInit) headerInit.textContent = initials;
-            if (modalInit) modalInit.textContent = initials;
-            // If new avatar image selected, copy to header
-            const modalImg = document.getElementById('modal-avatar-img');
             const headerImg = document.getElementById('header-avatar-img');
-            if (modalImg && modalImg.src && modalImg.style.display !== 'none' && headerImg) {
-                headerImg.src = modalImg.src;
-                headerImg.style.display = 'block';
+
+            if (avatarSrc) {
+                if (headerImg) {
+                    headerImg.src = avatarSrc;
+                    headerImg.style.display = 'block';
+                }
                 if (headerInit) headerInit.style.display = 'none';
+            } else {
+                if (headerInit) {
+                    headerInit.textContent = initials;
+                    headerInit.style.display = 'block';
+                }
+                if (headerImg) headerImg.style.display = 'none';
             }
+
+            // 2. Persist to localStorage ('user_custom_profile' & 'user_session')
+            try {
+                const profileData = {
+                    name: newName,
+                    avatar: avatarSrc,
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('user_custom_profile', JSON.stringify(profileData));
+
+                // Also update user_session if exists
+                const curSessionStr = localStorage.getItem('user_session');
+                if (curSessionStr) {
+                    const curSession = JSON.parse(curSessionStr);
+                    curSession.name = newName;
+                    if (avatarSrc) curSession.avatar = avatarSrc;
+                    localStorage.setItem('user_session', JSON.stringify(curSession));
+                }
+            } catch (err) {
+                console.warn('LocalStorage save error (e.g. storage quota):', err);
+            }
+
             closeProfileModal();
-            // Toast notification
-            const toast = document.createElement('div');
-            toast.textContent = '✅ Đã lưu thay đổi hồ sơ!';
-            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 6px 20px rgba(16,185,129,0.4);animation:popIn 0.3s ease;';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
+
+            showToast('✅ Đã lưu tên và ảnh đại diện thành công!', 'success');
         }
+
+        function loadSavedProfile() {
+            try {
+                // Check custom profile first
+                const savedProfileStr = localStorage.getItem('user_custom_profile');
+                const savedSessionStr = localStorage.getItem('user_session');
+
+                let targetName = '';
+                let targetAvatar = '';
+
+                if (savedProfileStr) {
+                    const p = JSON.parse(savedProfileStr);
+                    if (p.name) targetName = p.name;
+                    if (p.avatar) targetAvatar = p.avatar;
+                } else if (savedSessionStr) {
+                    const s = JSON.parse(savedSessionStr);
+                    if (s.name) targetName = s.name;
+                    if (s.avatar) targetAvatar = s.avatar;
+                }
+
+                if (targetName) {
+                    const headerName = document.getElementById('header-display-name');
+                    const headerBadge = document.getElementById('header-name-badge');
+                    const modalName = document.getElementById('modal-display-name');
+                    if (headerName) headerName.textContent = targetName;
+                    if (headerBadge) headerBadge.textContent = targetName;
+                    if (modalName) modalName.value = targetName;
+                }
+
+                if (targetAvatar) {
+                    const headerImg = document.getElementById('header-avatar-img');
+                    const modalImg = document.getElementById('modal-avatar-img');
+                    const headerInit = document.getElementById('header-avatar-initials');
+                    const modalInit = document.getElementById('modal-avatar-initials');
+
+                    if (headerImg) {
+                        headerImg.src = targetAvatar;
+                        headerImg.style.display = 'block';
+                    }
+                    if (modalImg) {
+                        modalImg.src = targetAvatar;
+                        modalImg.style.display = 'block';
+                    }
+                    if (headerInit) headerInit.style.display = 'none';
+                    if (modalInit) modalInit.style.display = 'none';
+                }
+            } catch (e) {
+                console.warn('Error loading saved profile:', e);
+            }
+        }
+
         // Close modal on backdrop click
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('profile-modal');
             if (modal && e.target === modal) closeProfileModal();
         });
 
-        // =============================================
-        // REPORT EDIT TOGGLE + DOWNLOAD
-        // =============================================
-        let reportEditMode = false;
         function toggleReportEdit() {
             reportEditMode = !reportEditMode;
             const content = document.getElementById('report-editable-content');
@@ -4779,6 +4870,7 @@
         }
 
         function applyUserSessionToUI(session) {
+            loadSavedProfile();
             if (!session) return;
             const name = session.name || 'Vũ Anh Thư';
             const contact = session.contact || 'anhthuvu8307@gmail.com';
