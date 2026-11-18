@@ -1006,6 +1006,332 @@
             font-size: 14px;
         }
     
+    
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            --pink-bg: #1a0d1f;
+            --pink-soft: #2d1a2e;
+            --glass-bg: rgba(30, 15, 35, 0.85);
+            --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --text-dark: #f1f5f9;
+            --text-body: #cbd5e1;
+            --text-muted: #94a3b8;
+            background: linear-gradient(135deg, #1a0d1f 0%, #0f1829 40%, #1a0d2e 70%, #0d1a1f 100%) !important;
+        }
+        body.dark-mode .site-header,
+        body.dark-mode .glass-card,
+        body.dark-mode .pipeline-card,
+        body.dark-mode .context-input-card,
+        body.dark-mode .chart-box-seamless,
+        body.dark-mode .kpi-big-card,
+        body.dark-mode .report-editor-card {
+            background: rgba(25, 15, 35, 0.88) !important;
+            border-color: rgba(244, 114, 182, 0.2) !important;
+            color: #f1f5f9 !important;
+        }
+        body.dark-mode .table-wrap-glass {
+            background: rgba(20, 10, 30, 0.9) !important;
+        }
+        body.dark-mode table.data-table th {
+            background: linear-gradient(90deg, #2d1a2e, #0f1829) !important;
+            color: #f9a8d4 !important;
+        }
+        body.dark-mode table.data-table td {
+            color: #cbd5e1 !important;
+            border-bottom-color: rgba(244, 114, 182, 0.1) !important;
+        }
+        body.dark-mode table.data-table tr:hover {
+            background: rgba(244, 114, 182, 0.08) !important;
+        }
+        body.dark-mode .chatbot-window {
+            background: rgba(20, 10, 30, 0.97) !important;
+        }
+        body.dark-mode .context-field {
+            background: rgba(20, 10, 30, 0.9) !important;
+            border-color: rgba(244, 114, 182, 0.3) !important;
+            color: #f1f5f9 !important;
+        }
+        body.dark-mode .nav-link-pill { color: #cbd5e1 !important; }
+        body.dark-mode .nav-link-pill:hover { background: rgba(244, 114, 182, 0.15) !important; }
+        body.dark-mode .nav-link-pill.active { color: white !important; }
+        body.dark-mode .header-badge-pill {
+            background: rgba(30, 15, 40, 0.9) !important;
+            color: #f9a8d4 !important;
+        }
+        body.dark-mode .site-footer {
+            background: rgba(20, 10, 30, 0.95) !important;
+            border-top-color: rgba(244, 114, 182, 0.2) !important;
+        }
+        body.dark-mode .footer-info-list,
+        body.dark-mode .footer-info-list a { color: #94a3b8 !important; }
+        body.dark-mode .source-chip { background: rgba(30,15,40,0.8) !important; color: #cbd5e1 !important; }
+        body.dark-mode .cmd-clean-panel,
+        body.dark-mode #cmd-clean-panel { background: linear-gradient(135deg, #2d1a2e, #0f1829) !important; }
+        body.dark-mode .report-editable-body { background: rgba(20, 10, 30, 0.9) !important; color: #e2e8f0 !important; }
+        body.dark-mode .assessment-box { background: linear-gradient(135deg, rgba(45,26,46,0.9), rgba(15,24,41,0.9)) !important; }
+        body.dark-mode .stepper-step-box { background: rgba(25,15,35,0.8) !important; border-color: rgba(244,114,182,0.2) !important; }
+        body.dark-mode .kpi-big-card::before { opacity: 0.7; }
+        body.dark-mode .issues-table th { background: rgba(45,26,46,0.9) !important; }
+        body.dark-mode .issues-table td { background: rgba(20,10,30,0.8) !important; color: #cbd5e1 !important; }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 { color: #f1f5f9 !important; }
+        body.dark-mode p { color: #cbd5e1; }
+        body.dark-mode .step-title { color: #f1f5f9 !important; }
+        body.dark-mode .kpi-number { color: #f1f5f9 !important; }
+        body.dark-mode .hero-headline { color: #f1f5f9 !important; }
+        body.dark-mode .mini-dash-preview { background: rgba(25,15,35,0.95) !important; }
+
+        /* Dark mode toggle button */
+        .dark-mode-toggle {
+            width: 36px; height: 20px;
+            background: linear-gradient(135deg, #fce7f3, #e0f2fe);
+            border-radius: 9999px;
+            border: 1.5px solid rgba(244,114,182,0.4);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+        .dark-mode-toggle::after {
+            content: '☀️';
+            position: absolute;
+            left: 2px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+        body.dark-mode .dark-mode-toggle {
+            background: linear-gradient(135deg, #2d1a2e, #0f1829);
+            border-color: rgba(244,114,182,0.4);
+        }
+        body.dark-mode .dark-mode-toggle::after {
+            content: '🌙';
+            left: auto;
+            right: 2px;
+        }
+
+        /* ===== CLICK RIPPLE EFFECT ===== */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(244, 114, 182, 0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* ===== FLOATING BUTTON PULSE ===== */
+        .btn-pink-glass, .btn-white-glass {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-pulse {
+            animation: btnPulse 2s ease-in-out infinite;
+        }
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 4px 16px rgba(236,72,153,0.35); }
+            50% { box-shadow: 0 4px 28px rgba(236,72,153,0.6), 0 0 0 6px rgba(236,72,153,0.1); }
+        }
+
+        /* ===== CURSOR SPARKLE ===== */
+        .cursor-spark {
+            position: fixed;
+            pointer-events: none;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f472b6, #7dd3fc);
+            z-index: 99999;
+            animation: sparkFade 0.8s ease-out forwards;
+        }
+        @keyframes sparkFade {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0) translateY(-20px); opacity: 0; }
+        }
+
+        /* ===== SLIDE EDITOR PAGE ===== */
+        .slide-editor-wrap {
+            display: grid;
+            grid-template-columns: 260px 1fr 220px;
+            gap: 0;
+            height: calc(100vh - 120px);
+            min-height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(244,114,182,0.15);
+            border: 1.5px solid rgba(244,114,182,0.2);
+        }
+        .slide-panel-left {
+            background: rgba(255,255,255,0.88);
+            border-right: 1.5px solid rgba(244,114,182,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        body.dark-mode .slide-panel-left {
+            background: rgba(20,10,30,0.95) !important;
+            border-right-color: rgba(244,114,182,0.2) !important;
+        }
+        .slide-panel-left-header {
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #fce7f3, #f0f9ff);
+            border-bottom: 1px solid rgba(244,114,182,0.15);
+            font-size: 12px;
+            font-weight: 800;
+            color: #db2777;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        body.dark-mode .slide-panel-left-header {
+            background: linear-gradient(135deg, rgba(45,26,46,0.9), rgba(15,24,41,0.9)) !important;
+        }
+        .slide-thumbs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #f472b6 transparent;
+        }
+        .slide-thumb {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            aspect-ratio: 16/10;
+            position: relative;
+            font-size: 9px;
+        }
+        .slide-thumb:hover { border-color: #f472b6; transform: scale(1.02); }
+        .slide-thumb.active { border-color: #f472b6; box-shadow: 0 4px 14px rgba(244,114,182,0.4); }
+        .slide-thumb-num {
+            position: absolute; bottom: 4px; right: 6px;
+            font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.7);
+        }
+        .slide-canvas-area {
+            background: #e8ecf0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            overflow-y: auto;
+            gap: 16px;
+        }
+        body.dark-mode .slide-canvas-area { background: #0d1117 !important; }
+        .slide-canvas {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16/10;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            position: relative;
+            cursor: text;
+            transition: box-shadow 0.3s ease;
+        }
+        .slide-canvas:hover { box-shadow: 0 16px 50px rgba(0,0,0,0.35); }
+        .slide-panel-right {
+            background: rgba(255,255,255,0.90);
+            border-left: 1.5px solid rgba(244,114,182,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 14px;
+            gap: 12px;
+        }
+        body.dark-mode .slide-panel-right {
+            background: rgba(20,10,30,0.95) !important;
+            border-left-color: rgba(244,114,182,0.2) !important;
+        }
+        .prop-section {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #db2777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(244,114,182,0.2);
+        }
+        .color-swatch-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .color-swatch {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .color-swatch:hover, .color-swatch.active {
+            border-color: #f472b6;
+            transform: scale(1.2);
+        }
+        .prop-select {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        body.dark-mode .prop-select {
+            background: rgba(20,10,30,0.9) !important;
+            color: #f1f5f9 !important;
+            border-color: rgba(244,114,182,0.3) !important;
+        }
+        .slide-editor-toolbar {
+            background: rgba(255,255,255,0.95);
+            border-bottom: 1.5px solid rgba(244,114,182,0.15);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        body.dark-mode .slide-editor-toolbar {
+            background: rgba(20,10,30,0.98) !important;
+            border-bottom-color: rgba(244,114,182,0.2) !important;
+        }
+        .toolbar-btn {
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(244,114,182,0.3);
+            background: white;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .toolbar-btn:hover {
+            background: #fce7f3;
+            color: #db2777;
+            border-color: #f472b6;
+        }
+        body.dark-mode .toolbar-btn {
+            background: rgba(30,15,40,0.9) !important;
+            color: #cbd5e1 !important;
+        }
+        .toolbar-sep { width: 1px; height: 20px; background: rgba(244,114,182,0.2); margin: 0 4px; }
+
     </style>
 </head>
 <body>
@@ -1065,6 +1391,11 @@
             <div class="header-right">
                 <a href="mailto:anhthuvu8307@gmail.com" class="header-badge-pill" style="text-decoration:none;" title="Email liên hệ">✉️ anhthuvu8307@gmail.com</a>
                 <div class="header-badge-pill">📞 0332 547 633</div>
+                <!-- Dark/Light mode toggle -->
+                <div class="header-badge-pill" style="cursor:pointer;padding:6px 14px;font-weight:800;background:linear-gradient(135deg,#fde8f2,#f0f9ff);color:var(--pink-dark);box-shadow:0 2px 8px rgba(244,114,182,0.15);" onclick="toggleDarkMode()" title="Chuyển chế độ Sáng / Tối" id="dark-mode-btn">
+                    <span id="dark-mode-icon" style="font-size:13px;margin-right:5px;">🌙</span>
+                    <span id="dark-mode-label" style="font-size:11.5px;">Giao diện Tối</span>
+                </div>
                 <div class="header-badge-pill" style="cursor:pointer;font-weight:800;background:linear-gradient(135deg,#fde8f2,#f0f9ff);color:var(--pink-dark);" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ">
                     👤 <span id="header-name-badge">Vũ Anh Thư</span>
                 </div>
@@ -1569,7 +1900,7 @@
                         <button id="toggle-edit-btn" class="btn-white-glass" onclick="toggleReportEdit()" style="font-size:11.5px;padding:7px 14px;">
                             ✏️ Sửa thủ công
                         </button>
-                        <button class="btn-white-glass" onclick="openSlidePresentation()" style="font-size:11.5px;padding:7px 14px;border-color:rgba(125,211,252,0.6);color:#0369a1;">
+                        <button class="btn-white-glass" onclick="navigateToPage('page-slides')" style="font-size:11.5px;padding:7px 14px;border-color:rgba(125,211,252,0.6);color:#0369a1;">
                             🎞️ Slide trình bày
                         </button>
                         <button class="btn-pink-glass" onclick="approveAndDownloadReport()" style="font-size:11.5px;padding:7px 14px;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.3);">
@@ -1618,6 +1949,124 @@
                 </div>
             </div>
 
+        </div>
+
+
+        <!-- ========================================================
+             TRANG SLIDE EDITOR (PAGE-SLIDES)
+             ======================================================== -->
+        <div id="page-slides" class="page-view" style="display:none;">
+            <div class="glass-card" style="padding:14px 20px;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="btn-white-glass" onclick="navigateToPage('page-dash')" style="font-size:11.5px;padding:7px 14px;">← Báo cáo</button>
+                        <div>
+                            <span class="pipeline-badge-tag">Trình chiếu</span>
+                            <span style="font-size:16px;font-weight:800;color:var(--text-dark);margin-left:6px;">🎞️ Slide Trình Bày Tự Động</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="btn-white-glass" onclick="addNewSlide()" style="font-size:11.5px;padding:7px 14px;">➕ Thêm slide</button>
+                        <button class="btn-white-glass" onclick="deleteCurrentSlide()" style="font-size:11.5px;padding:7px 14px;color:#ef4444;border-color:rgba(239,68,68,0.3);">🗑️ Xóa</button>
+                        <button class="btn-pink-glass" onclick="startSlideShow()" style="font-size:11.5px;padding:7px 16px;">▶ Trình chiếu</button>
+                        <button class="btn-pink-glass" onclick="downloadSlides()" style="font-size:11.5px;padding:7px 14px;background:linear-gradient(135deg,#10b981,#059669);">📥 Tải HTML</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-editor-wrap">
+                <!-- LEFT panel -->
+                <div class="slide-panel-left">
+                    <div class="slide-panel-left-header">
+                        <span>📋 Danh sách slide</span>
+                        <span id="slide-total-badge" style="background:#fce7f3;color:#db2777;padding:2px 8px;border-radius:9999px;font-size:10px;">0 slide</span>
+                    </div>
+                    <div class="slide-thumbs-list" id="slide-thumbs-container"></div>
+                </div>
+
+                <!-- CENTER -->
+                <div style="display:flex;flex-direction:column;overflow:hidden;">
+                    <div class="slide-editor-toolbar">
+                        <span style="font-size:11px;font-weight:700;color:#94a3b8;">Font:</span>
+                        <select id="slide-font-select" class="prop-select" style="width:130px;margin:0;" onchange="applyFontToSlide()">
+                            <option value="'Plus Jakarta Sans',sans-serif">Plus Jakarta Sans</option>
+                            <option value="'Inter',sans-serif">Inter</option>
+                            <option value="Georgia,serif">Georgia</option>
+                            <option value="Arial,sans-serif">Arial</option>
+                        </select>
+                        <select id="slide-fontsize-select" class="prop-select" style="width:70px;margin:0;" onchange="applyFontSizeToSlide()">
+                            <option value="11">11px</option><option value="12">12px</option>
+                            <option value="13" selected>13px</option><option value="14">14px</option>
+                            <option value="16">16px</option><option value="18">18px</option><option value="20">20px</option>
+                        </select>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" onclick="document.execCommand('bold')" title="Bold"><b>B</b></button>
+                        <button class="toolbar-btn" onclick="document.execCommand('italic')" title="Italic"><i>I</i></button>
+                        <button class="toolbar-btn" onclick="document.execCommand('underline')" title="Underline"><u>U</u></button>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" onclick="triggerImageUpload()">🖼️ Thêm ảnh</button>
+                        <button class="toolbar-btn" onclick="addTextBoxToSlide()">📝 Text box</button>
+                        <button class="toolbar-btn" onclick="addKPIBoxToSlide()">📊 KPI box</button>
+                        <input type="file" id="img-upload-input" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+                    </div>
+                    <div class="slide-canvas-area" id="slide-canvas-area">
+                        <div id="slide-canvas-frame" class="slide-canvas">
+                            <div id="slide-active-content" contenteditable="true" style="width:100%;height:100%;position:relative;outline:none;"></div>
+                        </div>
+                        <div style="font-size:11.5px;color:#94a3b8;text-align:center;">💡 Nhấp vào nội dung để chỉnh sửa • Dùng toolbar để định dạng</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT panel -->
+                <div class="slide-panel-right">
+                    <div class="prop-section">🎨 Màu nền slide</div>
+                    <div class="color-swatch-row" id="theme-swatches"></div>
+                    <div style="margin-bottom:4px;font-size:11px;font-weight:700;color:#64748b;">Gradient tùy chỉnh:</div>
+                    <div style="display:flex;gap:6px;margin-bottom:12px;">
+                        <input type="color" id="grad-color-1" value="#fce4f1" style="width:36px;height:28px;border:none;border-radius:8px;cursor:pointer;">
+                        <input type="color" id="grad-color-2" value="#f0f9ff" style="width:36px;height:28px;border:none;border-radius:8px;cursor:pointer;">
+                        <button onclick="applyCustomGradient()" class="toolbar-btn" style="flex:1;font-size:11px;">Áp dụng</button>
+                    </div>
+
+                    <div class="prop-section">📐 Bố cục</div>
+                    <select id="slide-layout-select" class="prop-select" onchange="applyLayoutToSlide()">
+                        <option value="center">Cover (Trung tâm)</option>
+                        <option value="left-content" selected>Tiêu đề + Nội dung</option>
+                        <option value="two-col">Hai cột</option>
+                        <option value="kpi-grid">KPI Grid</option>
+                        <option value="closing">Kết thúc</option>
+                    </select>
+
+                    <div class="prop-section">✨ Chèn slide nhanh</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertKPISummarySlide()">📊 KPI tổng quan</button>
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertCategorySlide()">📂 Danh mục/Kênh</button>
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertTrendSlide()">📈 Xu hướng thời gian</button>
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertInsightSlide()">💡 Nhận xét đề xuất</button>
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertActionSlide()">⚡ Vấn đề & hành động</button>
+                        <button class="toolbar-btn" style="justify-content:flex-start;" onclick="insertClosingSlide()">🙏 Kết thúc</button>
+                    </div>
+
+                    <div class="prop-section" style="margin-top:8px;">📌 Thông tin slide</div>
+                    <div id="slide-info-panel" style="font-size:11.5px;color:var(--text-muted);line-height:1.6;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full screen slide show -->
+        <div id="fullscreen-slideshow" style="display:none;position:fixed;inset:0;background:#0a0f1e;z-index:9900;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="position:fixed;top:0;left:0;right:0;padding:12px 24px;background:rgba(10,15,30,0.85);display:flex;justify-content:space-between;align-items:center;z-index:9901;backdrop-filter:blur(10px);">
+                <span style="color:white;font-weight:800;font-size:14px;">🎞️ Slide Trình Bày</span>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <button onclick="fsSlide(-1)" style="padding:7px 16px;border:1.5px solid rgba(255,255,255,0.3);border-radius:9999px;background:rgba(255,255,255,0.1);color:white;font-size:12px;cursor:pointer;">◀ Trước</button>
+                    <span id="fs-counter" style="color:rgba(255,255,255,0.6);font-size:12px;"></span>
+                    <button onclick="fsSlide(1)" style="padding:7px 16px;border:none;border-radius:9999px;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-size:12px;font-weight:800;cursor:pointer;">Tiếp ▶</button>
+                    <button onclick="closeFullscreenSlideshow()" style="padding:7px 14px;border:1.5px solid rgba(255,255,255,0.2);border-radius:9999px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;">✕</button>
+                </div>
+            </div>
+            <div id="fs-slide-view" style="margin-top:60px;width:min(960px,95vw);aspect-ratio:16/10;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);"></div>
+            <div id="fs-dots" style="display:flex;gap:8px;margin-top:14px;"></div>
+            <div style="margin-top:8px;font-size:11px;color:rgba(255,255,255,0.3);">← → phím mũi tên | Esc đóng</div>
         </div>
 
     </div><!-- End app-container -->
@@ -1836,7 +2285,8 @@
             const steps = [
                 { id: 'page-home', step: 'step-nav-1' },
                 { id: 'page-ingest', step: 'step-nav-2' },
-                { id: 'page-dash', step: 'step-nav-3' }
+                { id: 'page-dash', step: 'step-nav-3' },
+                { id: 'page-slides', step: 'step-nav-3' }
             ];
             steps.forEach(s => {
                 const stepEl = document.getElementById(s.step);
@@ -1849,6 +2299,13 @@
             // If navigating to page-dash, render seamless dashboard dynamically
             if (pageId === 'page-dash') {
                 renderPage3Dynamic(currentDataset);
+            }
+
+            // If navigating to page-slides, build and display slides
+            if (pageId === 'page-slides') {
+                if (typeof buildAllSlides === 'function') {
+                    buildAllSlides();
+                }
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2275,185 +2732,6 @@
             }
         }
 
-        function executeCleanCommand() {
-            const inp = document.getElementById('cmd-clean-input');
-            const resultEl = document.getElementById('cmd-clean-result');
-            if (!inp) return;
-            const rawCmd = inp.value.trim();
-            if (!rawCmd) {
-                showCmdResult('⚠️ Vui lòng nhập lệnh trước khi thực thi!', false);
-                return;
-            }
-            const cmd = rawCmd.toLowerCase()
-                .normalize('NFC');
-
-            if (!inspectorData || inspectorData.length === 0) {
-                showCmdResult('⚠️ Chưa có dữ liệu để xử lý. Vui lòng tải file lên trước!', false);
-                return;
-            }
-
-            let fixed = 0;
-            const beforeCount = inspectorData.length;
-
-            // ---- HELPER: normalize text for comparison ----
-            function normText(s) {
-                return String(s || '').trim().toLowerCase()
-                    .normalize('NFC')
-                    .replace(/\s+/g, ' ');
-            }
-
-            // ---- HELPER: find best matching column name ----
-            function findCol(hint) {
-                hint = normText(hint);
-                // exact match
-                for (const col of inspectorColumns) {
-                    if (normText(col) === hint) return col;
-                }
-                // includes match
-                for (const col of inspectorColumns) {
-                    if (normText(col).includes(hint) || hint.includes(normText(col))) return col;
-                }
-                // partial word match
-                const words = hint.split(/\s+/).filter(w => w.length > 2);
-                for (const col of inspectorColumns) {
-                    const cl = normText(col);
-                    if (words.some(w => cl.includes(w))) return col;
-                }
-                return null;
-            }
-
-            // ===================================================
-            // CASE 1: DELETE / LOẠI BỎ / XÓA rows
-            // Pattern: "loại bỏ ... <col> là/= <val>"
-            // ===================================================
-            const isDelete = /loại bỏ|xóa|xoá|delete|remove|lọc bỏ/.test(cmd);
-            if (isDelete) {
-                // Extract: "... <column_phrase> là/bằng/= <value>"
-                const colValRe = /(?:có\s+)?(.+?)\s+(?:là|bằng|=|==)\s+["""']?([^"'""]+?)["""']?\s*$/;
-                const m = cmd.match(colValRe);
-                if (m) {
-                    const colHint = m[1].replace(/(?:loại bỏ|xóa|xoá|delete|remove|lọc bỏ|các dòng có|các dữ liệu có|dòng có|dữ liệu có|các|dòng|hàng|row)/g, '').trim();
-                    const targetVal = m[2].trim();
-                    const targetCol = findCol(colHint);
-                    if (targetCol) {
-                        const newData = inspectorData.filter(row => !normText(row[targetCol]).includes(normText(targetVal)));
-                        fixed = inspectorData.length - newData.length;
-                        inspectorData = newData;
-                        renderEditableTable(inspectorColumns, inspectorData);
-                        scanDataErrors();
-                        inp.value = '';
-                        document.getElementById('cmd-clean-panel').style.display = 'none';
-                        showCmdResult(`✅ Đã xóa ${fixed} dòng có cột "${targetCol}" chứa "${targetVal}". Còn lại ${inspectorData.length} dòng.`, true);
-                        return;
-                    } else {
-                        showCmdResult(`⚠️ Không tìm thấy cột phù hợp với "${colHint}". Các cột hiện có: ${inspectorColumns.join(', ')}`, false);
-                        return;
-                    }
-                }
-                showCmdResult('⚠️ Không hiểu lệnh xóa. Dùng mẫu: "Loại bỏ các dòng có Khu vực là Hà Nội"', false);
-                return;
-            }
-
-            // ===================================================
-            // CASE 2: FILL EMPTY / ĐIỀN Ô TRỐNG
-            // ===================================================
-            if (/điền|fill|thay thế|thay ô trống|lấp đầy/.test(cmd)) {
-                const fillRe = /(?:điền|fill|thay thế?)\s+(?:ô\s+trống\s+)?(.+?)\s+(?:bằng|thành|với|=)\s+["""']?([^"'""]+?)["""']?\s*$/;
-                const m = cmd.match(fillRe);
-                let fillCol = null, fillVal = 'Chưa xác định';
-                if (m) {
-                    fillCol = findCol(m[1].trim());
-                    fillVal = m[2].trim();
-                }
-                inspectorData.forEach(r => {
-                    inspectorColumns.forEach(c => {
-                        if (fillCol && c !== fillCol) return;
-                        const v = String(r[c] !== undefined ? r[c] : '').trim();
-                        if (!v || v === 'null' || v === 'undefined') { r[c] = fillVal; fixed++; }
-                    });
-                });
-                renderEditableTable(inspectorColumns, inspectorData);
-                scanDataErrors();
-                inp.value = '';
-                document.getElementById('cmd-clean-panel').style.display = 'none';
-                showCmdResult(`✅ Đã điền ${fixed} ô trống${fillCol ? ` trong cột "${fillCol}"` : ''} với giá trị "${fillVal}"`, true);
-                return;
-            }
-
-            // ===================================================
-            // CASE 3: REMOVE DUPLICATES
-            // ===================================================
-            if (/trùng|duplicate|trùng lặp/.test(cmd)) {
-                const before = inspectorData.length;
-                const seen = new Set();
-                inspectorData = inspectorData.filter(r => {
-                    const key = JSON.stringify(r);
-                    if (seen.has(key)) return false;
-                    seen.add(key); return true;
-                });
-                fixed = before - inspectorData.length;
-                renderEditableTable(inspectorColumns, inspectorData);
-                scanDataErrors();
-                inp.value = '';
-                document.getElementById('cmd-clean-panel').style.display = 'none';
-                showCmdResult(`✅ Đã xóa ${fixed} dòng trùng lặp. Còn lại ${inspectorData.length} dòng.`, true);
-                return;
-            }
-
-            // ===================================================
-            // CASE 4: CAPITALIZE / CHUẨN HÓA
-            // ===================================================
-            if (/viết hoa|chuẩn hóa|capitalize|normalize/.test(cmd)) {
-                inspectorData.forEach(r => {
-                    inspectorColumns.forEach(c => {
-                        if (typeof r[c] === 'string') { r[c] = cleanVietnameseText(r[c].trim()); fixed++; }
-                    });
-                });
-                renderEditableTable(inspectorColumns, inspectorData);
-                scanDataErrors();
-                inp.value = '';
-                document.getElementById('cmd-clean-panel').style.display = 'none';
-                showCmdResult(`✅ Đã chuẩn hóa ${fixed} ô dữ liệu văn bản.`, true);
-                return;
-            }
-
-            // ===================================================
-            // CASE 5: FILL EMPTY NUMBERS WITH 0
-            // ===================================================
-            if (/số 0|thành 0|= 0|fill.*0/.test(cmd)) {
-                const numCols = inspectorColumns.filter(c => {
-                    const cl = c.toLowerCase();
-                    return cl.includes('thu') || cl.includes('phi') || cl.includes('lợi') || cl.includes('số lượng') || cl.includes('giá');
-                });
-                inspectorData.forEach(r => {
-                    (numCols.length ? numCols : inspectorColumns).forEach(c => {
-                        const v = String(r[c] !== undefined ? r[c] : '').trim();
-                        if (!v || v === 'null') { r[c] = 0; fixed++; }
-                    });
-                });
-                renderEditableTable(inspectorColumns, inspectorData);
-                scanDataErrors();
-                inp.value = '';
-                document.getElementById('cmd-clean-panel').style.display = 'none';
-                showCmdResult(`✅ Đã điền 0 cho ${fixed} ô số trống.`, true);
-                return;
-            }
-
-            showCmdResult('⚠️ Lệnh chưa được nhận dạng. Thử: "Loại bỏ các dòng có [Cột] là [Giá trị]" hoặc "Điền ô trống [Cột] bằng [Giá trị]"', false);
-        }
-
-        function showCmdResult(msg, success) {
-            const el = document.getElementById('cmd-clean-result');
-            if (!el) return;
-            el.textContent = msg;
-            el.style.display = 'block';
-            el.style.background = success ? '#f0fdf4' : '#fff7ed';
-            el.style.border = `1px solid ${success ? '#bbf7d0' : '#fed7aa'}`;
-            el.style.color = success ? '#059669' : '#c2410c';
-            setTimeout(() => { el.style.display = 'none'; }, 6000);
-        }
-
-        
         function aiAutoCleanData() {
             let fixed = 0;
             inspectorData.forEach(r => {
@@ -3558,6 +3836,664 @@
             if (modal && e.target === modal) closeSlideModal();
         });
 
-    </script>
+    
+        // ========================================================
+        // DARK MODE
+        // ========================================================
+        let darkMode = false;
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            const label = document.getElementById('dark-mode-label');
+            const icon = document.getElementById('dark-mode-icon');
+            if (label) label.textContent = darkMode ? 'Giao diện Sáng' : 'Giao diện Tối';
+            if (icon) icon.textContent = darkMode ? '☀️' : '🌙';
+            localStorage.setItem('dark-mode', darkMode ? '1' : '0');
+        }
+        // Restore on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('dark-mode') === '1') toggleDarkMode();
+        });
+
+        // ========================================================
+        // RIPPLE CLICK EFFECT
+        // ========================================================
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, .btn-pink-glass, .btn-white-glass, .nav-link-pill, .sub-nav-item, .stepper-step-box');
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 1.5;
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px;`;
+            target.style.position = 'relative';
+            target.style.overflow = 'hidden';
+            target.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 700);
+        });
+
+        // ========================================================
+        // CURSOR SPARKLE on click
+        // ========================================================
+        document.addEventListener('click', function(e) {
+            const colors = ['#f472b6','#7dd3fc','#a78bfa','#34d399','#fbbf24'];
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const spark = document.createElement('div');
+                    spark.className = 'cursor-spark';
+                    const angle = (Math.random() * 360) * Math.PI / 180;
+                    const dist  = 20 + Math.random() * 30;
+                    spark.style.cssText = `
+                        left: ${e.clientX + Math.cos(angle)*dist - 4}px;
+                        top:  ${e.clientY + Math.sin(angle)*dist - 4}px;
+                        background: ${colors[i % colors.length]};
+                    `;
+                    document.body.appendChild(spark);
+                    setTimeout(() => spark.remove(), 800);
+                }, i * 60);
+            }
+        });
+
+        // ========================================================
+        // SMART AI CLEAN COMMAND (robust NLP)
+        // ========================================================
+        function smartNLPClean(rawCmd) {
+            if (!inspectorData || inspectorData.length === 0) {
+                return { ok: false, msg: '⚠️ Chưa có dữ liệu để xử lý. Hãy tải file lên trước!' };
+            }
+
+            const cmd = rawCmd.toLowerCase().normalize('NFC').replace(/\s+/g, ' ').trim();
+            const before = inspectorData.length;
+            let fixed = 0;
+
+            function norm(s) {
+                return String(s || '').toLowerCase().normalize('NFC').replace(/\s+/g, ' ').trim();
+            }
+
+            function stripAccents(str) {
+                return String(str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+            }
+
+            function findBestCol(hint) {
+                if (!hint) return null;
+                const hNorm = norm(hint).replace(/^(cột|column|trường|field|các dữ liệu|dữ liệu|các dòng|dòng)\s+/, '').trim();
+                const hStrip = stripAccents(hNorm);
+
+                // 1. Exact match
+                for (const c of inspectorColumns) {
+                    if (norm(c) === hNorm || stripAccents(c) === hStrip) return c;
+                }
+
+                // 2. Column aliases mapping
+                const aliases = {
+                    'khu vuc': ['khu vực', 'khu vuc', 'vùng', 'địa bàn', 'tỉnh', 'thành phố'],
+                    'kenh': ['kênh bán', 'kênh', 'kenh', 'hành vi', 'kênh phân phối'],
+                    'san pham': ['sản phẩm', 'mặt hàng', 'san pham', 'tên sp', 'hàng hóa'],
+                    'doanh thu': ['doanh thu', 'doanh số', 'revenue', 'tiền bán'],
+                    'chi phi': ['chi phí', 'giá vốn', 'cost'],
+                    'loi nhuan': ['lợi nhuận', 'lãi', 'profit'],
+                    'so luong': ['số lượng', 'số đơn', 'sl', 'quantity', 'đơn'],
+                    'thang': ['tháng', 'kỳ', 'thời gian', 'ngày', 'date'],
+                    'ma don': ['mã đơn', 'mã dòng', 'id', 'stt']
+                };
+
+                for (const [key, list] of Object.entries(aliases)) {
+                    if (list.some(a => hStrip.includes(a) || a.includes(hStrip))) {
+                        for (const c of inspectorColumns) {
+                            const cStrip = stripAccents(c);
+                            if (list.some(a => cStrip.includes(a) || a.includes(cStrip))) return c;
+                        }
+                    }
+                }
+
+                // 3. Substring match
+                for (const c of inspectorColumns) {
+                    const cNorm = norm(c);
+                    const cStrip = stripAccents(c);
+                    if (cNorm.includes(hNorm) || hNorm.includes(cNorm) || cStrip.includes(hStrip) || hStrip.includes(cStrip)) {
+                        return c;
+                    }
+                }
+
+                // 4. Word-by-word intersection
+                const words = hStrip.split(' ').filter(w => w.length > 2);
+                for (const c of inspectorColumns) {
+                    const cStrip = stripAccents(c);
+                    if (words.some(w => cStrip.includes(w))) return c;
+                }
+
+                return null;
+            }
+
+            // ========================================================
+            // CASE 1: DELETE / LOẠI BỎ / XÓA
+            // ========================================================
+            const delKws = ['loại bỏ', 'xóa', 'xoá', 'delete', 'remove', 'lọc bỏ', 'bỏ đi', 'bỏ những', 'bỏ'];
+            if (delKws.some(k => cmd.includes(k))) {
+                let targetCol = null;
+                let targetVal = null;
+
+                // Subcase 1A: With separators: "là", "bằng", "=", "=="
+                const seps = [' là ', ' bằng ', ' = ', ' == ', '='];
+                for (const sep of seps) {
+                    const idx = cmd.lastIndexOf(sep);
+                    if (idx !== -1) {
+                        targetVal = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        let beforeSep = cmd.substring(0, idx);
+                        for (const k of delKws) beforeSep = beforeSep.replace(k, '');
+                        beforeSep = beforeSep.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').trim();
+                        targetCol = findBestCol(beforeSep);
+                        if (targetCol && targetVal) break;
+                    }
+                }
+
+                // Subcase 1B: No separator, e.g. "xóa khu vực Hà Nội" or "loại bỏ dòng khu vực Hà Nội"
+                if (!targetCol || !targetVal) {
+                    let cleanCmd = cmd;
+                    for (const k of delKws) cleanCmd = cleanCmd.replace(k, '');
+                    cleanCmd = cleanCmd.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').trim();
+
+                    for (const col of inspectorColumns) {
+                        const colNorm = norm(col);
+                        const colStrip = stripAccents(col);
+                        if (cleanCmd.includes(colNorm) || stripAccents(cleanCmd).includes(colStrip)) {
+                            targetCol = col;
+                            targetVal = cleanCmd.replace(colNorm, '').replace(colStrip, '').replace(/["""'']/g, '').trim();
+                            break;
+                        }
+                    }
+                }
+
+                // Subcase 1C: Value only, e.g. "Xóa Hà Nội" or "Loại bỏ Hà Nội"
+                // AI searches which column currently contains this value!
+                if (!targetCol || !targetVal) {
+                    let cleanCmd = cmd;
+                    for (const k of delKws) cleanCmd = cleanCmd.replace(k, '');
+                    cleanCmd = cleanCmd.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').replace(/["""'']/g, '').trim();
+
+                    if (cleanCmd.length >= 2) {
+                        for (const col of inspectorColumns) {
+                            if (inspectorData.some(row => norm(row[col]).includes(norm(cleanCmd)))) {
+                                targetCol = col;
+                                targetVal = cleanCmd;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (targetCol && targetVal) {
+                    const newData = inspectorData.filter(row => !norm(row[targetCol]).includes(norm(targetVal)));
+                    const removed = inspectorData.length - newData.length;
+                    inspectorData = newData;
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: `✅ Đã xóa ${removed} dòng có "${targetCol}" chứa "${targetVal}". Dữ liệu còn lại: ${inspectorData.length} dòng.`
+                    };
+                }
+
+                // Subcase 1D: Delete empty rows: "xóa các dòng trống", "loại bỏ ô trống"
+                if (cmd.includes('trống') || cmd.includes('empty') || cmd.includes('null')) {
+                    const newData = inspectorData.filter(row => {
+                        return inspectorColumns.every(col => {
+                            const v = String(row[col] !== undefined ? row[col] : '').trim();
+                            return v !== '' && v !== 'null';
+                        });
+                    });
+                    const removed = inspectorData.length - newData.length;
+                    inspectorData = newData;
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return { ok: true, msg: `✅ Đã xóa ${removed} dòng có chứa ô trống. Còn lại: ${inspectorData.length} dòng.` };
+                }
+            }
+
+            // ========================================================
+            // CASE 2: FILL EMPTY / ĐIỀN Ô TRỐNG
+            // ========================================================
+            if (/điền|fill|thay thế|lấp đầy|bổ sung/.test(cmd)) {
+                let fillCol = null;
+                let fillVal = 'Toàn quốc';
+
+                const seps = [' là ', ' bằng ', ' thành ', ' với giá trị ', ' = '];
+                for (const sep of seps) {
+                    const idx = cmd.lastIndexOf(sep);
+                    if (idx !== -1) {
+                        fillVal = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        let beforeSep = cmd.substring(0, idx);
+                        beforeSep = beforeSep.replace(/điền|fill|thay thế|lấp đầy|ô trống|trong cột|ở cột|cột/g, '').trim();
+                        fillCol = findBestCol(beforeSep);
+                        break;
+                    }
+                }
+
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        if (fillCol && c !== fillCol) return;
+                        const v = String(r[c] !== undefined ? r[c] : '').trim();
+                        if (!v || v === 'null' || v === 'undefined') {
+                            r[c] = fillVal || 'Chưa xác định';
+                            fixed++;
+                        }
+                    });
+                });
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                return { ok: true, msg: `✅ Đã điền ${fixed} ô trống${fillCol ? ` trong cột "${fillCol}"` : ''} bằng "${fillVal}".` };
+            }
+
+            // ========================================================
+            // CASE 3: REMOVE DUPLICATES / XÓA TRÙNG LẶP
+            // ========================================================
+            if (/trùng|duplicate|lặp/.test(cmd)) {
+                const seen = new Set();
+                inspectorData = inspectorData.filter(r => {
+                    const key = JSON.stringify(r);
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+                fixed = before - inspectorData.length;
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                return { ok: true, msg: `✅ Đã loại bỏ ${fixed} dòng trùng lặp. Dữ liệu còn lại: ${inspectorData.length} dòng.` };
+            }
+
+            // ========================================================
+            // CASE 4: CAPITALIZE / CHUẨN HÓA VIẾT HOA
+            // ========================================================
+            if (/viết hoa|chuẩn hóa|capitalize|chỉnh hoa|in hoa/.test(cmd)) {
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        if (typeof r[c] === 'string') {
+                            r[c] = cleanVietnameseText(r[c].trim());
+                            fixed++;
+                        }
+                    });
+                });
+                renderEditableTable(inspectorColumns, inspectorData);
+                return { ok: true, msg: `✅ Đã chuẩn hóa viết hoa và xóa lỗi khoảng trắng cho ${fixed} ô dữ liệu.` };
+            }
+
+            // ========================================================
+            // CASE 5: FILL ZERO IN NUMBER COLUMNS
+            // ========================================================
+            if (/thành 0|= 0|số 0|fill.*0|điền 0/.test(cmd)) {
+                const numCols = inspectorColumns.filter(c => /thu|phi|lợi|số lượng|giá|cost|rev|profit|amount/i.test(norm(c)));
+                (numCols.length ? numCols : inspectorColumns).forEach(c => {
+                    inspectorData.forEach(r => {
+                        const v = String(r[c] !== undefined ? r[c] : '').trim();
+                        if (!v || v === 'null') { r[c] = 0; fixed++; }
+                    });
+                });
+                renderEditableTable(inspectorColumns, inspectorData);
+                return { ok: true, msg: `✅ Đã điền số 0 cho ${fixed} ô số còn trống.` };
+            }
+
+            // ========================================================
+            // CASE 6: KEEP ONLY MATCHING ROWS (CHỈ GIỮ LẠI)
+            // ========================================================
+            if (/giữ lại|chỉ giữ|lọc lấy|keep/.test(cmd)) {
+                const seps = [' là ', ' bằng ', ' = '];
+                for (const sep of seps) {
+                    const idx = cmd.lastIndexOf(sep);
+                    if (idx !== -1) {
+                        const val = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        const colHint = cmd.substring(0, idx).replace(/giữ lại|chỉ giữ|lọc lấy|keep|các dòng có|có/g, '').trim();
+                        const col = findBestCol(colHint);
+                        if (col && val) {
+                            const newData = inspectorData.filter(r => norm(r[col]).includes(norm(val)));
+                            fixed = inspectorData.length - newData.length;
+                            inspectorData = newData;
+                            renderEditableTable(inspectorColumns, inspectorData);
+                            scanDataErrors();
+                            return { ok: true, msg: `✅ Chỉ giữ ${inspectorData.length} dòng có "${col}" chứa "${val}". Đã loại bỏ ${fixed} dòng.` };
+                        }
+                    }
+                }
+            }
+
+            return {
+                ok: false,
+                msg: `⚠️ AI chưa hiểu rõ lệnh: "${rawCmd}".\n\n💡 Gợi ý lệnh mẫu:\n• "Loại bỏ các dữ liệu có khu vực là Hà Nội"\n• "Xóa khu vực Hà Nội" hoặc "Xóa Hà Nội"\n• "Điền ô trống Khu vực bằng Toàn quốc"\n• "Xóa các dòng trùng lặp"\n• "Chuẩn hóa viết hoa toàn bộ"`
+            };
+        }
+
+        function executeCleanCommand() {
+            const inp = document.getElementById('cmd-clean-input');
+            if (!inp || !inp.value.trim()) {
+                showCmdResult('⚠️ Vui lòng nhập lệnh trước khi bấm thực thi!', false);
+                return;
+            }
+            const result = smartNLPClean(inp.value.trim());
+            inp.value = '';
+            if (result.ok) {
+                const panel = document.getElementById('cmd-clean-panel');
+                if (panel) panel.style.display = 'none';
+            }
+            showCmdResult(result.msg, result.ok);
+        }
+
+        function showCmdResult(msg, success) {
+            const el = document.getElementById('cmd-clean-result');
+            if (!el) {
+                alert(msg);
+                return;
+            }
+            el.innerHTML = msg.replace(/\n/g, '<br>');
+            el.style.display = 'block';
+            el.style.background = success ? '#f0fdf4' : '#fff7ed';
+            el.style.border = `1.5px solid ${success ? '#bbf7d0' : '#fed7aa'}`;
+            el.style.color = success ? '#059669' : '#c2410c';
+            setTimeout(() => { el.style.display = 'none'; }, 7000);
+        }
+
+        // ========================================================
+        // SLIDE EDITOR ENGINE
+        // ========================================================
+        const SLIDE_THEMES = [
+            { name:'Hồng pastel', bg:'linear-gradient(135deg,#fce4f1 0%,#f0f9ff 100%)', accent:'#f472b6' },
+            { name:'Xanh dương', bg:'linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%)', accent:'#3b82f6' },
+            { name:'Xanh lá', bg:'linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)', accent:'#10b981' },
+            { name:'Vàng pastel', bg:'linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%)', accent:'#f59e0b' },
+            { name:'Tím', bg:'linear-gradient(135deg,#faf5ff 0%,#ede9fe 100%)', accent:'#8b5cf6' },
+            { name:'Đỏ', bg:'linear-gradient(135deg,#fff1f2 0%,#fee2e2 100%)', accent:'#ef4444' },
+            { name:'Tối (Dark)', bg:'linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%)', accent:'#f472b6' },
+            { name:'Hồng+Xanh', bg:'linear-gradient(135deg,#fce4f1 0%,#fdf4fc 50%,#f0f9ff 100%)', accent:'#f472b6' },
+        ];
+
+        let editorSlides = [];
+        let activeSlideIdx = 0;
+        let currentThemeIdx = 0;
+
+        function initSlideEditor() {
+            if (editorSlides.length > 0) return;
+            buildAllSlides();
+        }
+
+        function buildAllSlides() {
+            editorSlides = buildSlideData();
+            activeSlideIdx = 0;
+            renderAllThumbs();
+            renderActiveSlide();
+            buildThemeSwatches();
+            updateSlideInfo();
+        }
+
+        function buildThemeSwatches() {
+            const container = document.getElementById('theme-swatches');
+            if (!container) return;
+            container.innerHTML = SLIDE_THEMES.map((t, i) => `
+                <div class="color-swatch ${i===currentThemeIdx?'active':''}" 
+                     style="background:${t.bg};border:2px solid ${t.accent};"
+                     onclick="applyTheme(${i})" title="${t.name}">
+                </div>`).join('');
+        }
+
+        function applyTheme(idx) {
+            currentThemeIdx = idx;
+            const theme = SLIDE_THEMES[idx];
+            if (editorSlides[activeSlideIdx]) {
+                editorSlides[activeSlideIdx].bg = theme.bg;
+                editorSlides[activeSlideIdx].accent = theme.accent;
+            }
+            renderActiveSlide();
+            renderAllThumbs();
+            buildThemeSwatches();
+        }
+
+        function applyCustomGradient() {
+            const c1 = document.getElementById('grad-color-1').value;
+            const c2 = document.getElementById('grad-color-2').value;
+            if (editorSlides[activeSlideIdx]) {
+                editorSlides[activeSlideIdx].bg = `linear-gradient(135deg,${c1},${c2})`;
+            }
+            renderActiveSlide();
+            renderAllThumbs();
+        }
+
+        function renderAllThumbs() {
+            const container = document.getElementById('slide-thumbs-container');
+            if (!container) return;
+            const badge = document.getElementById('slide-total-badge');
+            if (badge) badge.textContent = `${editorSlides.length} slide`;
+
+            container.innerHTML = editorSlides.map((s, i) => `
+                <div class="slide-thumb ${i===activeSlideIdx?'active':''}" 
+                     onclick="setActiveSlide(${i})"
+                     style="background:${s.bg};">
+                    <div style="padding:4px 6px;font-size:8px;font-weight:800;color:rgba(0,0,0,0.5);line-height:1.3;overflow:hidden;height:100%;">
+                        ${s.title || 'Slide ' + (i+1)}
+                    </div>
+                    <span class="slide-thumb-num">${i+1}</span>
+                </div>`).join('');
+        }
+
+        function renderActiveSlide() {
+            const frame = document.getElementById('slide-canvas-frame');
+            const content = document.getElementById('slide-active-content');
+            if (!frame || !content || !editorSlides[activeSlideIdx]) return;
+            const s = editorSlides[activeSlideIdx];
+            frame.style.background = s.bg;
+            content.innerHTML = s.content || '<p style="color:#94a3b8;text-align:center;padding:40px;">Slide trống</p>';
+            updateSlideInfo();
+        }
+
+        function setActiveSlide(idx) {
+            // Save current content before switching
+            const content = document.getElementById('slide-active-content');
+            if (content && editorSlides[activeSlideIdx]) {
+                editorSlides[activeSlideIdx].content = content.innerHTML;
+            }
+            activeSlideIdx = idx;
+            renderActiveSlide();
+            renderAllThumbs();
+        }
+
+        function updateSlideInfo() {
+            const info = document.getElementById('slide-info-panel');
+            if (!info) return;
+            const s = editorSlides[activeSlideIdx];
+            info.innerHTML = s ? `
+                <div>Slide <b>${activeSlideIdx+1}</b> / ${editorSlides.length}</div>
+                <div>Tiêu đề: <b>${s.title || '—'}</b></div>
+                <div style="margin-top:6px;font-size:10.5px;color:#94a3b8;">Nhấn vào slide để sửa nội dung</div>
+            ` : '';
+        }
+
+        function addNewSlide() {
+            editorSlides.push({
+                title: 'Slide mới',
+                bg: SLIDE_THEMES[currentThemeIdx].bg,
+                accent: SLIDE_THEMES[currentThemeIdx].accent,
+                content: `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px;text-align:center;">
+                    <h2 style="font-size:24px;font-weight:900;color:#0f172a;margin-bottom:12px;">Tiêu đề slide mới</h2>
+                    <p style="font-size:14px;color:#64748b;">Nhấp để chỉnh sửa nội dung này...</p>
+                </div>`
+            });
+            setActiveSlide(editorSlides.length - 1);
+        }
+
+        function deleteCurrentSlide() {
+            if (editorSlides.length <= 1) { alert('Cần ít nhất 1 slide!'); return; }
+            editorSlides.splice(activeSlideIdx, 1);
+            activeSlideIdx = Math.min(activeSlideIdx, editorSlides.length - 1);
+            renderAllThumbs();
+            renderActiveSlide();
+        }
+
+        function applyFontToSlide() {
+            const font = document.getElementById('slide-font-select').value;
+            const content = document.getElementById('slide-active-content');
+            if (content) content.style.fontFamily = font;
+        }
+
+        function applyFontSizeToSlide() {
+            const size = document.getElementById('slide-fontsize-select').value;
+            const content = document.getElementById('slide-active-content');
+            if (content) content.style.fontSize = size + 'px';
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('img-upload-input').click();
+        }
+
+        function handleImageUpload(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = 'max-width:60%;max-height:200px;border-radius:12px;display:block;margin:10px auto;cursor:move;box-shadow:0 4px 16px rgba(0,0,0,0.15);';
+                img.draggable = true;
+                const content = document.getElementById('slide-active-content');
+                if (content) content.appendChild(img);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function addTextBoxToSlide() {
+            const content = document.getElementById('slide-active-content');
+            if (!content) return;
+            const box = document.createElement('div');
+            box.contentEditable = 'true';
+            box.style.cssText = 'border:1.5px dashed rgba(244,114,182,0.5);border-radius:10px;padding:12px 16px;min-width:200px;min-height:50px;font-size:14px;color:#1e293b;margin:10px;cursor:text;outline:none;background:rgba(255,255,255,0.7);backdrop-filter:blur(4px);';
+            box.textContent = 'Nhập văn bản tại đây...';
+            content.appendChild(box);
+            box.focus();
+        }
+
+        function addKPIBoxToSlide() {
+            const st = inspectorData.length > 0 ? computeDynamicStats(inspectorData, inspectorColumns) : null;
+            const content = document.getElementById('slide-active-content');
+            if (!content) return;
+            const fmtV = n => typeof n === 'number' ? n.toLocaleString('vi-VN') : (n || '—');
+            const box = document.createElement('div');
+            box.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px;';
+            box.innerHTML = st ? [
+                {icon:'💰',label:'Doanh Thu',val:fmtV(st.totalRevenue)+' VND'},
+                {icon:'📈',label:'Lợi Nhuận',val:fmtV(st.totalProfit)+' VND'},
+                {icon:'📦',label:'Đơn Hàng',val:st.totalOrders.toLocaleString()},
+                {icon:'📊',label:'Biên LN',val:st.ros||'—'},
+            ].map(k=>`<div style="background:white;border-radius:12px;padding:12px;border-left:3px solid #f472b6;"><div style="font-size:18px;">${k.icon}</div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;">${k.label}</div><div style="font-size:16px;font-weight:900;color:#0f172a;">${k.val}</div></div>`).join('')
+            : '<div style="color:#94a3b8;font-size:12px;">Chưa có dữ liệu</div>';
+            content.appendChild(box);
+        }
+
+        // Quick insert slides
+        function insertKPISummarySlide() {
+            const st = inspectorData.length > 0 ? computeDynamicStats(inspectorData, inspectorColumns) : null;
+            const fmtV = n => typeof n === 'number' ? n.toLocaleString('vi-VN') : '—';
+            editorSlides.splice(activeSlideIdx+1, 0, {
+                title: '📊 KPI Tổng Quan',
+                bg: SLIDE_THEMES[currentThemeIdx].bg,
+                accent: SLIDE_THEMES[currentThemeIdx].accent,
+                content: buildSlideData().find(s=>s.content.includes('KPI')) ? buildSlideData().find(s=>s.content.includes('kpi-card')).content : '<p>Chưa có dữ liệu KPI</p>'
+            });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function insertCategorySlide() {
+            const slides = buildSlideData();
+            const catSlide = slides.find(s=>s.content.includes('catRanking') || s.title === '📂 Phân Tích Danh Mục');
+            editorSlides.splice(activeSlideIdx+1, 0, catSlide || { title:'📂 Danh Mục', bg: SLIDE_THEMES[currentThemeIdx].bg, content:'<p>Chưa có dữ liệu</p>' });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function insertTrendSlide() {
+            const slides = buildSlideData();
+            const ts = slides.find(s=>s.content.includes('timeSeries') || s.content.includes('Thời Gian'));
+            editorSlides.splice(activeSlideIdx+1, 0, ts || { title:'📈 Xu Hướng', bg: SLIDE_THEMES[currentThemeIdx].bg, content:'<p>Chưa có dữ liệu</p>' });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function insertInsightSlide() {
+            const slides = buildSlideData();
+            const ins = slides.find(s=>s.content.includes('Nhận Xét') || s.content.includes('Khuyến Nghị'));
+            editorSlides.splice(activeSlideIdx+1, 0, ins || { title:'💡 Nhận Xét', bg: SLIDE_THEMES[currentThemeIdx].bg, content:'<p>Chưa có dữ liệu</p>' });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function insertActionSlide() {
+            const slides = buildSlideData();
+            const act = slides.find(s=>s.content.includes('Vấn Đề') || s.content.includes('Hành Động'));
+            editorSlides.splice(activeSlideIdx+1, 0, act || { title:'⚡ Hành Động', bg: SLIDE_THEMES[currentThemeIdx].bg, content:'<p>Chưa có dữ liệu</p>' });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function insertClosingSlide() {
+            const slides = buildSlideData();
+            const cl = slides[slides.length-1];
+            editorSlides.splice(activeSlideIdx+1, 0, cl || { title:'🙏 Kết Thúc', bg: SLIDE_THEMES[currentThemeIdx].bg, content:'<p>Cảm ơn!</p>' });
+            setActiveSlide(activeSlideIdx+1);
+        }
+
+        function applyLayoutToSlide() {
+            const layout = document.getElementById('slide-layout-select').value;
+            const content = document.getElementById('slide-active-content');
+            const accent = SLIDE_THEMES[currentThemeIdx].accent;
+            if (!content) return;
+            const layouts = {
+                'center': `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;"><h1 style="font-size:28px;font-weight:900;color:#0f172a;margin-bottom:12px;">Tiêu đề chính</h1><p style="font-size:14px;color:#64748b;">Nội dung phụ — nhấp để chỉnh sửa</p></div>`,
+                'left-content': `<div style="padding:36px;height:100%;display:flex;flex-direction:column;"><div style="border-left:4px solid ${accent};padding-left:12px;margin-bottom:20px;"><h2 style="font-size:22px;font-weight:900;color:#0f172a;">Tiêu đề slide</h2></div><div style="flex:1;font-size:13px;line-height:1.8;color:#334155;">• Điểm chính 1<br>• Điểm chính 2<br>• Điểm chính 3</div></div>`,
+                'two-col': `<div style="padding:36px;height:100%;display:flex;flex-direction:column;"><h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:16px;">Tiêu đề</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;"><div style="background:rgba(255,255,255,0.7);border-radius:12px;padding:16px;font-size:12.5px;line-height:1.7;">Cột trái — nhấp để sửa</div><div style="background:rgba(255,255,255,0.7);border-radius:12px;padding:16px;font-size:12.5px;line-height:1.7;">Cột phải — nhấp để sửa</div></div></div>`,
+                'closing': `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;"><div style="font-size:40px;margin-bottom:16px;">🙏</div><h2 style="font-size:24px;font-weight:900;color:#0f172a;margin-bottom:8px;">Cảm ơn bạn!</h2><p style="font-size:14px;color:#64748b;margin-bottom:20px;">Vũ Anh Thư · Data Analyst & BI</p><div style="font-size:13px;color:#94a3b8;">📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633</div></div>`,
+            };
+            if (layouts[layout]) content.innerHTML = layouts[layout];
+        }
+
+        // ----  Fullscreen slideshow ----
+        let fsCurrentSlide = 0;
+        function startSlideShow() {
+            // Save current content
+            const content = document.getElementById('slide-active-content');
+            if (content && editorSlides[activeSlideIdx]) {
+                editorSlides[activeSlideIdx].content = content.innerHTML;
+            }
+            fsCurrentSlide = 0;
+            renderFsSlide();
+            const overlay = document.getElementById('fullscreen-slideshow');
+            if (overlay) overlay.style.display = 'flex';
+            document.addEventListener('keydown', fsKeyHandler);
+        }
+
+        function closeFullscreenSlideshow() {
+            const overlay = document.getElementById('fullscreen-slideshow');
+            if (overlay) overlay.style.display = 'none';
+            document.removeEventListener('keydown', fsKeyHandler);
+        }
+
+        function fsKeyHandler(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') fsSlide(1);
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') fsSlide(-1);
+            else if (e.key === 'Escape') closeFullscreenSlideshow();
+        }
+
+        function fsSlide(dir) {
+            fsCurrentSlide = Math.max(0, Math.min(fsCurrentSlide + dir, editorSlides.length - 1));
+            renderFsSlide();
+        }
+
+        function renderFsSlide() {
+            const view = document.getElementById('fs-slide-view');
+            const counter = document.getElementById('fs-counter');
+            const dots = document.getElementById('fs-dots');
+            if (!view || !editorSlides[fsCurrentSlide]) return;
+            const s = editorSlides[fsCurrentSlide];
+            view.innerHTML = `<div style="width:100%;height:100%;background:${s.bg};position:relative;font-family:'Plus Jakarta Sans',system-ui,sans-serif;animation:slideIn 0.35s ease;">
+                <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f472b6,#ec4899,#7dd3fc);"></div>
+                <div style="position:absolute;bottom:14px;right:18px;font-size:10px;color:rgba(0,0,0,0.3);font-weight:700;">${fsCurrentSlide+1}/${editorSlides.length}</div>
+                ${s.content}
+            </div>`;
+            if (counter) counter.textContent = `${fsCurrentSlide+1} / ${editorSlides.length}`;
+            if (dots) dots.innerHTML = editorSlides.map((_,i)=>`<div onclick="fsCurrentSlide=${i};renderFsSlide();" style="width:${i===fsCurrentSlide?'22':'8'}px;height:8px;border-radius:9999px;background:${i===fsCurrentSlide?'linear-gradient(90deg,#f472b6,#7dd3fc)':'rgba(255,255,255,0.3)'};cursor:pointer;transition:all 0.3s;"></div>`).join('');
+        }
+
+        // Initialize slide editor when navigating to page-slides
+        </script>
 </body>
 </html>
