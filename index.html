@@ -899,6 +899,22 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #f472b6 #f0f9ff;
+        }
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-body::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, #fff0f8, #f0f9ff);
+            border-radius: 10px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #f472b6, #7dd3fc);
+            border-radius: 10px;
+        }
+        .chat-body::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ec4899, #38bdf8);
         }
         .chat-bubble {
             max-width: 85%;
@@ -925,8 +941,21 @@
             display: flex;
             gap: 6px;
             overflow-x: auto;
-            background: #fff;
+            background: linear-gradient(90deg, #fff9fc, #f0f9ff);
             border-top: 1px solid #f1f5f9;
+            scrollbar-width: thin;
+            scrollbar-color: #f472b6 transparent;
+        }
+        .chat-suggestions::-webkit-scrollbar {
+            height: 4px;
+        }
+        .chat-suggestions::-webkit-scrollbar-track {
+            background: linear-gradient(90deg, #fce7f3, #e0f2fe);
+            border-radius: 10px;
+        }
+        .chat-suggestions::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #f472b6, #7dd3fc);
+            border-radius: 10px;
         }
         .suggestion-chip {
             white-space: nowrap;
@@ -989,30 +1018,55 @@
     <div class="app-container">
 
         <!-- ===== 1. TOP HEADER (ẢNH 1) ===== -->
+        <!-- Edit Profile Modal -->
+        <div id="profile-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+            <div style="background:#fff; border-radius:24px; padding:32px 28px; width:400px; max-width:calc(100vw - 32px); box-shadow:0 24px 60px rgba(236,72,153,0.25); position:relative;">
+                <button onclick="closeProfileModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">✕</button>
+                <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin-bottom:6px;">✏️ Chỉnh sửa hồ sơ</h3>
+                <p style="font-size:12px;color:#64748b;margin-bottom:20px;">Cập nhật tên hiển thị và ảnh đại diện</p>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;">
+                    <div id="modal-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(244,114,182,0.4);border:3px solid white;position:relative;overflow:hidden;" onclick="document.getElementById('avatar-file-input').click()" title="Nhấn để đổi ảnh">
+                        <span id="modal-avatar-initials">AT</span>
+                        <img id="modal-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+                    </div>
+                    <span style="font-size:11px;color:#94a3b8;">Nhấn vào ảnh để thay đổi</span>
+                    <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" onchange="previewAvatarFile(this)">
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="display:block;font-size:11.5px;font-weight:800;color:#475569;margin-bottom:6px;">Tên hiển thị</label>
+                    <input type="text" id="modal-display-name" value="Vũ Anh Thư" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#f472b6'" onblur="this.style.borderColor='#e2e8f0'">
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button onclick="closeProfileModal()" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#475569;font-weight:700;font-size:13px;cursor:pointer;">Hủy</button>
+                    <button onclick="saveProfileChanges()" style="flex:1;padding:10px;border:none;border-radius:12px;background:linear-gradient(135deg,#f472b6,#ec4899);color:white;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 4px 14px rgba(236,72,153,0.35);">✅ Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+
         <header class="site-header">
             <div class="header-left">
-                <div class="header-avatar" title="Vũ Anh Thư">AT</div>
+                <!-- Clickable avatar with image support -->
+                <div id="header-avatar-btn" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ" style="position:relative;cursor:pointer;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(236,72,153,0.35);border:2px solid white;overflow:hidden;flex-shrink:0;transition:transform 0.2s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+                    <span id="header-avatar-initials">AT</span>
+                    <img id="header-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+                </div>
                 <div class="header-brand-info">
-                    <span class="header-author-name">Vũ Anh Thư</span>
+                    <span class="header-author-name" id="header-display-name">Vũ Anh Thư</span>
                     <span class="header-author-role">Data Analyst &amp; BI</span>
                 </div>
                 <nav class="header-nav-links">
                     <div class="nav-link-pill active" id="nav-btn-home" onclick="navigateToPage('page-home')">Trang chủ</div>
-                    <div class="nav-link-pill" onclick="navigateToPage('page-home')">Giới thiệu</div>
-                    <div class="nav-link-pill" onclick="navigateToPage('page-ingest')">Dịch vụ ⌄</div>
+                    <div class="nav-link-pill" onclick="navigateToPage('page-ingest')">Dịch vụ</div>
                     <div class="nav-link-pill" onclick="toggleChatbot()">Hỏi đáp</div>
                     <div class="nav-link-pill" onclick="scrollToFooter()">Liên hệ</div>
                 </nav>
             </div>
 
             <div class="header-right">
-                <div class="header-badge-pill">anhthuvu8307</div>
+                <a href="mailto:anhthuvu8307@gmail.com" class="header-badge-pill" style="text-decoration:none;" title="Email liên hệ">✉️ anhthuvu8307@gmail.com</a>
                 <div class="header-badge-pill">📞 0332 547 633</div>
-                <div class="header-badge-pill" style="cursor:pointer;" onclick="toggleChatbot()" title="Trợ lý AI">🌙</div>
-                <div class="header-badge-pill" style="cursor:pointer;">vn VI ⌄</div>
-                <div class="header-badge-pill" style="cursor:pointer;" onclick="navigateToPage('page-dash')">📈 Thống kê của tôi</div>
-                <div class="header-badge-pill" style="font-weight:800; background:linear-gradient(135deg, #fde8f2, #fff); color:var(--pink-dark);">
-                    👤 Vũ Anh Thư
+                <div class="header-badge-pill" style="cursor:pointer;font-weight:800;background:linear-gradient(135deg,#fde8f2,#f0f9ff);color:var(--pink-dark);" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ">
+                    👤 <span id="header-name-badge">Vũ Anh Thư</span>
                 </div>
             </div>
         </header>
@@ -1485,9 +1539,17 @@
                         </p>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn-pink-glass" onclick="exportFullHTMLReport()">
-                            📥 Xuất Báo Cáo HTML Hoàn Chỉnh
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button id="toggle-edit-btn" class="btn-white-glass" onclick="toggleReportEdit()" style="font-size:11.5px;padding:7px 14px;">
+                            ✏️ Sửa thủ công
                         </button>
+                        <button class="btn-pink-glass" onclick="approveAndDownloadReport()" style="font-size:11.5px;padding:7px 14px;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+                            ✅ Duyệt &amp; Tải xuống
+                        </button>
+                        <button class="btn-pink-glass" onclick="exportFullHTMLReport()" style="font-size:11.5px;padding:7px 14px;">
+                            📥 Xuất HTML
+                        </button>
+                    </div>
                     </div>
                 </div>
 
@@ -1497,8 +1559,11 @@
                         <div style="font-size:12px; font-weight:800; color:#475569; margin-bottom:6px;">
                             ✍️ Nội dung báo cáo (Chỉnh sửa trực tiếp tại đây):
                         </div>
-                        <div id="report-editable-content" class="report-editable-body" contenteditable="true">
+                        <div id="report-editable-content" class="report-editable-body" contenteditable="false" style="cursor:default; opacity:0.95;">
                             Đang tạo lập báo cáo chiến lược...
+                        </div>
+                        <div id="report-edit-hint" style="margin-top:8px;font-size:11px;color:#94a3b8;text-align:center;display:block;">
+                            💡 Nhấn <b style="color:var(--pink-dark)">✏️ Sửa thủ công</b> để bật chế độ chỉnh sửa trực tiếp
                         </div>
                     </div>
 
@@ -2166,36 +2231,151 @@
         // 2 Nút làm sạch theo yêu cầu:
         // Nút 1: Làm sạch theo lệnh
         function cleanDataByCommand() {
-            const cmd = prompt(
-                'Nhập lệnh làm sạch dữ liệu bạn muốn thực hiện:\n' +
-                '1. Điền ô trống bằng "Toàn quốc" hoặc "Khác"\n' +
-                '2. Viết hoa chuẩn tiếng Việt\n' +
-                '3. Chuyển ô trống số tiền thành 0\n' +
-                'Hoặc gõ yêu cầu của bạn:',
-                'Điền ô trống khu vực bằng "Toàn quốc" và ô trống kênh bằng "Khác"'
-            );
+            // Show inline command panel instead of prompt()
+            const panel = document.getElementById('cmd-clean-panel');
+            if (panel) {
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                if (panel.style.display === 'block') {
+                    document.getElementById('cmd-clean-input').focus();
+                }
+            }
+        }
 
-            if (!cmd) return;
+        function executeCleanCommand() {
+            const cmd = (document.getElementById('cmd-clean-input').value || '').trim().toLowerCase();
+            if (!cmd) { alert('Vui lòng nhập lệnh!'); return; }
 
             let fixed = 0;
-            inspectorData.forEach(r => {
-                inspectorColumns.forEach(c => {
-                    const v = String(r[c] !== undefined ? r[c] : '').trim();
-                    if (!v || v === 'null') {
-                        if (c.toLowerCase().includes('khu_vuc') || c.toLowerCase().includes('khu vực')) {
-                            r[c] = 'Toàn quốc'; fixed++;
-                        } else if (c.toLowerCase().includes('kenh') || c.toLowerCase().includes('kênh')) {
-                            r[c] = 'Khác'; fixed++;
-                        } else if (c.toLowerCase().includes('tien') || c.toLowerCase().includes('thu') || c.toLowerCase().includes('phi')) {
-                            r[c] = 0; fixed++;
-                        } else {
-                            r[c] = 'Chưa xác định'; fixed++;
+            const beforeCount = inspectorData.length;
+
+            // --- DELETE ROW commands: "loại bỏ", "xóa", "xoá" ---
+            const deleteMatch = cmd.match(/(?:loại bỏ|xóa|xoá|delete|remove)\s+(?:các\s+)?(?:dữ liệu|dòng|hàng|row)?\s*(?:có\s+)?(.+?)\s+(?:là|=|==|bằng)\s+"?([^"]+)"?/i)
+                || cmd.match(/(?:loại bỏ|xóa|xoá)\s+(.+?)\s+"?([^"]+)"?/i);
+
+            if (deleteMatch || cmd.includes('loại bỏ') || cmd.includes('xóa') || cmd.includes('xoá')) {
+                // Try to extract column and value from command
+                let targetCol = null, targetVal = null;
+
+                // Pattern: "loại bỏ ... khu vực là Hà Nội"
+                const colValMatch = cmd.match(/(?:có\s+)?([a-zàáâãèéêìíòóôõùúăđĩũơư\s]+?)\s+(?:là|=|bằng)\s+"?([^"]+)"?\s*$/i)
+                    || cmd.match(/([a-zàáâãèéêìíòóôõùúăđĩũơư\s]+?)\s*(?:=|là)\s*"?([^"]+)"?/i);
+
+                if (colValMatch) {
+                    const rawCol = colValMatch[1].trim();
+                    targetVal = colValMatch[2].trim();
+
+                    // Map common Vietnamese column name variants to actual column names
+                    for (const col of inspectorColumns) {
+                        const colLow = col.toLowerCase().replace(/[()]/g, '');
+                        if (colLow.includes(rawCol) || rawCol.includes(colLow.substring(0, Math.min(colLow.length, 6)))) {
+                            targetCol = col;
+                            break;
                         }
-                    } else {
-                        r[c] = cleanVietnameseText(v);
                     }
+                    // If not found, try partial match
+                    if (!targetCol) {
+                        const words = rawCol.split(' ');
+                        for (const col of inspectorColumns) {
+                            const cl = col.toLowerCase();
+                            if (words.some(w => w.length > 2 && cl.includes(w))) {
+                                targetCol = col;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (targetCol && targetVal) {
+                    const before = inspectorData.length;
+                    inspectorData = inspectorData.filter(row => {
+                        const cellVal = String(row[targetCol] || '').trim().toLowerCase();
+                        return !cellVal.includes(targetVal.toLowerCase());
+                    });
+                    fixed = before - inspectorData.length;
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    document.getElementById('cmd-clean-input').value = '';
+                    document.getElementById('cmd-clean-panel').style.display = 'none';
+                    document.getElementById('cmd-clean-result').textContent = `✅ Đã xóa ${fixed} dòng có ${targetCol} chứa "${targetVal}"`;
+                    document.getElementById('cmd-clean-result').style.display = 'block';
+                    return;
+                } else {
+                    document.getElementById('cmd-clean-result').textContent = '⚠️ Không xác định được cột hoặc giá trị. Ví dụ: "Loại bỏ các dòng có Khu vực là Hà Nội"';
+                    document.getElementById('cmd-clean-result').style.display = 'block';
+                    return;
+                }
+            }
+
+            // --- FILL EMPTY commands ---
+            if (cmd.includes('điền') || cmd.includes('fill') || cmd.includes('thay') || cmd.includes('thế')) {
+                const fillMatch = cmd.match(/(?:điền|fill|thay thế?)\s+(?:ô\s+)?(?:trống\s+)?(.+?)\s+(?:bằng|thành|với|=)\s+"?([^"]+)"?/i);
+                let fillCol = null, fillVal = 'Toàn quốc';
+                if (fillMatch) {
+                    const rawCol = fillMatch[1].trim();
+                    fillVal = fillMatch[2].trim();
+                    for (const col of inspectorColumns) {
+                        const cl = col.toLowerCase();
+                        if (cl.includes(rawCol.substring(0, 4)) || rawCol.includes(cl.substring(0, 4))) { fillCol = col; break; }
+                    }
+                }
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        if (!fillCol || c === fillCol) {
+                            const v = String(r[c] !== undefined ? r[c] : '').trim();
+                            if (!v || v === 'null' || v === 'undefined') { r[c] = fillVal; fixed++; }
+                        }
+                    });
                 });
-            });
+            }
+
+            // --- CAPITALIZE / CHUẨN HÓA ---
+            else if (cmd.includes('viết hoa') || cmd.includes('chuẩn hóa') || cmd.includes('capitalize')) {
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        if (typeof r[c] === 'string') { r[c] = cleanVietnameseText(r[c].trim()); fixed++; }
+                    });
+                });
+            }
+
+            // --- REMOVE DUPLICATES ---
+            else if (cmd.includes('trùng') || cmd.includes('duplicate') || cmd.includes('trùng lặp')) {
+                const before = inspectorData.length;
+                const seen = new Set();
+                inspectorData = inspectorData.filter(r => {
+                    const key = JSON.stringify(r);
+                    if (seen.has(key)) return false;
+                    seen.add(key); return true;
+                });
+                fixed = before - inspectorData.length;
+            }
+
+            // --- FILL EMPTY NUMBERS WITH 0 ---
+            else if (cmd.includes('số 0') || cmd.includes('thành 0') || cmd.includes('= 0')) {
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        const v = String(r[c] !== undefined ? r[c] : '').trim();
+                        const isNum = c.toLowerCase().includes('thu') || c.toLowerCase().includes('phi') || c.toLowerCase().includes('lợi') || c.toLowerCase().includes('số');
+                        if (isNum && (!v || v === 'null')) { r[c] = 0; fixed++; }
+                    });
+                });
+            }
+
+            else {
+                // Generic: fill all empty cells
+                inspectorData.forEach(r => {
+                    inspectorColumns.forEach(c => {
+                        const v = String(r[c] !== undefined ? r[c] : '').trim();
+                        if (!v || v === 'null') { r[c] = 'Chưa xác định'; fixed++; }
+                    });
+                });
+            }
+
+            renderEditableTable(inspectorColumns, inspectorData);
+            scanDataErrors();
+            document.getElementById('cmd-clean-input').value = '';
+            document.getElementById('cmd-clean-panel').style.display = 'none';
+            document.getElementById('cmd-clean-result').textContent = `✅ Đã xử lý ${fixed} ô/dòng theo lệnh.`;
+            document.getElementById('cmd-clean-result').style.display = 'block';
 
             renderEditableTable(inspectorColumns, inspectorData);
             scanDataErrors();
@@ -2759,6 +2939,154 @@
             loadSampleDataset();
         });
     
+    
+        // =============================================
+        // PROFILE MODAL FUNCTIONS
+        // =============================================
+        function openProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Sync current name
+                const curName = document.getElementById('header-display-name').textContent;
+                document.getElementById('modal-display-name').value = curName;
+            }
+        }
+        function closeProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        function previewAvatarFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgEl = document.getElementById('modal-avatar-img');
+                    const initEl = document.getElementById('modal-avatar-initials');
+                    if (imgEl) { imgEl.src = e.target.result; imgEl.style.display = 'block'; }
+                    if (initEl) initEl.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function saveProfileChanges() {
+            const newName = document.getElementById('modal-display-name').value.trim() || 'Vũ Anh Thư';
+            // Update header name displays
+            const headerName = document.getElementById('header-display-name');
+            const headerBadge = document.getElementById('header-name-badge');
+            if (headerName) headerName.textContent = newName;
+            if (headerBadge) headerBadge.textContent = newName;
+            // Update avatar initials
+            const initials = newName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+            const headerInit = document.getElementById('header-avatar-initials');
+            const modalInit = document.getElementById('modal-avatar-initials');
+            if (headerInit) headerInit.textContent = initials;
+            if (modalInit) modalInit.textContent = initials;
+            // If new avatar image selected, copy to header
+            const modalImg = document.getElementById('modal-avatar-img');
+            const headerImg = document.getElementById('header-avatar-img');
+            if (modalImg && modalImg.src && modalImg.style.display !== 'none' && headerImg) {
+                headerImg.src = modalImg.src;
+                headerImg.style.display = 'block';
+                if (headerInit) headerInit.style.display = 'none';
+            }
+            closeProfileModal();
+            // Toast notification
+            const toast = document.createElement('div');
+            toast.textContent = '✅ Đã lưu thay đổi hồ sơ!';
+            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 6px 20px rgba(16,185,129,0.4);animation:popIn 0.3s ease;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+        // Close modal on backdrop click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('profile-modal');
+            if (modal && e.target === modal) closeProfileModal();
+        });
+
+        // =============================================
+        // REPORT EDIT TOGGLE + DOWNLOAD
+        // =============================================
+        let reportEditMode = false;
+        function toggleReportEdit() {
+            reportEditMode = !reportEditMode;
+            const content = document.getElementById('report-editable-content');
+            const btn = document.getElementById('toggle-edit-btn');
+            const hint = document.getElementById('report-edit-hint');
+            if (content) {
+                content.contentEditable = reportEditMode ? 'true' : 'false';
+                content.style.cursor = reportEditMode ? 'text' : 'default';
+                content.style.boxShadow = reportEditMode ? '0 0 0 3px rgba(244,114,182,0.25)' : '';
+                content.style.borderStyle = reportEditMode ? 'solid' : 'dashed';
+                content.style.borderColor = reportEditMode ? '#f472b6' : 'rgba(244,114,182,0.4)';
+                if (reportEditMode) content.focus();
+            }
+            if (btn) {
+                btn.textContent = reportEditMode ? '🔒 Khóa chỉnh sửa' : '✏️ Sửa thủ công';
+                btn.style.background = reportEditMode ? 'linear-gradient(135deg,#fde8f2,#fff)' : '';
+                btn.style.borderColor = reportEditMode ? '#f472b6' : '';
+                btn.style.color = reportEditMode ? '#db2777' : '';
+            }
+            if (hint) {
+                hint.style.display = reportEditMode ? 'none' : 'block';
+                if (reportEditMode) {
+                    hint.textContent = '';
+                } else {
+                    hint.innerHTML = '💡 Nhấn <b style="color:var(--pink-dark)">✏️ Sửa thủ công</b> để bật chế độ chỉnh sửa trực tiếp';
+                }
+            }
+        }
+
+        function approveAndDownloadReport() {
+            const content = document.getElementById('report-editable-content');
+            const reportHTML = content ? content.innerHTML : '<p>Chưa có nội dung báo cáo.</p>';
+            const domain = (document.getElementById('biz-domain') || {}).value || 'Doanh nghiệp';
+            const now = new Date().toLocaleDateString('vi-VN');
+            const fullHTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Báo Cáo Phân Tích Kinh Doanh - ${domain}</title>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 24px; color: #1e293b; line-height: 1.8; }
+  h1 { background: linear-gradient(135deg, #db2777, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin-bottom: 6px; }
+  .meta { font-size: 13px; color: #64748b; margin-bottom: 32px; }
+  .report-body { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 32px; }
+  .footer-note { margin-top: 40px; padding-top: 20px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #94a3b8; }
+</style>
+</head>
+<body>
+  <h1>📊 Báo Cáo Phân Tích Kinh Doanh</h1>
+  <div class="meta">
+    Lĩnh vực: ${domain} &nbsp;|&nbsp; Ngày xuất: ${now}<br>
+    Tác giả: Vũ Anh Thư – Data Analyst &amp; Business Intelligence
+  </div>
+  <div class="report-body">
+    ${reportHTML}
+  </div>
+  <div class="footer-note">
+    📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633 &nbsp;|&nbsp;
+    <a href="https://www.facebook.com/vatthhu/?locale=vi_VN">Facebook</a> &nbsp;|&nbsp;
+    <a href="https://www.instagram.com/__a.hthu/">Instagram</a>
+  </div>
+</body>
+</html>`;
+            const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'BaoCao_PhanTich_' + domain.replace(/\s+/g,'_').substring(0,20) + '_' + now.replace(/\//g,'-') + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            // Toast
+            const toast = document.createElement('div');
+            toast.textContent = '✅ Đã tải báo cáo về thiết bị!';
+            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 6px 20px rgba(16,185,129,0.4);';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
     </script>
 </body>
 </html>
