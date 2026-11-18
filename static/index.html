@@ -1363,6 +1363,32 @@
                     </div>
                 </div>
 
+                <!-- ===== COMMAND CLEAN PANEL (toggled by button above) ===== -->
+                <div id="cmd-clean-panel" style="display:none; margin-bottom:14px; background:linear-gradient(135deg,#fff9fc,#f0f9ff); border:1.5px solid rgba(244,114,182,0.4); border-radius:16px; padding:16px 20px;">
+                    <div style="font-size:13.5px; font-weight:800; color:#0f172a; margin-bottom:8px;">💬 Nhập lệnh làm sạch dữ liệu</div>
+                    <div style="font-size:11.5px; color:#64748b; margin-bottom:12px; line-height:1.7;">
+                        Hệ thống hiểu lệnh tự nhiên tiếng Việt. Ví dụ:<br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Loại bỏ các dòng có Khu vực là Hà Nội</code><br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Điền ô trống Khu vực bằng Toàn quốc</code><br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Xóa các dòng trùng lặp</code><br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Chuẩn hóa viết hoa toàn bộ</code>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="text" id="cmd-clean-input"
+                            placeholder='Nhập lệnh... (Enter để thực thi)'
+                            style="flex:1; padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:12.5px; outline:none; font-family:inherit;"
+                            onfocus="this.style.borderColor='#f472b6'"
+                            onblur="this.style.borderColor='#e2e8f0'"
+                            onkeydown="if(event.key==='Enter'){event.preventDefault();executeCleanCommand();}" />
+                        <button onclick="executeCleanCommand()" class="btn-pink-glass" style="font-size:12px; padding:9px 18px; white-space:nowrap;">
+                            ▶ Thực thi
+                        </button>
+                        <button onclick="document.getElementById('cmd-clean-panel').style.display='none'"
+                            style="padding:9px 14px; border:1.5px solid #e2e8f0; border-radius:12px; background:#f8fafc; color:#64748b; font-size:12px; font-weight:700; cursor:pointer;">✕</button>
+                    </div>
+                    <div id="cmd-clean-result" style="display:none; margin-top:12px; font-size:12.5px; font-weight:700; padding:10px 14px; border-radius:10px;"></div>
+                </div>
+
                 <!-- Thanh đếm lỗi -->
                 <div style="display:flex; align-items:center; gap:14px; font-size:12px; margin-bottom:10px;">
                     <span id="stat-syntax-err" style="color:#ef4444; font-weight:800;">0 Lỗi cú pháp</span> · 
@@ -1542,6 +1568,9 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <button id="toggle-edit-btn" class="btn-white-glass" onclick="toggleReportEdit()" style="font-size:11.5px;padding:7px 14px;">
                             ✏️ Sửa thủ công
+                        </button>
+                        <button class="btn-white-glass" onclick="openSlidePresentation()" style="font-size:11.5px;padding:7px 14px;border-color:rgba(125,211,252,0.6);color:#0369a1;">
+                            🎞️ Slide trình bày
                         </button>
                         <button class="btn-pink-glass" onclick="approveAndDownloadReport()" style="font-size:11.5px;padding:7px 14px;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.3);">
                             ✅ Duyệt &amp; Tải xuống
@@ -2231,114 +2260,130 @@
         // 2 Nút làm sạch theo yêu cầu:
         // Nút 1: Làm sạch theo lệnh
         function cleanDataByCommand() {
-            // Show inline command panel instead of prompt()
             const panel = document.getElementById('cmd-clean-panel');
-            if (panel) {
-                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                if (panel.style.display === 'block') {
-                    document.getElementById('cmd-clean-input').focus();
-                }
+            if (!panel) {
+                alert('Lỗi: Không tìm thấy panel lệnh. Vui lòng tải lại trang.');
+                return;
+            }
+            const isHidden = panel.style.display === 'none' || panel.style.display === '';
+            panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                setTimeout(() => {
+                    const inp = document.getElementById('cmd-clean-input');
+                    if (inp) inp.focus();
+                }, 100);
             }
         }
 
         function executeCleanCommand() {
-            const cmd = (document.getElementById('cmd-clean-input').value || '').trim().toLowerCase();
-            if (!cmd) { alert('Vui lòng nhập lệnh!'); return; }
+            const inp = document.getElementById('cmd-clean-input');
+            const resultEl = document.getElementById('cmd-clean-result');
+            if (!inp) return;
+            const rawCmd = inp.value.trim();
+            if (!rawCmd) {
+                showCmdResult('⚠️ Vui lòng nhập lệnh trước khi thực thi!', false);
+                return;
+            }
+            const cmd = rawCmd.toLowerCase()
+                .normalize('NFC');
+
+            if (!inspectorData || inspectorData.length === 0) {
+                showCmdResult('⚠️ Chưa có dữ liệu để xử lý. Vui lòng tải file lên trước!', false);
+                return;
+            }
 
             let fixed = 0;
             const beforeCount = inspectorData.length;
 
-            // --- DELETE ROW commands: "loại bỏ", "xóa", "xoá" ---
-            const deleteMatch = cmd.match(/(?:loại bỏ|xóa|xoá|delete|remove)\s+(?:các\s+)?(?:dữ liệu|dòng|hàng|row)?\s*(?:có\s+)?(.+?)\s+(?:là|=|==|bằng)\s+"?([^"]+)"?/i)
-                || cmd.match(/(?:loại bỏ|xóa|xoá)\s+(.+?)\s+"?([^"]+)"?/i);
-
-            if (deleteMatch || cmd.includes('loại bỏ') || cmd.includes('xóa') || cmd.includes('xoá')) {
-                // Try to extract column and value from command
-                let targetCol = null, targetVal = null;
-
-                // Pattern: "loại bỏ ... khu vực là Hà Nội"
-                const colValMatch = cmd.match(/(?:có\s+)?([a-zàáâãèéêìíòóôõùúăđĩũơư\s]+?)\s+(?:là|=|bằng)\s+"?([^"]+)"?\s*$/i)
-                    || cmd.match(/([a-zàáâãèéêìíòóôõùúăđĩũơư\s]+?)\s*(?:=|là)\s*"?([^"]+)"?/i);
-
-                if (colValMatch) {
-                    const rawCol = colValMatch[1].trim();
-                    targetVal = colValMatch[2].trim();
-
-                    // Map common Vietnamese column name variants to actual column names
-                    for (const col of inspectorColumns) {
-                        const colLow = col.toLowerCase().replace(/[()]/g, '');
-                        if (colLow.includes(rawCol) || rawCol.includes(colLow.substring(0, Math.min(colLow.length, 6)))) {
-                            targetCol = col;
-                            break;
-                        }
-                    }
-                    // If not found, try partial match
-                    if (!targetCol) {
-                        const words = rawCol.split(' ');
-                        for (const col of inspectorColumns) {
-                            const cl = col.toLowerCase();
-                            if (words.some(w => w.length > 2 && cl.includes(w))) {
-                                targetCol = col;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (targetCol && targetVal) {
-                    const before = inspectorData.length;
-                    inspectorData = inspectorData.filter(row => {
-                        const cellVal = String(row[targetCol] || '').trim().toLowerCase();
-                        return !cellVal.includes(targetVal.toLowerCase());
-                    });
-                    fixed = before - inspectorData.length;
-                    renderEditableTable(inspectorColumns, inspectorData);
-                    scanDataErrors();
-                    document.getElementById('cmd-clean-input').value = '';
-                    document.getElementById('cmd-clean-panel').style.display = 'none';
-                    document.getElementById('cmd-clean-result').textContent = `✅ Đã xóa ${fixed} dòng có ${targetCol} chứa "${targetVal}"`;
-                    document.getElementById('cmd-clean-result').style.display = 'block';
-                    return;
-                } else {
-                    document.getElementById('cmd-clean-result').textContent = '⚠️ Không xác định được cột hoặc giá trị. Ví dụ: "Loại bỏ các dòng có Khu vực là Hà Nội"';
-                    document.getElementById('cmd-clean-result').style.display = 'block';
-                    return;
-                }
+            // ---- HELPER: normalize text for comparison ----
+            function normText(s) {
+                return String(s || '').trim().toLowerCase()
+                    .normalize('NFC')
+                    .replace(/\s+/g, ' ');
             }
 
-            // --- FILL EMPTY commands ---
-            if (cmd.includes('điền') || cmd.includes('fill') || cmd.includes('thay') || cmd.includes('thế')) {
-                const fillMatch = cmd.match(/(?:điền|fill|thay thế?)\s+(?:ô\s+)?(?:trống\s+)?(.+?)\s+(?:bằng|thành|với|=)\s+"?([^"]+)"?/i);
-                let fillCol = null, fillVal = 'Toàn quốc';
-                if (fillMatch) {
-                    const rawCol = fillMatch[1].trim();
-                    fillVal = fillMatch[2].trim();
-                    for (const col of inspectorColumns) {
-                        const cl = col.toLowerCase();
-                        if (cl.includes(rawCol.substring(0, 4)) || rawCol.includes(cl.substring(0, 4))) { fillCol = col; break; }
+            // ---- HELPER: find best matching column name ----
+            function findCol(hint) {
+                hint = normText(hint);
+                // exact match
+                for (const col of inspectorColumns) {
+                    if (normText(col) === hint) return col;
+                }
+                // includes match
+                for (const col of inspectorColumns) {
+                    if (normText(col).includes(hint) || hint.includes(normText(col))) return col;
+                }
+                // partial word match
+                const words = hint.split(/\s+/).filter(w => w.length > 2);
+                for (const col of inspectorColumns) {
+                    const cl = normText(col);
+                    if (words.some(w => cl.includes(w))) return col;
+                }
+                return null;
+            }
+
+            // ===================================================
+            // CASE 1: DELETE / LOẠI BỎ / XÓA rows
+            // Pattern: "loại bỏ ... <col> là/= <val>"
+            // ===================================================
+            const isDelete = /loại bỏ|xóa|xoá|delete|remove|lọc bỏ/.test(cmd);
+            if (isDelete) {
+                // Extract: "... <column_phrase> là/bằng/= <value>"
+                const colValRe = /(?:có\s+)?(.+?)\s+(?:là|bằng|=|==)\s+["""']?([^"'""]+?)["""']?\s*$/;
+                const m = cmd.match(colValRe);
+                if (m) {
+                    const colHint = m[1].replace(/(?:loại bỏ|xóa|xoá|delete|remove|lọc bỏ|các dòng có|các dữ liệu có|dòng có|dữ liệu có|các|dòng|hàng|row)/g, '').trim();
+                    const targetVal = m[2].trim();
+                    const targetCol = findCol(colHint);
+                    if (targetCol) {
+                        const newData = inspectorData.filter(row => !normText(row[targetCol]).includes(normText(targetVal)));
+                        fixed = inspectorData.length - newData.length;
+                        inspectorData = newData;
+                        renderEditableTable(inspectorColumns, inspectorData);
+                        scanDataErrors();
+                        inp.value = '';
+                        document.getElementById('cmd-clean-panel').style.display = 'none';
+                        showCmdResult(`✅ Đã xóa ${fixed} dòng có cột "${targetCol}" chứa "${targetVal}". Còn lại ${inspectorData.length} dòng.`, true);
+                        return;
+                    } else {
+                        showCmdResult(`⚠️ Không tìm thấy cột phù hợp với "${colHint}". Các cột hiện có: ${inspectorColumns.join(', ')}`, false);
+                        return;
                     }
+                }
+                showCmdResult('⚠️ Không hiểu lệnh xóa. Dùng mẫu: "Loại bỏ các dòng có Khu vực là Hà Nội"', false);
+                return;
+            }
+
+            // ===================================================
+            // CASE 2: FILL EMPTY / ĐIỀN Ô TRỐNG
+            // ===================================================
+            if (/điền|fill|thay thế|thay ô trống|lấp đầy/.test(cmd)) {
+                const fillRe = /(?:điền|fill|thay thế?)\s+(?:ô\s+trống\s+)?(.+?)\s+(?:bằng|thành|với|=)\s+["""']?([^"'""]+?)["""']?\s*$/;
+                const m = cmd.match(fillRe);
+                let fillCol = null, fillVal = 'Chưa xác định';
+                if (m) {
+                    fillCol = findCol(m[1].trim());
+                    fillVal = m[2].trim();
                 }
                 inspectorData.forEach(r => {
                     inspectorColumns.forEach(c => {
-                        if (!fillCol || c === fillCol) {
-                            const v = String(r[c] !== undefined ? r[c] : '').trim();
-                            if (!v || v === 'null' || v === 'undefined') { r[c] = fillVal; fixed++; }
-                        }
+                        if (fillCol && c !== fillCol) return;
+                        const v = String(r[c] !== undefined ? r[c] : '').trim();
+                        if (!v || v === 'null' || v === 'undefined') { r[c] = fillVal; fixed++; }
                     });
                 });
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                inp.value = '';
+                document.getElementById('cmd-clean-panel').style.display = 'none';
+                showCmdResult(`✅ Đã điền ${fixed} ô trống${fillCol ? ` trong cột "${fillCol}"` : ''} với giá trị "${fillVal}"`, true);
+                return;
             }
 
-            // --- CAPITALIZE / CHUẨN HÓA ---
-            else if (cmd.includes('viết hoa') || cmd.includes('chuẩn hóa') || cmd.includes('capitalize')) {
-                inspectorData.forEach(r => {
-                    inspectorColumns.forEach(c => {
-                        if (typeof r[c] === 'string') { r[c] = cleanVietnameseText(r[c].trim()); fixed++; }
-                    });
-                });
-            }
-
-            // --- REMOVE DUPLICATES ---
-            else if (cmd.includes('trùng') || cmd.includes('duplicate') || cmd.includes('trùng lặp')) {
+            // ===================================================
+            // CASE 3: REMOVE DUPLICATES
+            // ===================================================
+            if (/trùng|duplicate|trùng lặp/.test(cmd)) {
                 const before = inspectorData.length;
                 const seen = new Set();
                 inspectorData = inspectorData.filter(r => {
@@ -2347,42 +2392,68 @@
                     seen.add(key); return true;
                 });
                 fixed = before - inspectorData.length;
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                inp.value = '';
+                document.getElementById('cmd-clean-panel').style.display = 'none';
+                showCmdResult(`✅ Đã xóa ${fixed} dòng trùng lặp. Còn lại ${inspectorData.length} dòng.`, true);
+                return;
             }
 
-            // --- FILL EMPTY NUMBERS WITH 0 ---
-            else if (cmd.includes('số 0') || cmd.includes('thành 0') || cmd.includes('= 0')) {
+            // ===================================================
+            // CASE 4: CAPITALIZE / CHUẨN HÓA
+            // ===================================================
+            if (/viết hoa|chuẩn hóa|capitalize|normalize/.test(cmd)) {
                 inspectorData.forEach(r => {
                     inspectorColumns.forEach(c => {
-                        const v = String(r[c] !== undefined ? r[c] : '').trim();
-                        const isNum = c.toLowerCase().includes('thu') || c.toLowerCase().includes('phi') || c.toLowerCase().includes('lợi') || c.toLowerCase().includes('số');
-                        if (isNum && (!v || v === 'null')) { r[c] = 0; fixed++; }
+                        if (typeof r[c] === 'string') { r[c] = cleanVietnameseText(r[c].trim()); fixed++; }
                     });
                 });
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                inp.value = '';
+                document.getElementById('cmd-clean-panel').style.display = 'none';
+                showCmdResult(`✅ Đã chuẩn hóa ${fixed} ô dữ liệu văn bản.`, true);
+                return;
             }
 
-            else {
-                // Generic: fill all empty cells
+            // ===================================================
+            // CASE 5: FILL EMPTY NUMBERS WITH 0
+            // ===================================================
+            if (/số 0|thành 0|= 0|fill.*0/.test(cmd)) {
+                const numCols = inspectorColumns.filter(c => {
+                    const cl = c.toLowerCase();
+                    return cl.includes('thu') || cl.includes('phi') || cl.includes('lợi') || cl.includes('số lượng') || cl.includes('giá');
+                });
                 inspectorData.forEach(r => {
-                    inspectorColumns.forEach(c => {
+                    (numCols.length ? numCols : inspectorColumns).forEach(c => {
                         const v = String(r[c] !== undefined ? r[c] : '').trim();
-                        if (!v || v === 'null') { r[c] = 'Chưa xác định'; fixed++; }
+                        if (!v || v === 'null') { r[c] = 0; fixed++; }
                     });
                 });
+                renderEditableTable(inspectorColumns, inspectorData);
+                scanDataErrors();
+                inp.value = '';
+                document.getElementById('cmd-clean-panel').style.display = 'none';
+                showCmdResult(`✅ Đã điền 0 cho ${fixed} ô số trống.`, true);
+                return;
             }
 
-            renderEditableTable(inspectorColumns, inspectorData);
-            scanDataErrors();
-            document.getElementById('cmd-clean-input').value = '';
-            document.getElementById('cmd-clean-panel').style.display = 'none';
-            document.getElementById('cmd-clean-result').textContent = `✅ Đã xử lý ${fixed} ô/dòng theo lệnh.`;
-            document.getElementById('cmd-clean-result').style.display = 'block';
-
-            renderEditableTable(inspectorColumns, inspectorData);
-            scanDataErrors();
-            alert('Đã thực thi làm sạch theo lệnh thành công cho ' + fixed + ' ô dữ liệu!');
+            showCmdResult('⚠️ Lệnh chưa được nhận dạng. Thử: "Loại bỏ các dòng có [Cột] là [Giá trị]" hoặc "Điền ô trống [Cột] bằng [Giá trị]"', false);
         }
 
-        // Nút 2: AI làm sạch
+        function showCmdResult(msg, success) {
+            const el = document.getElementById('cmd-clean-result');
+            if (!el) return;
+            el.textContent = msg;
+            el.style.display = 'block';
+            el.style.background = success ? '#f0fdf4' : '#fff7ed';
+            el.style.border = `1px solid ${success ? '#bbf7d0' : '#fed7aa'}`;
+            el.style.color = success ? '#059669' : '#c2410c';
+            setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+
+        
         function aiAutoCleanData() {
             let fixed = 0;
             inspectorData.forEach(r => {
@@ -2672,139 +2743,149 @@
 
         // 7. Full Standalone Visual HTML Exporter
         function exportFullHTMLReport() {
-            const ds = currentDataset || { name: 'Bao_Cao_Kinh_Doanh', isSample: false, rows: inspectorData, columns: inspectorColumns };
-            const rows = inspectorData && inspectorData.length > 0 ? inspectorData : (ds.rows || []);
-            const cols = inspectorColumns && inspectorColumns.length > 0 ? inspectorColumns : (ds.columns || Object.keys(rows[0] || {}));
-            const st = computeDynamicStats(rows, cols);
+            const rows = inspectorData && inspectorData.length > 0 ? inspectorData : [];
+            const cols = inspectorColumns && inspectorColumns.length > 0 ? inspectorColumns : (rows.length > 0 ? Object.keys(rows[0]) : []);
+            const st   = rows.length > 0 ? computeDynamicStats(rows, cols) : null;
+            const biz  = (document.getElementById('biz-domain') || {}).value || 'Phân tích kinh doanh';
+            const goal = (document.getElementById('biz-goal')   || {}).value || '';
+            const reportContent = (document.getElementById('report-editable-content') || {}).innerHTML || '';
+            const insightsContent = (document.getElementById('general-insights-box') || {}).innerHTML || '';
+            const trendAnalysis   = (document.getElementById('trend-analysis-box')   || {}).innerHTML || '';
+            const channelAnalysis = (document.getElementById('channel-analysis-box') || {}).innerHTML || '';
+            const issuesBody      = (document.getElementById('issues-table-body')    || {}).innerHTML || '';
+            const aiSuggest       = (document.getElementById('ai-suggestion-preview')|| {}).innerHTML || '';
+            const dsName = currentDataset ? (currentDataset.name || 'Dữ liệu') : 'Chưa có dữ liệu';
+            const now = new Date().toLocaleDateString('vi-VN');
 
-            const bizDomain = (document.getElementById('biz-domain') && document.getElementById('biz-domain').value) || 'Doanh nghiệp thương mại & dịch vụ';
-            const repContent = (document.getElementById('report-editable-content') && document.getElementById('report-editable-content').innerHTML) || '';
+            const fmtVND = n => typeof n === 'number' ? n.toLocaleString('vi-VN') : (n || '—');
 
-            const topCat = st.catRanking[0] || { name: 'Chưa xác định', revenue: 0, pct: 0 };
-            const maxRev = Math.max(...st.catRanking.slice(0, 5).map(c => c.revenue), 1);
+            const kpiSection = st ? `
+                <div class="section-title">📊 Dashboard KPI Tổng Quan</div>
+                <div class="kpi-grid">
+                    ${[
+                        {icon:'💰', label:'Tổng Doanh Thu', val: fmtVND(st.totalRevenue)+' VND', color:'#f472b6'},
+                        {icon:'📈', label:'Tổng Lợi Nhuận Gộp', val: fmtVND(st.totalProfit)+' VND', color:'#10b981'},
+                        {icon:'💸', label:'Tổng Chi Phí', val: fmtVND(st.totalCost)+' VND', color:'#f59e0b'},
+                        {icon:'📦', label:'Tổng Đơn / Dòng', val: st.totalOrders.toLocaleString(), color:'#38bdf8'},
+                        {icon:'📊', label:'Biên LN / DT (ROS)', val: st.ros || '—', color:'#8b5cf6'},
+                        {icon:'🛒', label:'Giá trị TB / đơn', val: fmtVND(st.aov)+' VND', color:'#ec4899'},
+                    ].map(k => `<div class="kpi-card"><div class="kpi-top" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div></div>`).join('')}
+                </div>` : '<p style="color:#94a3b8;">Chưa có dữ liệu để hiển thị KPI.</p>';
 
-            const svgBars = st.catRanking.slice(0, 5).map((c, idx) => {
-                const heightPct = Math.max(12, Math.round((c.revenue / maxRev) * 100));
-                return `
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end;">
-                        <div style="font-size:10px; font-weight:800; color:#db2777; margin-bottom:4px;">${(c.revenue / 1000000).toFixed(1)}Tr</div>
-                        <div style="width:100%; max-width:44px; height:${heightPct}%; border-radius:8px 8px 0 0; background:linear-gradient(180deg,#f472b6,#ec4899);"></div>
-                        <div style="font-size:11px; font-weight:700; color:#475569; margin-top:6px; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.name}</div>
-                    </div>
-                `;
-            }).join('');
+            const catSection = st && st.catRanking && st.catRanking.length > 0 ? `
+                <div class="section-title">📂 Phân Tích Theo Danh Mục / Kênh</div>
+                <table class="data-tbl">
+                    <thead><tr><th>#</th><th>Danh Mục</th><th>Doanh Thu (VND)</th><th>Tỷ trọng</th></tr></thead>
+                    <tbody>
+                        ${st.catRanking.slice(0,10).map((c, i) => `
+                            <tr>
+                                <td>${i+1}</td>
+                                <td><b>${c.name}</b></td>
+                                <td>${fmtVND(c.rev)}</td>
+                                <td>${st.totalRevenue > 0 ? (c.rev/st.totalRevenue*100).toFixed(1) : 0}%</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>` : '';
 
-            const breakdownRows = st.catRanking.map((c, i) => `
-                <tr>
-                    <td><b>#${i+1}</b></td>
-                    <td><b>${c.name}</b></td>
-                    <td>${c.revenue.toLocaleString('vi-VN')} VND</td>
-                    <td><b>${c.pct}%</b></td>
-                    <td>${c.count}</td>
-                </tr>
-            `).join('');
+            const timeSection = st && st.timeSeries && st.timeSeries.length > 0 ? `
+                <div class="section-title">📅 Doanh Thu Theo Thời Gian</div>
+                <table class="data-tbl">
+                    <thead><tr><th>Kỳ</th><th>Doanh Thu (VND)</th><th>Lợi Nhuận (VND)</th><th>Chi Phí (VND)</th><th>Số Đơn</th></tr></thead>
+                    <tbody>
+                        ${st.timeSeries.map(t => `
+                            <tr>
+                                <td>${t.period || '—'}</td>
+                                <td>${fmtVND(t.revenue)}</td>
+                                <td>${fmtVND(t.profit)}</td>
+                                <td>${fmtVND(t.cost)}</td>
+                                <td>${t.orders || '—'}</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>` : '';
 
-            const previewCols = cols.slice(0, 7);
-            const previewRows = rows.slice(0, 25).map((r, ri) => `
-                <tr>
-                    <td>${ri + 1}</td>
-                    ${previewCols.map(c => '<td>' + (r[c] !== undefined ? cleanVietnameseText(r[c]) : '') + '</td>').join('')}
-                </tr>
-            `).join('');
-
-            const htmlContent = `<!DOCTYPE html>
+            const fullHTML = `<!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Báo Cáo Phân Tích &amp; Quyết Định Kinh Doanh - Vũ Anh Thư</title>
-    <style>
-        body { font-family:'Segoe UI',sans-serif; background:#fff5f8; color:#0f172a; padding:30px 20px; line-height:1.6; }
-        .wrapper { max-width:1000px; margin:0 auto; background:#ffffff; border-radius:24px; padding:36px; box-shadow:0 10px 40px rgba(244,114,182,0.15); border:1.5px solid rgba(244,114,182,0.3); }
-        .header { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #fce7f3; padding-bottom:20px; margin-bottom:24px; }
-        .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
-        .kpi-card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; position:relative; overflow:hidden; }
-        .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3.5px; background:linear-gradient(90deg,#f472b6,#ec4899); }
-        .chart-box { background:#fafcff; border:1px solid #e2e8f0; border-radius:16px; padding:20px; margin-bottom:24px; }
-        table { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
-        th { background:#fdf2f8; color:#db2777; padding:8px 12px; border-bottom:1px solid #f9a8d4; text-align:left; }
-        td { padding:8px 12px; border-bottom:1px solid #f1f5f9; }
-        @media print { .btn-p { display:none; } }
-    </style>
+<meta charset="UTF-8">
+<title>Báo Cáo Phân Tích Kinh Doanh - ${biz}</title>
+<style>
+  * { box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; max-width:1100px; margin:0 auto; padding:40px 24px 60px; color:#1e293b; background:#fafafa; }
+  .cover { background:linear-gradient(135deg,#fce4f1,#f0f9ff); border-radius:20px; padding:40px; text-align:center; margin-bottom:36px; }
+  .cover-title { font-size:30px; font-weight:900; background:linear-gradient(135deg,#db2777,#38bdf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:10px; }
+  .cover-meta { font-size:13px; color:#64748b; }
+  .section-title { font-size:16px; font-weight:800; color:#db2777; border-left:4px solid #f472b6; padding:6px 14px; background:#fff9fc; border-radius:0 10px 10px 0; margin:28px 0 14px; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+  .kpi-card { background:white; border-radius:14px; padding:18px; border:1.5px solid #f1f5f9; position:relative; overflow:hidden; }
+  .kpi-top { position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi-icon { font-size:22px; margin-bottom:6px; }
+  .kpi-label { font-size:10.5px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:4px; }
+  .kpi-value { font-size:20px; font-weight:900; color:#0f172a; }
+  .data-tbl { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; margin-bottom:20px; }
+  .data-tbl th { background:linear-gradient(90deg,#fce7f3,#f0f9ff); color:#db2777; font-size:12px; font-weight:800; padding:10px 14px; text-align:left; }
+  .data-tbl td { background:white; padding:9px 14px; font-size:12.5px; border-bottom:1px solid #f1f5f9; }
+  .analysis-box { background:linear-gradient(135deg,#fce4f1,#f0f9ff); border-left:4px solid #f472b6; border-radius:0 14px 14px 0; padding:16px 20px; margin:14px 0 20px; font-size:13px; line-height:1.8; color:#334155; }
+  .report-box { background:white; border:1.5px solid #fce7f3; border-radius:16px; padding:28px; font-size:13.5px; line-height:1.9; }
+  .footer-note { margin-top:40px; padding:20px; border-top:2px dashed #fce7f3; font-size:12px; color:#94a3b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  @media print { body { max-width:100%; } .kpi-grid { grid-template-columns:repeat(3,1fr); } }
+</style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="header">
-            <div>
-                <h2 style="color:#db2777; margin:0;">BÁO CÁO PHÂN TÍCH &amp; RA QUYẾT ĐỊNH KINH DOANH</h2>
-                <p style="margin:4px 0 0 0; font-size:12.5px; color:#64748b;">
-                    Chuyên viên: <b>Vũ Anh Thư - Data Analyst &amp; BI</b> | Tệp: <b>${ds.name}</b> | Ngày xuất: ${new Date().toLocaleString('vi-VN')}
-                </p>
-            </div>
-            <button class="btn-p" onclick="window.print()" style="background:#ec4899; color:white; border:none; padding:8px 18px; border-radius:9999px; font-weight:700; cursor:pointer;">
-                🖨️ In Báo Cáo / Lưu PDF
-            </button>
-        </div>
-
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div style="font-size:11px; font-weight:800; color:#64748b;">TỔNG DOANH THU</div>
-                <div style="font-size:20px; font-weight:900; margin:4px 0;">${st.totalRev.toLocaleString('vi-VN')} đ</div>
-                <div style="font-size:11px; color:#db2777; font-weight:700;">Biên LN: ${st.profitMargin}</div>
-            </div>
-            <div class="kpi-card">
-                <div style="font-size:11px; font-weight:800; color:#64748b;">LỢI NHUẬN GỘP / RÒNG</div>
-                <div style="font-size:20px; font-weight:900; margin:4px 0;">${st.totalProfit.toLocaleString('vi-VN')} đ</div>
-                <div style="font-size:11px; color:#0284c7; font-weight:700;">AOV: ${st.aov.toLocaleString('vi-VN')} đ</div>
-            </div>
-            <div class="kpi-card">
-                <div style="font-size:11px; font-weight:800; color:#64748b;">TỔNG CHI PHÍ</div>
-                <div style="font-size:20px; font-weight:900; margin:4px 0;">${st.totalCost.toLocaleString('vi-VN')} đ</div>
-                <div style="font-size:11px; color:#64748b;">Tỷ lệ chi phí: ${(st.totalRev > 0 ? (st.totalCost/st.totalRev*100).toFixed(1) : 0)}%</div>
-            </div>
-            <div class="kpi-card">
-                <div style="font-size:11px; font-weight:800; color:#64748b;">TỔNG SỐ ĐƠN / BẢN GHI</div>
-                <div style="font-size:20px; font-weight:900; margin:4px 0;">${st.totalOrders}</div>
-                <div style="font-size:11px; color:#16a34a; font-weight:700;">${rows.length} dòng hợp lệ</div>
-            </div>
-        </div>
-
-        <div class="chart-box">
-            <h4 style="margin:0 0 12px 0; color:#0f172a;">📊 Biểu Đồ So Sánh Doanh Thu Các Phân Nhóm</h4>
-            <div style="height:180px; display:flex; align-items:flex-end; gap:14px; border-bottom:2px solid #e2e8f0; padding-bottom:8px;">
-                ${svgBars}
-            </div>
-        </div>
-
-        <div class="chart-box">
-            <h4 style="margin:0 0 10px 0; color:#0f172a;">📋 Toàn Văn Báo Cáo Chiến Lược</h4>
-            <div style="font-size:13px; line-height:1.7;">
-                ${repContent}
-            </div>
-        </div>
-
-        <h4 style="margin:20px 0 6px 0; color:#0f172a;">📑 Trích Xuất Dữ Liệu Sạch (25 dòng đầu)</h4>
-        <table>
-            <thead><tr><th>#</th>${previewCols.map(c => '<th>' + cleanVietnameseText(c) + '</th>').join('')}</tr></thead>
-            <tbody>${previewRows}</tbody>
-        </table>
-
-        <div style="margin-top:30px; text-align:center; font-size:11.5px; color:#64748b; border-top:1px dashed #cbd5e1; padding-top:14px;">
-            Báo cáo được khởi tạo tự động bởi nền tảng <b>Vũ Anh Thư - Data Analyst &amp; Business Intelligence</b>.
-        </div>
+  <div class="cover">
+    <div style="font-size:36px;margin-bottom:14px;">📊</div>
+    <div class="cover-title">Báo Cáo Phân Tích Kinh Doanh</div>
+    <div class="cover-meta">
+      <b>${biz}</b>${goal ? ' · ' + goal : ''}<br>
+      📁 Tệp dữ liệu: ${dsName} · 📋 ${rows.length} dòng · 🗓️ Ngày xuất: ${now}
     </div>
+  </div>
+
+  ${kpiSection}
+
+  ${trendAnalysis ? `<div class="section-title">📈 Phân Tích Xu Hướng Doanh Thu</div><div class="analysis-box">${trendAnalysis}</div>` : ''}
+
+  ${catSection}
+
+  ${channelAnalysis ? `<div class="section-title">📂 Phân Tích Danh Mục / Kênh</div><div class="analysis-box">${channelAnalysis}</div>` : ''}
+
+  ${timeSection}
+
+  ${insightsContent ? `<div class="section-title">💡 Nhận Xét Chung & Đề Xuất</div><div class="analysis-box">${insightsContent}</div>` : ''}
+
+  ${issuesBody ? `<div class="section-title">⚡ Phân Tích Vấn Đề & Hành Động</div>
+  <table class="data-tbl">
+    <thead><tr><th>#</th><th>Vấn Đề</th><th>Mức Độ</th><th>Đề Xuất Hành Động</th></tr></thead>
+    <tbody>${issuesBody}</tbody>
+  </table>` : ''}
+
+  ${aiSuggest ? `<div class="section-title">✨ Gợi Ý Chiến Lược Từ AI</div><div class="analysis-box">${aiSuggest}</div>` : ''}
+
+  ${reportContent ? `<div class="section-title">📝 Báo Cáo Chiến Lược Chi Tiết</div><div class="report-box">${reportContent}</div>` : ''}
+
+  <div class="footer-note">
+    <span>📧 anhthuvu8307@gmail.com &nbsp;|&nbsp; 📞 0332 547 633 &nbsp;|&nbsp; 📍 Hà Nội</span>
+    <span>Vũ Anh Thư · Data Analyst & Business Intelligence · © ${new Date().getFullYear()}</span>
+  </div>
 </body>
 </html>`;
 
-            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'Bao_Cao_VuAnhThu_' + Date.now() + '.html';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const blob = new Blob([fullHTML], {type:'text/html;charset=utf-8'});
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url;
+            a.download = 'BaoCao_' + biz.replace(/\s+/g,'_').substring(0,20) + '_' + now.replace(/\//g,'-') + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            const toast = document.createElement('div');
+            toast.textContent = '✅ Đã xuất báo cáo HTML đầy đủ!';
+            toast.style.cssText = 'position:fixed;bottom:100px;right:24px;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:800;z-index:9999;box-shadow:0 6px 24px rgba(244,114,182,0.4);';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
         }
 
-        // 8. History & Samples
+        
         function updateUploadHistoryUI() {
             const listEl = document.getElementById('upload-history-list');
             const badgeEl = document.getElementById('history-count-badge');
@@ -3086,6 +3167,396 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2500);
         }
+
+    
+        // ========================================================
+        // SLIDE PRESENTATION ENGINE
+        // ========================================================
+        let currentSlide = 0;
+        let allSlides = [];
+
+        function buildSlideData() {
+            const rows  = inspectorData && inspectorData.length > 0 ? inspectorData : [];
+            const cols  = inspectorColumns && inspectorColumns.length > 0 ? inspectorColumns : [];
+            const st    = rows.length > 0 ? computeDynamicStats(rows, cols) : null;
+            const biz   = (document.getElementById('biz-domain') || {}).value || 'Phân tích kinh doanh';
+            const goal  = (document.getElementById('biz-goal')   || {}).value || 'Tối ưu hóa hiệu quả kinh doanh';
+            const dsName = currentDataset ? (currentDataset.name || 'Dữ liệu tải lên') : 'Chưa có dữ liệu';
+
+            const fmtVND = n => typeof n === 'number' ? (n >= 1e9 ? (n/1e9).toFixed(1)+'B' : n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n.toLocaleString()) : (n || '—');
+
+            const slides = [];
+
+            // ---- SLIDE 0: COVER ----
+            slides.push({
+                bg: 'linear-gradient(135deg, #fce4f1 0%, #f0f9ff 60%, #e8f5ff 100%)',
+                accent: 'linear-gradient(135deg, #f472b6, #7dd3fc)',
+                content: `
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">
+                        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:24px;box-shadow:0 8px 24px rgba(244,114,182,0.4);">📊</div>
+                        <div style="font-size:11px;font-weight:800;color:#db2777;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">BÁO CÁO PHÂN TÍCH KINH DOANH</div>
+                        <h1 style="font-size:30px;font-weight:900;color:#0f172a;margin-bottom:12px;line-height:1.3;">${biz}</h1>
+                        <p style="font-size:14px;color:#64748b;max-width:520px;line-height:1.6;margin-bottom:24px;">${goal}</p>
+                        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                            <span style="background:#fce7f3;color:#db2777;padding:6px 14px;border-radius:9999px;font-size:12px;font-weight:700;">📁 ${dsName}</span>
+                            <span style="background:#f0f9ff;color:#0369a1;padding:6px 14px;border-radius:9999px;font-size:12px;font-weight:700;">📋 ${rows.length} dòng dữ liệu</span>
+                            <span style="background:#f0fdf4;color:#059669;padding:6px 14px;border-radius:9999px;font-size:12px;font-weight:700;">✅ Đã làm sạch & phân tích</span>
+                        </div>
+                        <div style="margin-top:28px;font-size:12px;color:#94a3b8;">Vũ Anh Thư · Data Analyst & Business Intelligence · anhthuvu8307@gmail.com</div>
+                    </div>`
+            });
+
+            // ---- SLIDE 1: KPI TỔNG QUAN ----
+            if (st) {
+                slides.push({
+                    bg: 'linear-gradient(135deg, #fff9fc 0%, #f0f9ff 100%)',
+                    content: `
+                        <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                            <div style="font-size:11px;font-weight:800;color:#db2777;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">TỔNG QUAN KPI</div>
+                            <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:24px;">Chỉ Số Kinh Doanh Chính</h2>
+                            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;">
+                                ${[
+                                    {icon:'💰', label:'Tổng Doanh Thu', val: fmtVND(st.totalRevenue)+' VND', color:'#f472b6'},
+                                    {icon:'📈', label:'Tổng Lợi Nhuận', val: fmtVND(st.totalProfit)+' VND', color:'#10b981'},
+                                    {icon:'💸', label:'Tổng Chi Phí', val: fmtVND(st.totalCost)+' VND', color:'#f59e0b'},
+                                    {icon:'📦', label:'Tổng Đơn Hàng', val: st.totalOrders.toLocaleString(), color:'#38bdf8'},
+                                    {icon:'📊', label:'Biên LN / DT', val: st.ros || '—', color:'#8b5cf6'},
+                                    {icon:'🛒', label:'Giá trị TB / đơn', val: fmtVND(st.aov)+' VND', color:'#ec4899'},
+                                ].map(k => `
+                                    <div style="background:white;border-radius:16px;padding:18px 20px;border:1.5px solid #f1f5f9;position:relative;overflow:hidden;">
+                                        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${k.color};"></div>
+                                        <div style="font-size:22px;margin-bottom:6px;">${k.icon}</div>
+                                        <div style="font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">${k.label}</div>
+                                        <div style="font-size:18px;font-weight:900;color:#0f172a;">${k.val}</div>
+                                    </div>`).join('')}
+                            </div>
+                        </div>`
+                });
+            }
+
+            // ---- SLIDE 2: PHÂN TÍCH KÊNH / DANH MỤC ----
+            if (st && st.catRanking && st.catRanking.length > 0) {
+                const topCats = st.catRanking.slice(0, 5);
+                const maxRev = topCats[0] ? topCats[0].rev : 1;
+                slides.push({
+                    bg: 'linear-gradient(135deg, #fff9fc 0%, #f0f9ff 100%)',
+                    content: `
+                        <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                            <div style="font-size:11px;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">PHÂN TÍCH DANH MỤC</div>
+                            <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:20px;">Doanh Thu Theo ${st.catCol || 'Danh Mục'}</h2>
+                            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+                                ${topCats.map((c, i) => `
+                                    <div style="display:flex;align-items:center;gap:14px;">
+                                        <div style="width:24px;height:24px;border-radius:50%;background:${['#f472b6','#7dd3fc','#a78bfa','#34d399','#fb923c'][i]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0;">${i+1}</div>
+                                        <div style="flex:1;min-width:0;">
+                                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                                                <span style="font-size:12.5px;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${c.name}</span>
+                                                <span style="font-size:12px;font-weight:800;color:#db2777;flex-shrink:0;margin-left:8px;">${fmtVND(c.rev)} VND</span>
+                                            </div>
+                                            <div style="height:8px;background:#f1f5f9;border-radius:9999px;overflow:hidden;">
+                                                <div style="height:100%;border-radius:9999px;background:linear-gradient(90deg,${['#f472b6','#7dd3fc','#a78bfa','#34d399','#fb923c'][i]},${['#ec4899','#38bdf8','#8b5cf6','#10b981','#f97316'][i]});width:${maxRev > 0 ? Math.round(c.rev/maxRev*100) : 0}%;transition:width 0.8s ease;"></div>
+                                            </div>
+                                        </div>
+                                        <div style="font-size:11.5px;font-weight:800;color:#94a3b8;flex-shrink:0;">${maxRev > 0 ? Math.round(c.rev/maxRev*100) : 0}%</div>
+                                    </div>`).join('')}
+                            </div>
+                        </div>`
+                });
+            }
+
+            // ---- SLIDE 3: XU HƯỚNG THEO THỜI GIAN ----
+            if (st && st.timeSeries && st.timeSeries.length > 0) {
+                const ts = st.timeSeries;
+                const maxRev2 = Math.max(...ts.map(t => t.revenue || 0)) || 1;
+                slides.push({
+                    bg: 'linear-gradient(135deg, #f0f9ff 0%, #fff9fc 100%)',
+                    content: `
+                        <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                            <div style="font-size:11px;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">XU HƯỚNG KINH DOANH</div>
+                            <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:20px;">Doanh Thu Theo Thời Gian</h2>
+                            <div style="flex:1;display:flex;align-items:flex-end;gap:8px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
+                                ${ts.slice(0, 12).map((t, i) => `
+                                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                                        <div style="font-size:9.5px;font-weight:700;color:#db2777;">${fmtVND(t.revenue)}</div>
+                                        <div style="width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#f472b6,#7dd3fc);min-height:4px;height:${maxRev2 > 0 ? Math.round(t.revenue/maxRev2*180) : 4}px;"></div>
+                                        <div style="font-size:9px;color:#94a3b8;text-align:center;white-space:nowrap;overflow:hidden;max-width:100%;">${t.period || i+1}</div>
+                                    </div>`).join('')}
+                            </div>
+                            <div style="margin-top:12px;font-size:11.5px;color:#64748b;">
+                                ${ts.length > 1 ? `📈 ${ts.length} kỳ phân tích · Doanh thu ${ts[ts.length-1].revenue >= ts[0].revenue ? 'tăng trưởng' : 'giảm'} so với kỳ đầu` : ''}
+                            </div>
+                        </div>`
+                });
+            }
+
+            // ---- SLIDE 4: NHẬN XÉT TỔNG QUAN ----
+            const insightsEl = document.getElementById('general-insights-box');
+            const insightsHTML = insightsEl ? insightsEl.innerText.substring(0, 800) : '';
+            slides.push({
+                bg: 'linear-gradient(135deg, #fce4f1 0%, #f0f9ff 100%)',
+                content: `
+                    <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                        <div style="font-size:11px;font-weight:800;color:#db2777;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">NHẬN XÉT & ĐỀ XUẤT</div>
+                        <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:20px;">Phân Tích Tổng Quan & Khuyến Nghị</h2>
+                        <div style="flex:1;background:white;border-radius:16px;padding:24px;border-left:4px solid #f472b6;overflow:hidden;">
+                            ${insightsHTML ?
+                                '<p style="font-size:13px;line-height:1.8;color:#334155;">' + insightsHTML.replace(/\n/g,'<br>') + '</p>'
+                                : `<div style="display:flex;flex-direction:column;gap:14px;">
+                                    ${st ? [
+                                        `💰 <b>Doanh thu tổng:</b> ${fmtVND(st.totalRevenue)} VND với ${st.totalOrders} đơn hàng được ghi nhận.`,
+                                        `📈 <b>Biên lợi nhuận:</b> ${st.ros || 'Chưa tính'} — ${st.ros && parseFloat(st.ros) > 25 ? 'Hiệu quả kinh doanh tốt.' : 'Cần cải thiện chi phí vận hành.'}`,
+                                        `🏆 <b>Danh mục dẫn đầu:</b> ${st.catRanking && st.catRanking[0] ? st.catRanking[0].name + ' với ' + fmtVND(st.catRanking[0].rev) + ' VND' : 'Chưa xác định'}.`,
+                                        `🎯 <b>Mục tiêu:</b> ${goal}`
+                                    ].map(t => `<div style="font-size:12.5px;line-height:1.6;color:#334155;">• ${t}</div>`).join('') : '<div style="color:#94a3b8;">Chưa có dữ liệu để phân tích</div>'}
+                                </div>`}
+                        </div>
+                    </div>`
+            });
+
+            // ---- SLIDE 5: PHÂN TÍCH VẤN ĐỀ & ĐỀ XUẤT HÀNH ĐỘNG ----
+            const issuesEl = document.getElementById('issues-table-body');
+            const issueRows = issuesEl ? Array.from(issuesEl.querySelectorAll('tr')).slice(0, 4) : [];
+            slides.push({
+                bg: 'linear-gradient(135deg, #fff9fc 0%, #f0f9ff 100%)',
+                content: `
+                    <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                        <div style="font-size:11px;font-weight:800;color:#f59e0b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">KẾ HOẠCH HÀNH ĐỘNG</div>
+                        <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:20px;">Vấn Đề & Đề Xuất Chiến Lược</h2>
+                        <div style="flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+                            ${issueRows.length > 0 ?
+                                issueRows.map((row, i) => {
+                                    const cells = row.querySelectorAll('td');
+                                    const issue = cells[1] ? cells[1].textContent : '';
+                                    const action = cells[3] ? cells[3].textContent : '';
+                                    const priority = cells[2] ? cells[2].textContent : '';
+                                    return `<div style="background:white;border-radius:14px;padding:14px 18px;border-left:3px solid ${['#f472b6','#f59e0b','#38bdf8','#10b981'][i]||'#f472b6'};display:flex;gap:16px;align-items:flex-start;">
+                                        <div style="font-size:18px;flex-shrink:0;">⚡</div>
+                                        <div style="flex:1;min-width:0;">
+                                            <div style="font-size:12.5px;font-weight:800;color:#1e293b;margin-bottom:3px;">${issue}</div>
+                                            <div style="font-size:11.5px;color:#64748b;">${action}</div>
+                                        </div>
+                                        ${priority ? `<span style="background:#fef3c7;color:#b45309;padding:3px 10px;border-radius:9999px;font-size:10.5px;font-weight:700;flex-shrink:0;">${priority}</span>` : ''}
+                                    </div>`;
+                                }).join('')
+                                : `<div style="display:flex;flex-direction:column;gap:12px;">
+                                    ${['Tối ưu kênh phân phối mang lại biên lợi nhuận cao nhất',
+                                       'Kiểm soát chi phí giá vốn để cải thiện ROS',
+                                       'Mở rộng sản phẩm chủ lực đang tăng trưởng mạnh',
+                                       'Đánh giá lại khu vực/kênh hoạt động kém hiệu quả'
+                                    ].map((t, i) => `
+                                        <div style="background:white;border-radius:14px;padding:14px 18px;border-left:3px solid ${['#f472b6','#f59e0b','#38bdf8','#10b981'][i]};display:flex;align-items:center;gap:12px;">
+                                            <span style="font-size:16px;">⚡</span>
+                                            <span style="font-size:12.5px;font-weight:700;color:#1e293b;">${t}</span>
+                                        </div>`).join('')}
+                                </div>`}
+                        </div>
+                    </div>`
+            });
+
+            // ---- SLIDE 6: BÁO CÁO CHIẾN LƯỢC (excerpt) ----
+            const reportEl = document.getElementById('report-editable-content');
+            const reportText = reportEl ? reportEl.innerText.substring(0, 600) : '';
+            slides.push({
+                bg: 'linear-gradient(135deg, #fff0f8 0%, #f0f9ff 100%)',
+                content: `
+                    <div style="padding:36px 40px;height:100%;display:flex;flex-direction:column;">
+                        <div style="font-size:11px;font-weight:800;color:#db2777;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">BÁO CÁO CHIẾN LƯỢC</div>
+                        <h2 style="font-size:22px;font-weight:900;color:#0f172a;margin-bottom:20px;">Tóm Tắt Báo Cáo Phân Tích</h2>
+                        <div style="flex:1;background:white;border-radius:16px;padding:22px;border:1.5px solid #fce7f3;overflow:hidden;">
+                            <p style="font-size:12.5px;line-height:1.9;color:#334155;white-space:pre-wrap;">${reportText || 'Báo cáo chưa được tạo. Hãy quay lại trang Dashboard để tạo báo cáo.'}</p>
+                        </div>
+                    </div>`
+            });
+
+            // ---- SLIDE 7: KẾT THÚC / LIÊN HỆ ----
+            slides.push({
+                bg: 'linear-gradient(135deg, #fce4f1 0%, #e8f5ff 100%)',
+                content: `
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">
+                        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;box-shadow:0 6px 20px rgba(244,114,182,0.4);">🙏</div>
+                        <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin-bottom:8px;">Cảm ơn bạn đã theo dõi!</h2>
+                        <p style="font-size:14px;color:#64748b;margin-bottom:28px;">Báo cáo được tổng hợp và phân tích bởi</p>
+                        <div style="background:white;border-radius:20px;padding:24px 36px;box-shadow:0 8px 28px rgba(244,114,182,0.15);border:1.5px solid #fce7f3;">
+                            <div style="font-size:18px;font-weight:900;color:#db2777;margin-bottom:4px;">Vũ Anh Thư</div>
+                            <div style="font-size:13px;font-weight:600;color:#64748b;margin-bottom:16px;">Data Analyst & Business Intelligence</div>
+                            <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:#475569;text-align:left;">
+                                <div>📧 anhthuvu8307@gmail.com</div>
+                                <div>📞 0332 547 633</div>
+                                <div>🔗 facebook.com/vatthhu</div>
+                                <div>📍 Hà Nội, Việt Nam</div>
+                            </div>
+                        </div>
+                    </div>`
+            });
+
+            return slides;
+        }
+
+        function openSlidePresentation() {
+            const modal = document.getElementById('slide-modal');
+            if (!modal) return;
+            allSlides = buildSlideData();
+            currentSlide = 0;
+            renderSlide();
+            renderSlideDots();
+            modal.style.display = 'flex';
+            document.addEventListener('keydown', slideKeyHandler);
+        }
+
+        function closeSlideModal() {
+            const modal = document.getElementById('slide-modal');
+            if (modal) modal.style.display = 'none';
+            document.removeEventListener('keydown', slideKeyHandler);
+        }
+
+        function slideKeyHandler(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
+            else if (e.key === 'Escape') closeSlideModal();
+        }
+
+        function renderSlide() {
+            const viewport = document.getElementById('slide-viewport');
+            const counter  = document.getElementById('slide-counter');
+            if (!viewport || !allSlides.length) return;
+            const slide = allSlides[currentSlide];
+            viewport.innerHTML = `
+                <div style="
+                    width:100%; height:100%;
+                    background:${slide.bg};
+                    border-radius:20px;
+                    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+                    overflow:hidden;
+                    animation:slideIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+                    position:relative;
+                    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+                ">
+                    <!-- Decorative top bar -->
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f472b6,#ec4899,#7dd3fc);"></div>
+                    <!-- Slide number badge -->
+                    <div style="position:absolute;bottom:16px;right:20px;font-size:10.5px;color:rgba(0,0,0,0.3);font-weight:700;">${currentSlide + 1} / ${allSlides.length}</div>
+                    ${slide.content}
+                </div>`;
+
+            if (counter) counter.textContent = `${currentSlide + 1} / ${allSlides.length}`;
+
+            // Update dots
+            const dots = document.querySelectorAll('.slide-dot');
+            dots.forEach((d, i) => {
+                d.style.background = i === currentSlide
+                    ? 'linear-gradient(135deg,#f472b6,#7dd3fc)'
+                    : 'rgba(255,255,255,0.3)';
+                d.style.width = i === currentSlide ? '24px' : '8px';
+            });
+        }
+
+        function renderSlideDots() {
+            const dotsEl = document.getElementById('slide-dots');
+            if (!dotsEl) return;
+            dotsEl.innerHTML = allSlides.map((_, i) => `
+                <div class="slide-dot" onclick="goToSlide(${i})" style="
+                    height:8px; width:${i===0?'24':'8'}px; border-radius:9999px;
+                    background:${i===0?'linear-gradient(135deg,#f472b6,#7dd3fc)':'rgba(255,255,255,0.3)'};
+                    cursor:pointer; transition:all 0.3s ease;
+                "></div>`).join('');
+        }
+
+        function nextSlide() {
+            if (currentSlide < allSlides.length - 1) { currentSlide++; renderSlide(); }
+        }
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; renderSlide(); }
+        }
+        function goToSlide(n) {
+            currentSlide = Math.max(0, Math.min(n, allSlides.length - 1));
+            renderSlide();
+        }
+
+        function downloadSlides() {
+            const biz   = (document.getElementById('biz-domain') || {}).value || 'PhanTich';
+            const slides = buildSlideData();
+            let slidesHTML = '';
+            slides.forEach((s, i) => {
+                slidesHTML += `
+                <div class="slide" id="slide-${i}" style="display:${i===0?'flex':'none'};width:960px;height:600px;background:${s.bg};border-radius:0;position:relative;font-family:'Segoe UI',system-ui,sans-serif;flex-direction:column;">
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f472b6,#ec4899,#7dd3fc);"></div>
+                    <div style="position:absolute;bottom:16px;right:20px;font-size:10px;color:rgba(0,0,0,0.3);">${i+1}/${slides.length}</div>
+                    ${s.content}
+                </div>`;
+            });
+
+            const fullHTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Slide Trình Bày - ${biz}</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0a0f1e; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:'Segoe UI',system-ui,sans-serif; }
+  .controls { position:fixed; top:0; left:0; right:0; padding:10px 24px; display:flex; justify-content:space-between; align-items:center; background:rgba(10,15,30,0.8); z-index:100; }
+  .controls span { color:white; font-weight:800; font-size:14px; }
+  .controls button { padding:7px 18px; border:none; border-radius:9999px; background:linear-gradient(135deg,#f472b6,#7dd3fc); color:white; font-weight:800; cursor:pointer; font-size:12px; }
+  .controls .prev { background:rgba(255,255,255,0.15); }
+  .slide-container { margin-top:60px; width:960px; height:600px; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
+  .slide { width:960px; height:600px; overflow:hidden; }
+  .dots { display:flex; gap:8px; margin-top:16px; justify-content:center; }
+  .dot { width:8px; height:8px; border-radius:9999px; background:rgba(255,255,255,0.3); cursor:pointer; transition:all 0.3s; }
+  .dot.active { width:24px; background:linear-gradient(90deg,#f472b6,#7dd3fc); }
+</style>
+</head>
+<body>
+  <div class="controls">
+    <span>🎞️ Slide Trình Bày · ${biz}</span>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="prev" onclick="changeSlide(-1)">◀ Trước</button>
+      <span id="cnt" style="font-size:12px;color:rgba(255,255,255,0.6);">1 / ${slides.length}</span>
+      <button onclick="changeSlide(1)">Tiếp ▶</button>
+    </div>
+  </div>
+  <div class="slide-container">${slidesHTML}</div>
+  <div class="dots" id="dots">${slides.map((_,i)=>`<div class="dot ${i===0?'active':''}" onclick="goTo(${i})"></div>`).join('')}</div>
+  <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.3);">← → phím mũi tên | Vũ Anh Thư · anhthuvu8307@gmail.com</div>
+  <script>
+    var cur = 0, total = ${slides.length};
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach((s,i) => s.style.display = i===n?'flex':'none');
+      document.querySelectorAll('.dot').forEach((d,i) => { d.className='dot'+(i===n?' active':''); });
+      document.getElementById('cnt').textContent = (n+1)+' / '+total;
+      cur = n;
+    }
+    function changeSlide(d) { showSlide(Math.max(0,Math.min(cur+d,total-1))); }
+    function goTo(n) { showSlide(n); }
+    document.addEventListener('keydown', function(e) {
+      if (e.key==='ArrowRight'||e.key==='ArrowDown') changeSlide(1);
+      else if (e.key==='ArrowLeft'||e.key==='ArrowUp') changeSlide(-1);
+    });
+  <\/script>
+</body>
+</html>`;
+            const blob = new Blob([fullHTML], {type:'text/html;charset=utf-8'});
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url;
+            a.download = 'Slide_' + biz.replace(/\s+/g,'_').substring(0,20) + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Add slide-in keyframe if not present
+        if (!document.getElementById('slide-anim-style')) {
+            const st2 = document.createElement('style');
+            st2.id = 'slide-anim-style';
+            st2.textContent = '@keyframes slideIn { from { opacity:0; transform:translateX(30px) scale(0.97); } to { opacity:1; transform:translateX(0) scale(1); } }';
+            document.head.appendChild(st2);
+        }
+
+        // Close slide modal on backdrop click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('slide-modal');
+            if (modal && e.target === modal) closeSlideModal();
+        });
 
     </script>
 </body>
