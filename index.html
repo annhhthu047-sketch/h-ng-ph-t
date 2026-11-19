@@ -1550,7 +1550,7 @@
                 <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;">
                     <div id="modal-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(244,114,182,0.4);border:3px solid white;position:relative;overflow:hidden;" onclick="document.getElementById('avatar-file-input').click()" title="Nhấn để đổi ảnh">
                         <span id="modal-avatar-initials" style="display:none;">AT</span>
-                        <img id="modal-avatar-img" src="avatar_thumb.jpg" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null; this.src=DEFAULT_AVATAR_B64;" />
+                        <img id="modal-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; if(document.getElementById('modal-avatar-initials')) document.getElementById('modal-avatar-initials').style.display='block';" />
                     </div>
                     <span style="font-size:11px;color:#94a3b8;">Nhấn vào ảnh để thay đổi</span>
                     <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" onchange="previewAvatarFile(this)">
@@ -1571,7 +1571,7 @@
                 <!-- Clickable avatar with image support -->
                 <div id="header-avatar-btn" onclick="openProfileModal()" title="Chỉnh sửa hồ sơ" style="position:relative;cursor:pointer;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#7dd3fc);color:white;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(236,72,153,0.35);border:2px solid white;overflow:hidden;flex-shrink:0;transition:transform 0.2s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
                     <span id="header-avatar-initials" style="display:none;">AT</span>
-                    <img id="header-avatar-img" src="avatar_thumb.jpg" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null; this.src=DEFAULT_AVATAR_B64;" />
+                    <img id="header-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; if(document.getElementById('header-avatar-initials')) document.getElementById('header-avatar-initials').style.display='block';" />
                 </div>
                 <div class="header-brand-info">
                     <span class="header-author-name" id="header-display-name">Vũ Anh Thư</span>
@@ -1807,8 +1807,26 @@
             </div>
 
             <!-- Cảnh Báo File Rỗng (Empty File Alert) -->
-            <div id="empty-file-alert" class="alert-empty-file">
-                ⚠️ <b>Tệp dữ liệu rỗng:</b> Tệp bạn vừa tải lên không chứa bản ghi dữ liệu nào! Hệ thống không bịa đặt số liệu. Vui lòng tải lên tệp có dữ liệu hợp lệ để tiếp tục quy trình phân tích.
+            <div id="empty-file-alert" class="alert-empty-file" style="display:none; margin-top:16px; padding:18px 22px; border-radius:18px; background:#fff1f2; border:2px solid #fda4af; box-shadow:0 8px 25px rgba(225,29,72,0.15); animation:popIn 0.3s ease;">
+                <div style="display:flex; align-items:flex-start; gap:14px;">
+                    <div style="font-size:30px; line-height:1; flex-shrink:0;">🚫</div>
+                    <div style="flex:1;">
+                        <div style="font-size:15px; font-weight:800; color:#be123c;" id="empty-alert-title">
+                            Lỗi: Không tìm thấy dữ liệu trong tệp tải lên!
+                        </div>
+                        <div style="font-size:12.5px; color:#9f1239; margin-top:5px; line-height:1.6;" id="empty-alert-desc">
+                            Tệp dữ liệu hoàn toàn rỗng hoặc không chứa bất kỳ bản ghi dữ liệu hợp lệ nào (0 dòng dữ liệu). Hệ thống đã dừng lại tại bước này và không tiến hành phân tích số liệu. Vui lòng kiểm tra lại tệp nguồn và tải lên tệp có dữ liệu để tiếp tục.
+                        </div>
+                        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+                            <button class="btn-pink-glass" style="font-size:11.5px; padding:6px 14px;" onclick="document.getElementById('file-upload-input').click()">
+                                📂 Tải lên tệp khác
+                            </button>
+                            <button class="btn-white-glass" style="font-size:11.5px; padding:6px 14px;" onclick="loadSampleDataset()">
+                                ⚡ Sử dụng dữ liệu mẫu Hưng Phát
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 📋 Khung Nhận Xét Nhanh & Đánh Giá Chung Dữ Liệu (MỚI) -->
@@ -2660,14 +2678,93 @@
             };
         }
 
-        // 2. File Uploading & Empty File Guard
+        // 2. File Uploading & Strict Empty File Guard
+        function isDatasetEmpty(rows) {
+            if (!rows || !Array.isArray(rows) || rows.length === 0) return true;
+            let totalNonEmpty = 0;
+            for (let i = 0; i < rows.length; i++) {
+                const r = rows[i];
+                if (!r || typeof r !== 'object') continue;
+                for (const k in r) {
+                    const v = r[k];
+                    if (v !== undefined && v !== null) {
+                        const s = String(v).trim();
+                        if (s !== '' && s.toLowerCase() !== 'null' && s.toLowerCase() !== 'undefined') {
+                            totalNonEmpty++;
+                        }
+                    }
+                }
+            }
+            if (totalNonEmpty === 0) return true;
+
+            const firstRow = rows[0] || {};
+            const meaningfulCols = Object.keys(firstRow).filter(k => k && !k.startsWith('__EMPTY') && k.trim() !== '');
+            if (meaningfulCols.length === 0 && totalNonEmpty === 0) return true;
+
+            return false;
+        }
+
+        function handleEmptyFileUpload(fileName) {
+            const emptyAlert = document.getElementById('empty-file-alert');
+            const assessBox = document.getElementById('data-assessment-box');
+            const bizCard = document.getElementById('biz-context-card');
+            const inspectorSec = document.getElementById('data-inspector-section');
+            const pill = document.getElementById('file-status-pill');
+
+            // 1. Hiển thị thông báo lỗi không tìm thấy dữ liệu
+            if (emptyAlert) {
+                emptyAlert.style.display = 'block';
+                const titleEl = document.getElementById('empty-alert-title');
+                const descEl = document.getElementById('empty-alert-desc');
+                if (titleEl) titleEl.textContent = `Lỗi: Không tìm thấy dữ liệu trong tệp "${fileName}"!`;
+                if (descEl) descEl.textContent = `Tệp "${fileName}" hoàn toàn rỗng hoặc không chứa bất kỳ bản ghi dữ liệu hợp lệ nào (0 dòng dữ liệu). Hệ thống đã dừng lại tại bước này và không tiến hành phân tích số liệu. Vui lòng kiểm tra lại tệp nguồn và tải lên tệp có dữ liệu để tiếp tục.`;
+                emptyAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // 2. Ẩn hoàn toàn khung nhận xét, bối cảnh doanh nghiệp và bảng dữ liệu rỗng
+            if (assessBox) assessBox.style.display = 'none';
+            if (bizCard) bizCard.style.display = 'none';
+            if (inspectorSec) inspectorSec.style.display = 'none';
+
+            // 3. Xóa dữ liệu bộ nhớ
+            currentDataset = null;
+            inspectorData = [];
+            inspectorColumns = [];
+            renderEditableTable([], []);
+
+            // 4. Cập nhật thẻ trạng thái màu đỏ
+            if (pill) {
+                pill.style.display = 'inline-flex';
+                pill.style.background = '#fee2e2';
+                pill.style.color = '#dc2626';
+                pill.style.border = '1.5px solid #fca5a5';
+                pill.textContent = '❌ Lỗi: ' + fileName + ' (Tệp rỗng - Không tìm thấy dữ liệu)';
+            }
+
+            // 5. Reset input file
+            const fileInput = document.getElementById('file-upload-input');
+            if (fileInput) fileInput.value = '';
+
+            // 6. Hiển thị toast cảnh báo
+            showToast(`❌ Không tìm thấy dữ liệu trong tệp "${fileName}"!`, 'error');
+        }
+
         function onFileUploaded(event) {
             const file = event.target.files[0];
             if (!file) return;
 
+            // Kiểm tra tệp 0 byte
+            if (file.size === 0) {
+                handleEmptyFileUpload(file.name);
+                return;
+            }
+
             const pill = document.getElementById('file-status-pill');
             if (pill) {
                 pill.style.display = 'inline-flex';
+                pill.style.background = 'rgba(255,255,255,0.7)';
+                pill.style.color = 'var(--pink-dark)';
+                pill.style.border = '1px solid rgba(244,114,182,0.4)';
                 pill.textContent = 'Đang đọc: ' + file.name + '...';
             }
 
@@ -2678,12 +2775,20 @@
                 reader.onload = function(e) {
                     try {
                         const csvText = e.target.result;
+                        if (!csvText || !csvText.trim()) {
+                            handleEmptyFileUpload(file.name);
+                            return;
+                        }
                         const workbook = XLSX.read(csvText, { type: 'string' });
                         const firstSheetName = workbook.SheetNames[0];
                         const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { raw: false, defval: "" });
+                        if (isDatasetEmpty(rawRows)) {
+                            handleEmptyFileUpload(file.name);
+                            return;
+                        }
                         processUploadedRows(rawRows, file.name);
                     } catch(err) {
-                        alert('Không thể đọc file CSV. Vui lòng kiểm tra lại định dạng tệp!');
+                        handleEmptyFileUpload(file.name);
                     }
                 };
                 reader.readAsText(file, 'utf-8');
@@ -2692,12 +2797,20 @@
                 reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
+                        if (data.length === 0) {
+                            handleEmptyFileUpload(file.name);
+                            return;
+                        }
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheetName = workbook.SheetNames[0];
                         const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { raw: false, defval: "" });
+                        if (isDatasetEmpty(rawRows)) {
+                            handleEmptyFileUpload(file.name);
+                            return;
+                        }
                         processUploadedRows(rawRows, file.name);
                     } catch(err) {
-                        alert('Không thể đọc file Excel. Vui lòng kiểm tra lại định dạng tệp!');
+                        handleEmptyFileUpload(file.name);
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -2707,26 +2820,36 @@
         function processUploadedRows(rawRows, fileName) {
             const emptyAlert = document.getElementById('empty-file-alert');
             const assessBox = document.getElementById('data-assessment-box');
+            const bizCard = document.getElementById('biz-context-card');
+            const inspectorSec = document.getElementById('data-inspector-section');
 
-            // 1. Kiểm tra tệp rỗng (Empty file guard)
-            if (!rawRows || rawRows.length === 0) {
-                if (emptyAlert) emptyAlert.style.display = 'block';
-                if (assessBox) assessBox.style.display = 'none';
-                currentDataset = null;
-                inspectorData = [];
-                inspectorColumns = [];
-                renderEditableTable([], []);
-                scanDataErrors();
-                alert('Tệp dữ liệu rỗng! Vui lòng tải lên tệp có chứa ít nhất 1 dòng dữ liệu hợp lệ.');
+            // 1. Kiểm tra tệp rỗng (Strict Empty file guard)
+            if (isDatasetEmpty(rawRows)) {
+                handleEmptyFileUpload(fileName);
                 return;
             }
 
+            // Tệp hợp lệ: Ẩn thông báo lỗi, hiện các khối chức năng
             if (emptyAlert) emptyAlert.style.display = 'none';
+            if (assessBox) assessBox.style.display = 'block';
+            if (bizCard) bizCard.style.display = 'block';
+            if (inspectorSec) inspectorSec.style.display = 'block';
 
-            const rawCols = Object.keys(rawRows[0]);
+            // Lọc bỏ những dòng hoàn toàn trống
+            const validRawRows = rawRows.filter(r => {
+                if (!r || typeof r !== 'object') return false;
+                return Object.values(r).some(v => v !== undefined && v !== null && String(v).trim() !== '');
+            });
+
+            if (validRawRows.length === 0) {
+                handleEmptyFileUpload(fileName);
+                return;
+            }
+
+            const rawCols = Object.keys(validRawRows[0]);
             const cleanedCols = rawCols.map(c => cleanVietnameseText(c));
 
-            const cleanedRows = rawRows.map(row => {
+            const cleanedRows = validRawRows.map(row => {
                 const newRow = {};
                 rawCols.forEach((colKey, idx) => {
                     const cleanColKey = cleanedCols[idx];
@@ -2755,6 +2878,9 @@
             const pill = document.getElementById('file-status-pill');
             if (pill) {
                 pill.style.display = 'inline-flex';
+                pill.style.background = 'rgba(255,255,255,0.7)';
+                pill.style.color = 'var(--pink-dark)';
+                pill.style.border = '1px solid rgba(244,114,182,0.4)';
                 pill.textContent = fileName + ' (' + cleanedRows.length + ' dòng)';
             }
 
@@ -2960,8 +3086,9 @@
 
         // Nút: Duyệt dữ liệu để phân tích
         function approveAndGoDash() {
-            if (!inspectorData || inspectorData.length === 0) {
-                alert('Vui lòng tải lên tệp dữ liệu trước khi duyệt!');
+            if (!inspectorData || inspectorData.length === 0 || isDatasetEmpty(inspectorData)) {
+                showToast('❌ Không tìm thấy dữ liệu hợp lệ để phân tích! Vui lòng nạp tệp dữ liệu.', 'error');
+                alert('Không tìm thấy dữ liệu hợp lệ để phân tích! Vui lòng tải lên tệp có dữ liệu.');
                 return;
             }
 
@@ -3666,6 +3793,15 @@
         }
 
         function loadSampleDataset() {
+            const emptyAlert = document.getElementById('empty-file-alert');
+            if (emptyAlert) emptyAlert.style.display = 'none';
+            const assessBox = document.getElementById('data-assessment-box');
+            if (assessBox) assessBox.style.display = 'block';
+            const bizCard = document.getElementById('biz-context-card');
+            if (bizCard) bizCard.style.display = 'block';
+            const inspectorSec = document.getElementById('data-inspector-section');
+            if (inspectorSec) inspectorSec.style.display = 'block';
+
             currentDataset = EMBEDDED_SAMPLE_DATA;
             const sampleCols = ["MÃ ĐƠN", "THÁNG", "KÊNH BÁN", "KHU VỰC", "SẢN PHẨM", "SỐ LƯỢNG", "DOANH THU (VND)", "CHI PHÍ GIÁ VỐN (VND)", "LỢI NHUẬN GỘP (VND)"];
             const sampleRows = [
@@ -3829,105 +3965,80 @@
             }
         }
 
+        // Kiểm tra xem tài khoản đăng nhập có phải là tài khoản chính chủ của Vũ Anh Thư hay không
+        function isOwnerAccount(name, contact) {
+            const n = (name || '').toLowerCase().trim();
+            const c = (contact || '').toLowerCase().replace(/[\s\.-]/g, '');
+
+            if (c === '0332547633' || c === '+84332547633' || c === 'anhthuvu8307@gmail.com') {
+                return true;
+            }
+
+            const norm = n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
+            if (norm === 'vu anh thu' || norm === 'anh thu vu' || norm === 'vuanhthu' || norm === 'anhthuvu') {
+                if (!c || c === '0332547633' || c === 'anhthuvu8307@gmail.com') {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function saveProfileChanges() {
-            const newName = (document.getElementById('modal-display-name') || {}).value.trim() || 'Vũ Anh Thư';
+            const newName = (document.getElementById('modal-display-name') || {}).value.trim() || 'Người dùng';
             const modalImg = document.getElementById('modal-avatar-img');
-            const avatarSrc = (modalImg && modalImg.src && modalImg.style.display !== 'none') ? modalImg.src : '';
+            const avatarSrc = (modalImg && modalImg.src && modalImg.style.display !== 'none' && modalImg.src.startsWith('data:')) ? modalImg.src : '';
 
-            // 1. Update header displays
-            const headerName = document.getElementById('header-display-name');
-            const headerBadge = document.getElementById('header-name-badge');
-            if (headerName) headerName.textContent = newName;
-            if (headerBadge) headerBadge.textContent = newName;
+            // Retrieve current session
+            const curSessionStr = localStorage.getItem('user_session');
+            let curSession = curSessionStr ? JSON.parse(curSessionStr) : { name: newName, contact: '' };
+            curSession.name = newName;
 
-            const initials = newName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'AT';
-            const headerInit = document.getElementById('header-avatar-initials');
-            const headerImg = document.getElementById('header-avatar-img');
+            const isOwner = isOwnerAccount(newName, curSession.contact);
 
             if (avatarSrc) {
-                if (headerImg) {
-                    headerImg.src = avatarSrc;
-                    headerImg.style.display = 'block';
-                }
-                if (headerInit) headerInit.style.display = 'none';
-            } else {
-                if (headerInit) {
-                    headerInit.textContent = initials;
-                    headerInit.style.display = 'block';
-                }
-                if (headerImg) headerImg.style.display = 'none';
+                curSession.avatar = avatarSrc;
+            } else if (!isOwner) {
+                delete curSession.avatar;
             }
 
-            // 2. Persist to localStorage ('user_custom_profile' & 'user_session')
             try {
-                const profileData = {
+                localStorage.setItem('user_session', JSON.stringify(curSession));
+                localStorage.setItem('user_custom_profile', JSON.stringify({
                     name: newName,
-                    avatar: avatarSrc,
+                    avatar: curSession.avatar || '',
                     updatedAt: new Date().toISOString()
-                };
-                localStorage.setItem('user_custom_profile', JSON.stringify(profileData));
-
-                // Also update user_session if exists
-                const curSessionStr = localStorage.getItem('user_session');
-                if (curSessionStr) {
-                    const curSession = JSON.parse(curSessionStr);
-                    curSession.name = newName;
-                    if (avatarSrc) curSession.avatar = avatarSrc;
-                    localStorage.setItem('user_session', JSON.stringify(curSession));
-                }
+                }));
             } catch (err) {
-                console.warn('LocalStorage save error (e.g. storage quota):', err);
+                console.warn('LocalStorage save error:', err);
             }
 
+            applyUserSessionToUI(curSession);
             closeProfileModal();
 
-            showToast('✅ Đã lưu tên và ảnh đại diện thành công!', 'success');
+            showToast('✅ Đã lưu hồ sơ thành công!', 'success');
         }
 
         function loadSavedProfile() {
             try {
-                // Check custom profile first
-                const savedProfileStr = localStorage.getItem('user_custom_profile');
                 const savedSessionStr = localStorage.getItem('user_session');
+                const savedProfileStr = localStorage.getItem('user_custom_profile');
 
-                let targetName = '';
-                let targetAvatar = '';
-
-                if (savedProfileStr) {
-                    const p = JSON.parse(savedProfileStr);
-                    if (p.name) targetName = p.name;
-                    if (p.avatar) targetAvatar = p.avatar;
-                } else if (savedSessionStr) {
-                    const s = JSON.parse(savedSessionStr);
-                    if (s.name) targetName = s.name;
-                    if (s.avatar) targetAvatar = s.avatar;
+                let s = null;
+                if (savedSessionStr) {
+                    s = JSON.parse(savedSessionStr);
+                } else if (savedProfileStr) {
+                    s = JSON.parse(savedProfileStr);
                 }
 
-                if (targetName) {
-                    const headerName = document.getElementById('header-display-name');
-                    const headerBadge = document.getElementById('header-name-badge');
-                    const modalName = document.getElementById('modal-display-name');
-                    if (headerName) headerName.textContent = targetName;
-                    if (headerBadge) headerBadge.textContent = targetName;
-                    if (modalName) modalName.value = targetName;
-                }
-
-                if (targetAvatar) {
-                    const headerImg = document.getElementById('header-avatar-img');
-                    const modalImg = document.getElementById('modal-avatar-img');
-                    const headerInit = document.getElementById('header-avatar-initials');
-                    const modalInit = document.getElementById('modal-avatar-initials');
-
-                    if (headerImg) {
-                        headerImg.src = targetAvatar;
-                        headerImg.style.display = 'block';
-                    }
-                    if (modalImg) {
-                        modalImg.src = targetAvatar;
-                        modalImg.style.display = 'block';
-                    }
-                    if (headerInit) headerInit.style.display = 'none';
-                    if (modalInit) modalInit.style.display = 'none';
+                if (s) {
+                    applyUserSessionToUI(s);
+                } else {
+                    // Mặc định ban đầu khi chưa đăng nhập: hiển thị nền tảng của Vũ Anh Thư
+                    const defaultOwner = {
+                        name: 'Vũ Anh Thư',
+                        contact: 'anhthuvu8307@gmail.com'
+                    };
+                    applyUserSessionToUI(defaultOwner);
                 }
             } catch (e) {
                 console.warn('Error loading saved profile:', e);
@@ -5091,27 +5202,30 @@
             }
 
             if (currentAuthMode === 'register' && !name) {
-                // If name empty, derive name from contact (e.g. from email or phone)
                 name = contact.includes('@') ? contact.split('@')[0] : ('Người dùng ' + contact.slice(-4));
             } else if (!name) {
-                name = 'Vũ Anh Thư';
+                name = isOwnerAccount('', contact) ? 'Vũ Anh Thư' : 'Thành viên';
             }
 
-            // Save user session to localStorage
+            const isOwner = isOwnerAccount(name, contact);
+
+            // Lưu session người dùng
             const userSession = {
                 name: name,
                 contact: contact,
                 loggedIn: true,
                 loginTime: new Date().toISOString()
             };
+
+            // Nếu là tài khoản chính chủ, cấp ảnh avatar của Vũ Anh Thư
+            if (isOwner) {
+                userSession.avatar = typeof DEFAULT_AVATAR_B64 !== 'undefined' ? DEFAULT_AVATAR_B64 : 'avatar_thumb.jpg';
+            }
+
             localStorage.setItem('user_session', JSON.stringify(userSession));
-
-            // Apply user info to UI
             applyUserSessionToUI(userSession);
-
             closeAuthModal();
 
-            // Welcome toast
             showToast(`🎉 Chào mừng ${name} đã đăng nhập thành công!`, 'success');
         }
 
@@ -5123,40 +5237,119 @@
         }
 
         function applyUserSessionToUI(session) {
-            loadSavedProfile();
             if (!session) return;
-            const name = session.name || 'Vũ Anh Thư';
-            const contact = session.contact || 'anhthuvu8307@gmail.com';
+            const name = (session.name || '').trim() || 'Người dùng';
+            const contact = (session.contact || '').trim();
+            const isOwner = isOwnerAccount(name, contact);
 
-            // Header name badge
+            // 1. Thẻ tên trên thanh điều hướng bên phải
             const badge = document.getElementById('header-name-badge');
-            if (badge) badge.textContent = name;
+            if (badge) badge.textContent = '👤 ' + name;
 
-            // Header author name
+            // 2. Tên hiển thị bên trái & Chức danh
             const author = document.getElementById('header-display-name');
             if (author) author.textContent = name;
 
-            // Header initials
-            const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'AT';
-            const initEl = document.getElementById('header-avatar-initials');
-            if (initEl) initEl.textContent = initials;
+            const roleEl = document.querySelector('.header-author-role');
+            if (roleEl) {
+                roleEl.textContent = isOwner ? 'Data Analyst & BI' : 'Thành viên';
+            }
+
+            // 3. Cập nhật ô nhập tên trong modal
+            const modalName = document.getElementById('modal-display-name');
+            if (modalName) modalName.value = name;
+
+            // 4. Tính toán ký tự viết tắt Initials (2 chữ cái)
+            const words = name.split(/\s+/).filter(Boolean);
+            let initials = 'ND';
+            if (words.length === 1) {
+                initials = words[0].substring(0, 2).toUpperCase();
+            } else if (words.length >= 2) {
+                initials = (words[0][0] + words[words.length - 1][0]).toUpperCase();
+            }
+
+            const headerInit = document.getElementById('header-avatar-initials');
             const modalInit = document.getElementById('modal-avatar-initials');
+            if (headerInit) headerInit.textContent = initials;
             if (modalInit) modalInit.textContent = initials;
 
-            // If contact is an email, update email link in header if desired
-            if (contact.includes('@')) {
+            // 5. Logic Avatar Header & Modal:
+            // "chỉ tài khoản của tôi hiện avt của tôi thôi, khi người dùng đăng nhập hiện mặc định không phải avt của tôi"
+            const headerImg = document.getElementById('header-avatar-img');
+            const modalImg = document.getElementById('modal-avatar-img');
+            const customAvatar = session.avatar;
+
+            if (isOwner) {
+                // Tài khoản chính chủ Vũ Anh Thư: Hiện ảnh chân dung Vũ Anh Thư
+                const ownerPhoto = (customAvatar && customAvatar.startsWith('data:')) ? customAvatar : (typeof DEFAULT_AVATAR_B64 !== 'undefined' ? DEFAULT_AVATAR_B64 : 'avatar_thumb.jpg');
+                if (headerImg) {
+                    headerImg.src = ownerPhoto;
+                    headerImg.style.display = 'block';
+                }
+                if (modalImg) {
+                    modalImg.src = ownerPhoto;
+                    modalImg.style.display = 'block';
+                }
+                if (headerInit) headerInit.style.display = 'none';
+                if (modalInit) modalInit.style.display = 'none';
+            } else if (customAvatar && customAvatar.startsWith('data:')) {
+                // Người dùng khác đã tự tải lên ảnh chân dung của riêng họ
+                if (headerImg) {
+                    headerImg.src = customAvatar;
+                    headerImg.style.display = 'block';
+                }
+                if (modalImg) {
+                    modalImg.src = customAvatar;
+                    modalImg.style.display = 'block';
+                }
+                if (headerInit) headerInit.style.display = 'none';
+                if (modalInit) modalInit.style.display = 'none';
+            } else {
+                // Người dùng khác mặc định: KHÔNG hiện ảnh của Vũ Anh Thư!
+                // Hiện avatar mặc định là vòng tròn pastel chứa chữ cái tên (Initials)
+                if (headerImg) {
+                    headerImg.style.display = 'none';
+                    headerImg.src = '';
+                }
+                if (modalImg) {
+                    modalImg.style.display = 'none';
+                    modalImg.src = '';
+                }
+                if (headerInit) {
+                    headerInit.style.display = 'block';
+                }
+                if (modalInit) {
+                    modalInit.style.display = 'block';
+                }
+            }
+
+            // 6. Cập nhật thông tin email/sđt trên thanh header
+            if (isOwner) {
                 const mailPill = document.querySelector('a.header-badge-pill[href^="mailto:"]');
                 if (mailPill) {
-                    mailPill.href = 'mailto:' + contact;
-                    mailPill.innerHTML = '✉️ ' + contact;
+                    mailPill.href = 'mailto:anhthuvu8307@gmail.com';
+                    mailPill.innerHTML = '✉️ anhthuvu8307@gmail.com';
                 }
-            } else if (/^[0-9+]+$/.test(contact.replace(/\s+/g, ''))) {
-                const phonePills = document.querySelectorAll('.header-badge-pill');
-                phonePills.forEach(p => {
-                    if (p.textContent.includes('📞')) {
-                        p.innerHTML = '📞 ' + contact;
+                const phonePill = document.querySelector('a.header-badge-pill[href^="tel:"]');
+                if (phonePill) {
+                    phonePill.href = 'tel:0332547633';
+                    phonePill.innerHTML = '📞 0332 547 633';
+                }
+            } else if (contact) {
+                if (contact.includes('@')) {
+                    const mailPill = document.querySelector('a.header-badge-pill[href^="mailto:"]');
+                    if (mailPill) {
+                        mailPill.href = 'mailto:' + contact;
+                        mailPill.innerHTML = '✉️ ' + contact;
                     }
-                });
+                } else {
+                    const phonePill = document.querySelector('a.header-badge-pill[href^="tel:"]');
+                    if (phonePill) {
+                        const cleanPhone = contact.replace(/[\s\.-]/g, '');
+                        phonePill.href = 'tel:' + cleanPhone;
+                        phonePill.innerHTML = '📞 ' + contact;
+                    }
+                }
             }
         }
 
