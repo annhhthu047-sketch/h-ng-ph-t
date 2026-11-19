@@ -1446,6 +1446,87 @@
             box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.35) !important;
         }
 
+    
+        /* Ingest Source Tabs */
+        .ingest-source-tab {
+            padding: 8px 18px;
+            border-radius: 9999px;
+            border: 1.5px solid rgba(244,114,182,0.3);
+            background: rgba(255,255,255,0.7);
+            color: #475569;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ingest-source-tab:hover {
+            border-color: var(--pink-btn);
+            background: rgba(255,255,255,0.95);
+            transform: translateY(-1px);
+        }
+        .ingest-source-tab.active {
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(236,72,153,0.35);
+        }
+
+        /* Professional Report Typography & Layout */
+        .exec-summary-card {
+            background: linear-gradient(135deg, rgba(253, 242, 248, 0.75), rgba(240, 249, 255, 0.75));
+            border: 1.5px solid rgba(244, 114, 182, 0.35);
+            border-left: 5px solid var(--pink-dark);
+            border-radius: 16px;
+            padding: 22px 26px;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.08);
+            margin-bottom: 8px;
+        }
+        .exec-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        .exec-insight-item {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            line-height: 1.8;
+            font-size: 13px;
+            color: #1e293b;
+            text-align: justify;
+        }
+        .exec-lead-text {
+            font-size: 13.5px;
+            line-height: 1.85;
+            color: #334155;
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+        .report-editable-body {
+            font-family: inherit;
+            font-size: 13.5px;
+            line-height: 1.85;
+            color: #1e293b;
+            padding: 22px 28px;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1.5px solid #e2e8f0;
+            min-height: 400px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+            text-align: justify;
+        }
     </style>
 </head>
 <body>
@@ -1778,19 +1859,86 @@
                     </div>
                 </div>
 
-                <!-- Dropzone Box -->
-                <div style="border: 2px dashed rgba(244,114,182,0.45); border-radius: 18px; padding: 36px 20px; text-align: center; background: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.25s;"
-                     onclick="document.getElementById('file-upload-input').click()"
-                     onmouseover="this.style.borderColor='var(--pink-btn)'; this.style.background='rgba(255,255,255,0.9)';"
-                     onmouseout="this.style.borderColor='rgba(244,114,182,0.45)'; this.style.background='rgba(255,255,255,0.65)';"
-                >
-                    <input type="file" id="file-upload-input" style="display:none;" accept=".csv,.xlsx,.xls,.txt" onchange="onFileUploaded(event)">
-                    <div style="font-size:40px; margin-bottom:8px;">📂</div>
-                    <div style="font-size:15px; font-weight:800; color:var(--pink-dark);">
-                        Nhấp để chọn tệp hoặc kéo thả tệp vào đây
+                <!-- Tabs chọn phương thức nạp dữ liệu (Ảnh 1) -->
+                <div style="display:flex; gap:8px; margin-bottom:16px; border-bottom:1.5px solid rgba(244,114,182,0.25); padding-bottom:12px; flex-wrap:wrap;">
+                    <button id="tab-ingest-file" class="ingest-source-tab active" onclick="switchIngestSource('file')">
+                        📁 Tải tệp lên (Excel / CSV)
+                    </button>
+                    <button id="tab-ingest-gsheet" class="ingest-source-tab" onclick="switchIngestSource('gsheet')">
+                        📊 Google Sheet
+                    </button>
+                    <button id="tab-ingest-lark" class="ingest-source-tab" onclick="switchIngestSource('lark')">
+                        🦅 Lark Base
+                    </button>
+                </div>
+
+                <!-- 1. Vùng Tải Tệp (Mặc định) -->
+                <div id="ingest-box-file" class="ingest-box-panel">
+                    <div style="border: 2px dashed rgba(244,114,182,0.45); border-radius: 18px; padding: 36px 20px; text-align: center; background: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.25s;"
+                         onclick="document.getElementById('file-upload-input').click()"
+                         onmouseover="this.style.borderColor='var(--pink-btn)'; this.style.background='rgba(255,255,255,0.9)';"
+                         onmouseout="this.style.borderColor='rgba(244,114,182,0.45)'; this.style.background='rgba(255,255,255,0.65)';"
+                    >
+                        <input type="file" id="file-upload-input" style="display:none;" accept=".csv,.xlsx,.xls,.txt" onchange="onFileUploaded(event)">
+                        <div style="font-size:40px; margin-bottom:8px;">📂</div>
+                        <div style="font-size:15px; font-weight:800; color:var(--pink-dark);">
+                            Nhấp để chọn tệp hoặc kéo thả tệp vào đây
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                            Tệp CSV, Excel (xlsx, xls) · Tự động chuẩn hóa phông chữ tiếng Việt UTF-8
+                        </div>
                     </div>
-                    <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
-                        Tệp CSV, Excel (xlsx, xls) · Tự động chuẩn hóa phông chữ tiếng Việt UTF-8
+                </div>
+
+                <!-- 2. Vùng Google Sheet (MỚI) -->
+                <div id="ingest-box-gsheet" class="ingest-box-panel" style="display:none;">
+                    <div style="border: 1.5px solid rgba(56,189,248,0.45); border-radius: 18px; padding: 26px 22px; background: rgba(240,249,255,0.7);">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <span style="font-size:26px;">📊</span>
+                            <div>
+                                <div style="font-size:15px; font-weight:800; color:#0369a1;">Kết Nối &amp; Nạp Dữ Liệu Từ Google Sheet</div>
+                                <div style="font-size:11.5px; color:#64748b;">Dán đường link bảng tính Google Sheet của bạn (chế độ chia sẻ: Bất kỳ ai có liên kết đều có thể xem).</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                            <input type="url" id="gsheet-url-input" placeholder="Ví dụ: https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit#gid=0"
+                                style="flex:1; min-width:260px; padding:11px 16px; border:1.5px solid #cbd5e1; border-radius:12px; font-size:12.5px; outline:none;"
+                                onfocus="this.style.borderColor='#38bdf8'" onblur="this.style.borderColor='#cbd5e1'"
+                                onkeydown="if(event.key==='Enter') connectGoogleSheet()" />
+                            <button class="btn-pink-glass" style="background:linear-gradient(135deg, #0284c7, #0369a1); font-size:12px; padding:10px 20px; white-space:nowrap;" onclick="connectGoogleSheet()">
+                                ⚡ Kết nối &amp; Nạp dữ liệu
+                            </button>
+                        </div>
+                        <div style="font-size:11px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                            <span>💡 <b>Mẹo:</b> Mở bảng Google Sheet ➔ Bấm nút <b>Chia sẻ</b> ➔ Chọn <i>"Bất kỳ ai có liên kết đều có thể xem"</i> ➔ Dán link vào đây.</span>
+                            <a href="javascript:void(0)" onclick="loadSampleGoogleSheet()" style="color:#0284c7; font-weight:700; text-decoration:none;">[Dùng thử link mẫu]</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Vùng Lark Base (MỚI) -->
+                <div id="ingest-box-lark" class="ingest-box-panel" style="display:none;">
+                    <div style="border: 1.5px solid rgba(244,114,182,0.45); border-radius: 18px; padding: 26px 22px; background: rgba(253,242,248,0.7);">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <span style="font-size:26px;">🦅</span>
+                            <div>
+                                <div style="font-size:15px; font-weight:800; color:#db2777;">Kết Nối &amp; Nạp Dữ Liệu Từ Lark Base (Bitable)</div>
+                                <div style="font-size:11.5px; color:#64748b;">Hỗ trợ liên kết chia sẻ Lark Base, API Webhook hoặc tải file xuất CSV/Excel từ Lark Base.</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                            <input type="text" id="lark-url-input" placeholder="Ví dụ: https://example.larksuite.com/base/... hoặc dán liên kết chia sẻ bảng Lark Base"
+                                style="flex:1; min-width:260px; padding:11px 16px; border:1.5px solid #cbd5e1; border-radius:12px; font-size:12.5px; outline:none;"
+                                onfocus="this.style.borderColor='#f472b6'" onblur="this.style.borderColor='#cbd5e1'"
+                                onkeydown="if(event.key==='Enter') connectLarkBase()" />
+                            <button class="btn-pink-glass" style="font-size:12px; padding:10px 20px; white-space:nowrap;" onclick="connectLarkBase()">
+                                ⚡ Kết nối &amp; Nạp dữ liệu
+                            </button>
+                        </div>
+                        <div style="font-size:11px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                            <span>💡 <b>Lưu ý:</b> Nếu Lark Base bảo mật CORS, bạn có thể bấm <b>Export (Xuất)</b> file .xlsx/.csv từ Lark và kéo thả vào tab <b>Tải tệp lên</b>.</span>
+                            <a href="javascript:void(0)" onclick="loadSampleDataset()" style="color:#db2777; font-weight:700; text-decoration:none;">[Dùng thử dữ liệu mẫu Lark]</a>
+                        </div>
                     </div>
                 </div>
 
@@ -1895,13 +2043,16 @@
                         </p>
                     </div>
 
-                    <!-- 2 Nút Làm Sạch theo yêu cầu -->
-                    <div style="display:flex; gap:8px; align-items:center;">
+                    <!-- Các Nút Làm Sạch & Nút Hoàn Tác (Ảnh 2) -->
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                         <button class="btn-white-glass" style="font-size:12px;" onclick="cleanDataByCommand()">
                             🧹 Làm sạch theo lệnh
                         </button>
                         <button class="btn-pink-glass" style="font-size:12px;" onclick="aiAutoCleanData()">
                             ✨ AI làm sạch
+                        </button>
+                        <button id="btn-undo-data" class="btn-white-glass" style="font-size:12px; opacity:0.5; cursor:not-allowed;" onclick="undoDataChange()" title="Chưa có thao tác nào để hoàn tác" disabled>
+                            ↩️ Hoàn tác
                         </button>
                         <button class="btn-pink-glass" style="background:linear-gradient(135deg, #10b981, #059669); font-size:12px; box-shadow:0 4px 16px rgba(16,185,129,0.35);" onclick="approveAndGoDash()">
                             ✅ Duyệt dữ liệu để phân tích →
@@ -1913,11 +2064,11 @@
                 <div id="cmd-clean-panel" style="display:none; margin-bottom:14px; background:linear-gradient(135deg,#fff9fc,#f0f9ff); border:1.5px solid rgba(244,114,182,0.4); border-radius:16px; padding:16px 20px;">
                     <div style="font-size:13.5px; font-weight:800; color:#0f172a; margin-bottom:8px;">💬 Nhập lệnh làm sạch dữ liệu</div>
                     <div style="font-size:11.5px; color:#64748b; margin-bottom:12px; line-height:1.7;">
-                        Hệ thống hiểu lệnh tự nhiên tiếng Việt. Ví dụ:<br>
-                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Loại bỏ các dòng có Khu vực là Hà Nội</code><br>
-                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Điền ô trống Khu vực bằng Toàn quốc</code><br>
-                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Xóa các dòng trùng lặp</code><br>
-                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Chuẩn hóa viết hoa toàn bộ</code>
+                        AI Agent hiểu lệnh tự nhiên tiếng Việt. Ví dụ:<br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Xóa 5 dòng dữ liệu đầu tiên</code> (hoặc xóa N dòng cuối, xóa dòng số 3)<br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Loại bỏ các dòng có Khu vực là Hà Nội</code> (hoặc xóa Hà Nội)<br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Điền ô trống Khu vực bằng Toàn quốc</code> (hoặc điền số 0)<br>
+                        • <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Xóa các dòng trùng lặp</code> · <code style="background:#fce7f3;padding:1px 6px;border-radius:4px;color:#db2777;">Chuẩn hóa viết hoa toàn bộ</code>
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <input type="text" id="cmd-clean-input"
@@ -2690,6 +2841,196 @@
             };
         }
 
+        // ========================================================
+        // GOOGLE SHEET & LARK BASE CONNECTIONS & UNDO STACK
+        // ========================================================
+        let dataHistoryStack = [];
+
+        function pushDataHistory(desc = 'Chỉnh sửa dữ liệu') {
+            if (!inspectorData || inspectorData.length === 0) return;
+            if (dataHistoryStack.length >= 25) {
+                dataHistoryStack.shift();
+            }
+            dataHistoryStack.push({
+                data: JSON.parse(JSON.stringify(inspectorData)),
+                cols: [...inspectorColumns],
+                desc: desc,
+                time: new Date().toLocaleTimeString('vi-VN')
+            });
+            updateUndoButtonState();
+        }
+
+        function undoDataChange() {
+            if (!dataHistoryStack || dataHistoryStack.length === 0) {
+                showToast('⚠️ Chưa có thao tác nào để hoàn tác!', 'info');
+                return;
+            }
+            const last = dataHistoryStack.pop();
+            inspectorData = last.data;
+            inspectorColumns = last.cols;
+            renderEditableTable(inspectorColumns, inspectorData);
+            scanDataErrors();
+            updateUndoButtonState();
+            showToast('↩️ Đã hoàn tác: "' + last.desc + '"! Còn ' + inspectorData.length + ' dòng.', 'success');
+        }
+
+        function updateUndoButtonState() {
+            const btn = document.getElementById('btn-undo-data');
+            if (!btn) return;
+            if (dataHistoryStack.length > 0) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                const last = dataHistoryStack[dataHistoryStack.length - 1];
+                btn.title = 'Hoàn tác: ' + last.desc + ' (' + dataHistoryStack.length + ' bước lưu)';
+                btn.innerHTML = '↩️ Hoàn tác (' + dataHistoryStack.length + ')';
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.title = 'Chưa có thao tác nào để hoàn tác';
+                btn.innerHTML = '↩️ Hoàn tác';
+            }
+        }
+
+        function switchIngestSource(source) {
+            const tabs = ['file', 'gsheet', 'lark'];
+            tabs.forEach(t => {
+                const tabBtn = document.getElementById('tab-ingest-' + t);
+                const panel = document.getElementById('ingest-box-' + t);
+                if (tabBtn) {
+                    if (t === source) tabBtn.classList.add('active');
+                    else tabBtn.classList.remove('active');
+                }
+                if (panel) {
+                    panel.style.display = (t === source) ? 'block' : 'none';
+                }
+            });
+        }
+
+        function connectGoogleSheet() {
+            const inp = document.getElementById('gsheet-url-input');
+            const url = (inp ? inp.value : '').trim();
+            if (!url) {
+                showToast('⚠️ Vui lòng nhập đường link Google Sheet!', 'error');
+                return;
+            }
+
+            const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (!match) {
+                showToast('⚠️ Link Google Sheet không đúng định dạng!', 'error');
+                alert('Định dạng link không đúng. Link cần có dạng:\nhttps://docs.google.com/spreadsheets/d/ID_BANG_TINH/edit');
+                return;
+            }
+            const sheetId = match[1];
+            const gidMatch = url.match(/[#&]gid=([0-9]+)/);
+            const gid = gidMatch ? gidMatch[1] : '0';
+
+            const pill = document.getElementById('file-status-pill');
+            if (pill) {
+                pill.style.display = 'inline-flex';
+                pill.textContent = 'Đang kết nối Google Sheet...';
+            }
+
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/gviz/tq?tqx=out:csv&gid=' + gid;
+
+            fetch(csvUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(csvText => {
+                    if (!csvText || !csvText.trim()) {
+                        handleEmptyFileUpload('Google_Sheet');
+                        return;
+                    }
+                    const workbook = XLSX.read(csvText, { type: 'string' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { raw: false, defval: "" });
+                    if (isDatasetEmpty(rawRows)) {
+                        handleEmptyFileUpload('Google_Sheet');
+                        return;
+                    }
+                    processUploadedRows(rawRows, 'Google_Sheet_' + sheetId.substring(0, 8));
+                    showToast('✅ Đã nạp thành công dữ liệu từ Google Sheet!', 'success');
+                })
+                .catch(err => {
+                    console.warn('Google Sheet fetch error:', err);
+                    const exportUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
+                    fetch(exportUrl)
+                        .then(res => res.text())
+                        .then(csvText => {
+                            const workbook = XLSX.read(csvText, { type: 'string' });
+                            const firstSheetName = workbook.SheetNames[0];
+                            const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { raw: false, defval: "" });
+                            if (isDatasetEmpty(rawRows)) {
+                                handleEmptyFileUpload('Google_Sheet');
+                                return;
+                            }
+                            processUploadedRows(rawRows, 'Google_Sheet_' + sheetId.substring(0, 8));
+                            showToast('✅ Đã nạp thành công dữ liệu từ Google Sheet!', 'success');
+                        })
+                        .catch(e => {
+                            alert('⚠️ Không thể kết nối trực tiếp đến bảng Google Sheet!\n\nNguyên nhân: Bảng tính chưa được mở quyền chia sẻ công khai hoặc bị chính sách bảo mật mạng (CORS) của trình duyệt chặn.\n\n👉 Hướng dẫn khắc phục:\n1. Mở Google Sheet ➔ Bấm nút "Chia sẻ" (Share) ở góc trên bên phải ➔ Chọn "Bất kỳ ai có đường liên kết đều có thể xem" (Anyone with the link can view).\n2. Hoặc: Vào menu Tệp (File) ➔ Tải xuống (Download) ➔ Microsoft Excel (.xlsx) hoặc CSV ➔ Kéo thả vào tab "Tải tệp lên"!');
+                            if (pill) pill.style.display = 'none';
+                        });
+                });
+        }
+
+        function loadSampleGoogleSheet() {
+            const inp = document.getElementById('gsheet-url-input');
+            if (inp) inp.value = 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit#gid=0';
+            loadSampleDataset();
+            showToast('⚡ Đã kết nối và nạp dữ liệu mẫu Google Sheet!', 'success');
+        }
+
+        function connectLarkBase() {
+            const inp = document.getElementById('lark-url-input');
+            const url = (inp ? inp.value : '').trim();
+            if (!url) {
+                showToast('⚠️ Vui lòng nhập link bảng Lark Base!', 'error');
+                return;
+            }
+
+            const pill = document.getElementById('file-status-pill');
+            if (pill) {
+                pill.style.display = 'inline-flex';
+                pill.textContent = 'Đang tải dữ liệu Lark Base...';
+            }
+
+            fetch(url)
+                .then(res => res.text())
+                .then(data => {
+                    try {
+                        const parsed = JSON.parse(data);
+                        let rows = [];
+                        if (Array.isArray(parsed)) rows = parsed;
+                        else if (parsed.data && parsed.data.items) rows = parsed.data.items.map(i => i.fields || i);
+                        else if (parsed.items) rows = parsed.items.map(i => i.fields || i);
+
+                        if (rows.length > 0 && !isDatasetEmpty(rows)) {
+                            processUploadedRows(rows, 'LarkBase_Data');
+                            showToast('✅ Đã nạp dữ liệu từ Lark Base thành công!', 'success');
+                            return;
+                        }
+                    } catch(e){}
+
+                    const workbook = XLSX.read(data, { type: 'string' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { raw: false, defval: "" });
+                    if (!isDatasetEmpty(rawRows)) {
+                        processUploadedRows(rawRows, 'LarkBase_Data');
+                        showToast('✅ Đã nạp dữ liệu từ Lark Base thành công!', 'success');
+                    } else {
+                        handleEmptyFileUpload('LarkBase');
+                    }
+                })
+                .catch(err => {
+                    alert('⚠️ Trình duyệt chặn tải dữ liệu trực tiếp từ link Lark Base do chính sách CORS.\n\n👉 Để nạp từ Lark Base nhanh nhất:\n1. Trên bảng Lark Base, bấm nút "..." ở góc phải ➔ Chọn "Export" (Xuất tệp CSV/Excel).\n2. Kéo thả tệp vừa xuất vào tab "Tải tệp lên" để phân tích ngay!');
+                    if (pill) pill.style.display = 'none';
+                });
+        }
+
         // 2. File Uploading & Strict Empty File Guard
         function isDatasetEmpty(rows) {
             if (!rows || !Array.isArray(rows) || rows.length === 0) return true;
@@ -3014,7 +3355,11 @@
             const newVal = cleanVietnameseText(cellEl.textContent);
             cellEl.textContent = newVal;
             if (inspectorData[rowIdx]) {
-                inspectorData[rowIdx][colKey] = newVal;
+                const oldVal = inspectorData[rowIdx][colKey];
+                if (String(oldVal) !== String(newVal)) {
+                    pushDataHistory('Sửa ô ' + colKey);
+                    inspectorData[rowIdx][colKey] = newVal;
+                }
             }
             if (String(newVal).trim() === '') {
                 cellEl.classList.add('cell-empty');
@@ -3070,6 +3415,7 @@
         }
 
         function aiAutoCleanData() {
+            pushDataHistory('AI làm sạch tự động');
             let fixed = 0;
             inspectorData.forEach(r => {
                 inspectorColumns.forEach(c => {
@@ -3197,18 +3543,33 @@
                 `;
             }
 
-            // 4. Nhận xét chung & Đề xuất từ dữ liệu (General Insights)
+            // 4. Nhận xét chung & Đề xuất từ dữ liệu (Executive Business Insights)
             const genBox = document.getElementById('general-insights-box');
             if (genBox) {
                 genBox.innerHTML = `
-                    <p style="margin-bottom:8px;">
-                        📌 <b>Bối cảnh phân tích:</b> Trong mô hình hoạt động <i>"${bizDomain}"</i> nhằm giải quyết bài toán <i>"${bizGoal}"</i>:
-                    </p>
-                    <ul style="margin-left:20px; line-height:1.8;">
-                        <li><b>Sức khỏe tài chính:</b> Biên lợi nhuận gộp đạt <b>${st.profitMargin}</b> với tổng lợi nhuận đạt <b>${st.totalProfit.toLocaleString('vi-VN')} VND</b> trên nền doanh thu <b>${st.totalRev.toLocaleString('vi-VN')} VND</b>.</li>
-                        <li><b>Động lực tăng trưởng cốt lõi:</b> Phân khúc <b>"${topCat.name}"</b> chứng minh hiệu quả sinh dòng tiền vượt trội (${topCat.pct}% doanh thu), cần được ưu tiên tập trung ngân sách và nhân lực.</li>
-                        <li><b>Dư địa tối ưu hóa:</b> Nhóm <b>"${lowestCat.name}"</b> hiện đóng góp tỷ trọng nhỏ (${lowestCat.pct}%), cần được tái đánh giá cơ cấu chi phí vận hành để cải thiện tỷ suất lợi nhuận ròng.</li>
-                    </ul>
+                    <div class="exec-summary-card">
+                        <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                            <span>🎯</span> <b>TỔNG KẾT CHIẾN LƯỢC TỪ DỮ LIỆU THỰC TẾ (EXECUTIVE SUMMARY)</b>
+                        </div>
+                        <div class="exec-lead-text">
+                            📌 <b>Bối cảnh phân tích:</b> Trong mô hình hoạt động kinh doanh <i>"${bizDomain}"</i> nhằm giải quyết mục tiêu trọng tâm <i>"${bizGoal}"</i>:
+                        </div>
+                        
+                        <div class="exec-insight-item">
+                            <span class="exec-badge-pill" style="background:#dcfce7; color:#15803d;">💰 Sức khỏe tài chính &amp; Lợi nhuận gộp</span><br>
+                            Biên lợi nhuận gộp toàn hệ thống đạt <b>${st.profitMargin}</b> với tổng lợi nhuận đạt <b>${st.totalProfit.toLocaleString('vi-VN')} VND</b> trên nền tổng doanh thu <b>${st.totalRev.toLocaleString('vi-VN')} VND</b>. Hiệu suất tài chính phản ánh mô hình kinh doanh ổn định và có khả năng sinh dòng tiền đều đặn.
+                        </div>
+
+                        <div class="exec-insight-item">
+                            <span class="exec-badge-pill" style="background:#e0f2fe; color:#0369a1;">🚀 Động lực tăng trưởng cốt lõi</span><br>
+                            Phân khúc <b>"${topCat.name}"</b> khẳng định vị thế dẫn đầu tuyệt đối, đóng góp <b>${topCat.pct}%</b> tổng doanh thu toàn chuỗi (${topCat.revenue.toLocaleString('vi-VN')} VND). Đây là trụ cột kinh doanh cần được ưu tiên tập trung ngân sách marketing, nhân sự bán hàng và kế hoạch lưu kho chủ động.
+                        </div>
+
+                        <div class="exec-insight-item" style="margin-bottom:0;">
+                            <span class="exec-badge-pill" style="background:#fef3c7; color:#b45309;">🔍 Dư địa tối ưu hóa &amp; Quản trị chi phí</span><br>
+                            Nhóm <b>"${lowestCat.name}"</b> hiện đóng góp tỷ trọng nhỏ (${lowestCat.pct}% doanh thu, tương ứng ${lowestCat.revenue.toLocaleString('vi-VN')} VND). Cần được tái thẩm định quy trình cung ứng và cơ cấu định giá nhằm cắt giảm chi phí phát sinh, cải thiện biên độ lợi nhuận ròng trong quý tiếp theo.
+                        </div>
+                    </div>
                 `;
             }
 
@@ -3216,57 +3577,74 @@
             const issBody = document.getElementById('issues-table-body');
             if (issBody) {
                 issBody.innerHTML = `
-                    <tr>
-                        <td><b>1. Mức độ tập trung doanh thu</b></td>
-                        <td>Nhóm "${topCat.name}" chiếm ${topCat.pct}% doanh thu, tạo áp lực lớn vào một nhóm đầu mối.</td>
-                        <td>Mở rộng danh mục và chương trình kích cầu cho các nhóm tiềm năng tiếp theo để đa dạng hóa nguồn thu.</td>
-                        <td><span class="pipeline-badge-tag" style="background:#fee2e2; color:#b91c1c;">Ưu tiên cao</span></td>
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:15px 18px; line-height:1.7;"><b>1. Mức độ tập trung doanh thu</b></td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Nhóm "${topCat.name}" chiếm ${topCat.pct}% doanh thu, tạo áp lực phụ thuộc lớn vào một nhóm đầu mối duy nhất.</td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Mở rộng danh mục sản phẩm và triển khai chương trình kích cầu cho các nhóm tiềm năng tiếp theo để đa dạng hóa nguồn thu.</td>
+                        <td style="padding:15px 18px; text-align:center;"><span class="pipeline-badge-tag" style="background:#fee2e2; color:#b91c1c; font-weight:800; padding:5px 10px;">Ưu tiên cao</span></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f1f5f9; background:rgba(255,255,255,0.4);">
+                        <td style="padding:15px 18px; line-height:1.7;"><b>2. Kiểm soát tỷ lệ chi phí</b></td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Chi phí giá vốn chiếm ${(st.totalRev > 0 ? (st.totalCost/st.totalRev*100).toFixed(1) : 0)}% tổng doanh thu (${st.totalCost.toLocaleString('vi-VN')} VND).</td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Đàm phán lại giá vốn nhà cung cấp và cắt giảm các khâu trung gian vận hành kém hiệu quả để mở rộng biên độ lãi gộp.</td>
+                        <td style="padding:15px 18px; text-align:center;"><span class="pipeline-badge-tag" style="background:#fef3c7; color:#b45309; font-weight:800; padding:5px 10px;">Ưu tiên vừa</span></td>
                     </tr>
                     <tr>
-                        <td><b>2. Kiểm soát tỷ lệ chi phí</b></td>
-                        <td>Chi phí chiếm ${(st.totalRev > 0 ? (st.totalCost/st.totalRev*100).toFixed(1) : 0)}% tổng doanh thu (${st.totalCost.toLocaleString('vi-VN')} VND).</td>
-                        <td>Đàm phán lại giá vốn nhà cung cấp và cắt giảm các khâu trung gian vận hành kém hiệu quả.</td>
-                        <td><span class="pipeline-badge-tag" style="background:#fef3c7; color:#b45309;">Ưu tiên vừa</span></td>
-                    </tr>
-                    <tr>
-                        <td><b>3. Đòn bẩy giá trị đơn trung bình (AOV)</b></td>
-                        <td>Giá trị đơn bình quân ở mức ${st.aov.toLocaleString('vi-VN')} VND / đơn.</td>
-                        <td>Triển khai chiến lược bán chéo (cross-selling) và gói combo để nâng AOV thêm 15-20% trong quý tới.</td>
-                        <td><span class="pipeline-badge-tag" style="background:#e0f2fe; color:#0369a1;">Ưu tiên vừa</span></td>
+                        <td style="padding:15px 18px; line-height:1.7;"><b>3. Đòn bẩy giá trị đơn trung bình (AOV)</b></td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Giá trị đơn bình quân hiện đạt mức ${st.aov.toLocaleString('vi-VN')} VND / đơn hàng.</td>
+                        <td style="padding:15px 18px; line-height:1.7; text-align:justify;">Triển khai chiến lược bán chéo (cross-selling) và gói combo để nâng giá trị đơn trung bình thêm 15-20% trong kỳ tới.</td>
+                        <td style="padding:15px 18px; text-align:center;"><span class="pipeline-badge-tag" style="background:#e0f2fe; color:#0369a1; font-weight:800; padding:5px 10px;">Ưu tiên vừa</span></td>
                     </tr>
                 `;
             }
 
-            // 6. Báo cáo hoàn chỉnh có thể chỉnh sửa trực tiếp thủ công
+            // 6. Báo cáo hoàn chỉnh chuẩn mực văn bản doanh nghiệp
             const repEdit = document.getElementById('report-editable-content');
             if (repEdit) {
                 repEdit.innerHTML = `
-                    <h3 style="color:var(--pink-dark); margin-bottom:12px;">BÁO CÁO PHÂN TÍCH HIỆU QUẢ KINH DOANH &amp; ĐỀ XUẤT CHIẾN LƯỢC</h3>
-                    <p><b>Kính gửi:</b> Ban Giám Đốc &amp; Trưởng Phòng Phát Triển Kinh Doanh</p>
-                    <p><b>Chuyên viên phân tích:</b> Vũ Anh Thư - Data Analyst &amp; BI</p>
-                    <p><b>Lĩnh vực hoạt động:</b> ${bizDomain}</p>
-                    <hr style="margin:14px 0; border:none; border-top:1px solid #e2e8f0;">
+                    <div style="text-align:center; padding:10px 0 16px 0; border-bottom:2px solid #fce7f3; margin-bottom:18px;">
+                        <div style="font-size:11px; font-weight:800; letter-spacing:1px; color:#94a3b8; text-transform:uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM · ĐỘC LẬP - TỰ DO - HẠNH PHÚC</div>
+                        <h3 style="font-size:17px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px; margin:10px 0 6px 0;">BÁO CÁO PHÂN TÍCH HIỆU QUẢ KINH DOANH &amp; ĐỀ XUẤT CHIẾN LƯỢC</h3>
+                        <div style="font-size:12px; color:#64748b; font-style:italic;">(Tài liệu lưu hành nội bộ - Đánh giá chuyên sâu từ dữ liệu vận hành thực tế)</div>
+                    </div>
 
-                    <h4 style="color:#0f172a; margin-top:14px;">1. TỔNG QUAN TÀI CHÍNH &amp; QUY MÔ HOẠT ĐỘNG</h4>
-                    <p>
-                        Dựa trên ${rows.length} bản ghi dữ liệu hợp lệ đã được kiểm định và làm sạch, tổng doanh thu toàn hệ thống đạt <b>${st.totalRev.toLocaleString('vi-VN')} VND</b>. 
-                        Chi phí giá vốn và vận hành ghi nhận ở mức <b>${st.totalCost.toLocaleString('vi-VN')} VND</b>, mang lại lợi nhuận gộp <b>${st.totalProfit.toLocaleString('vi-VN')} VND</b> 
-                        với biên lợi nhuận đạt <b>${st.profitMargin}</b>.
+                    <div style="background:#f8fafc; border-radius:12px; padding:14px 18px; margin-bottom:18px; font-size:12.5px; line-height:1.8; border-left:3.5px solid #0284c7;">
+                        <div>• <b>Kính gửi:</b> Ban Giám Đốc &amp; Hội Đồng Quản Trị Doanh Nghiệp</div>
+                        <div>• <b>Chuyên viên phân tích:</b> Vũ Anh Thư - Data Analyst &amp; Business Intelligence</div>
+                        <div>• <b>Lĩnh vực hoạt động:</b> ${bizDomain} &nbsp;|&nbsp; <b>Mục tiêu phân tích:</b> ${bizGoal}</div>
+                        <div>• <b>Thời gian lập báo cáo:</b> ${new Date().toLocaleDateString('vi-VN')}</div>
+                    </div>
+
+                    <h4 style="color:#0f172a; font-size:13.5px; font-weight:800; text-transform:uppercase; margin:18px 0 8px 0; padding-bottom:6px; border-bottom:1.5px solid #f1f5f9; letter-spacing:0.3px;">I. TỔNG QUAN TÀI CHÍNH &amp; QUY MÔ HOẠT ĐỘNG</h4>
+                    <p style="font-size:13.5px; line-height:1.85; text-align:justify; margin-bottom:14px; text-indent:24px;">
+                        Dựa trên cơ sở tổng hợp từ <b>${rows.length.toLocaleString('vi-VN')}</b> bản ghi dữ liệu hợp lệ đã được kiểm định và làm sạch, tổng doanh thu ghi nhận toàn hệ thống đạt <b>${st.totalRev.toLocaleString('vi-VN')} VND</b>. Chi phí giá vốn và vận hành liên quan đạt <b>${st.totalCost.toLocaleString('vi-VN')} VND</b>, mang lại lợi nhuận gộp đạt <b>${st.totalProfit.toLocaleString('vi-VN')} VND</b> với tỷ suất biên lợi nhuận gộp (ROS) đạt mức <b>${st.profitMargin}</b>.
                     </p>
 
-                    <h4 style="color:#0f172a; margin-top:14px;">2. CƠ CẤU ĐÓNG GÓP THEO ${st.catCol.toUpperCase()}</h4>
-                    <p>
-                        Phân tích chuyên sâu chỉ ra sự chênh lệch đáng kể giữa các phân khúc. 
-                        Cụ thể, nhóm <b>"${topCat.name}"</b> đang dẫn đầu thị trường với mức đóng góp <b>${topCat.pct}%</b> tổng doanh thu. 
-                        Các phân nhóm tiếp theo lần lượt chiếm tỷ trọng bổ trợ. Doanh nghiệp cần duy trì chất lượng dịch vụ tại nhóm dẫn đầu để giữ chân khách hàng cốt lõi.
+                    <h4 style="color:#0f172a; font-size:13.5px; font-weight:800; text-transform:uppercase; margin:18px 0 8px 0; padding-bottom:6px; border-bottom:1.5px solid #f1f5f9; letter-spacing:0.3px;">II. CƠ CẤU ĐÓNG GÓP THEO ${st.catCol.toUpperCase()}</h4>
+                    <p style="font-size:13.5px; line-height:1.85; text-align:justify; margin-bottom:14px; text-indent:24px;">
+                        Phân tích cơ cấu đóng góp chỉ ra sự chênh lệch có tính phân hóa rõ nét giữa các phân khúc thị trường. Cụ thể, nhóm <b>"${topCat.name}"</b> đang giữ vai trò là động lực tăng trưởng chính với mức đóng góp lên tới <b>${topCat.pct}%</b> tổng doanh thu (đạt ${topCat.revenue.toLocaleString('vi-VN')} VND). Các nhóm phân loại tiếp theo lần lượt giữ vai trò bổ trợ doanh thu. Doanh nghiệp cần duy trì chất lượng cung ứng tại nhóm dẫn đầu để giữ chân khách hàng cốt lõi và phát huy tối đa lợi thế cạnh tranh.
                     </p>
 
-                    <h4 style="color:#0f172a; margin-top:14px;">3. ĐỀ XUẤT HÀNH ĐỘNG CHIẾN LƯỢC</h4>
-                    <p>
-                        - <b>Hành động 1:</b> Tập trung nguồn lực nâng cao năng lực phục vụ cho nhóm "${topCat.name}" trong các kỳ bán hàng cao điểm.<br>
-                        - <b>Hành động 2:</b> Rà soát chính sách giá và chi phí của nhóm "${lowestCat.name}" để cải thiện biên độ lợi nhuận ròng.<br>
-                        - <b>Hành động 3:</b> Tự động hóa quy trình đối soát dữ liệu định kỳ để kịp thời phát hiện biến động doanh số.
-                    </p>
+                    <h4 style="color:#0f172a; font-size:13.5px; font-weight:800; text-transform:uppercase; margin:18px 0 8px 0; padding-bottom:6px; border-bottom:1.5px solid #f1f5f9; letter-spacing:0.3px;">III. ĐỀ XUẤT HÀNH ĐỘNG CHIẾN LƯỢC ƯU TIÊN</h4>
+                    <div style="font-size:13.5px; line-height:1.85; margin-bottom:16px;">
+                        <div style="margin-bottom:8px;">✔ <b>Hành động 1:</b> Tập trung phân bổ nguồn lực marketing và nâng cao năng lực phục vụ cho nhóm "${topCat.name}" trong các kỳ bán hàng cao điểm.</div>
+                        <div style="margin-bottom:8px;">✔ <b>Hành động 2:</b> Rà soát lại chính sách giá vốn và chi phí trung gian của nhóm "${lowestCat.name}" để cải thiện biên độ lợi nhuận ròng.</div>
+                        <div style="margin-bottom:8px;">✔ <b>Hành động 3:</b> Chuẩn hóa và tự động hóa quy trình đối soát dữ liệu định kỳ bằng AI Agent nhằm kịp thời phát hiện các biến động bất thường của doanh số.</div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:28px; padding-top:16px; border-top:1px dashed #cbd5e1; font-size:12.5px; line-height:1.7;">
+                        <div>
+                            <b>Nơi nhận:</b><br>
+                            • Ban Giám Đốc<br>
+                            • Phòng Kế hoạch &amp; Tài chính<br>
+                            • Lưu trữ hồ sơ BI
+                        </div>
+                        <div style="text-align:right;">
+                            <b>Chuyên viên lập báo cáo:</b><br><br><br>
+                            <b style="color:var(--pink-dark);font-size:14px;">Vũ Anh Thư</b><br>
+                            <span style="color:#64748b;font-size:11.5px;">Data Analyst &amp; Business Intelligence</span>
+                        </div>
+                    </div>
                 `;
             }
 
@@ -3274,11 +3652,12 @@
             const aiSug = document.getElementById('ai-suggestion-preview');
             if (aiSug) {
                 aiSug.innerHTML = `
-                    <b>Đề xuất bổ sung từ AI:</b><br>
-                    "Khuyến nghị áp dụng gói khuyến mại liên kết giữa nhóm <b>${topCat.name}</b> và các nhóm phụ để kéo doanh số tổng thể tăng tối thiểu 12.5% trong vòng 60 ngày tới, đồng thời giữ vững biên lợi nhuận trên 35%."
+                    <div style="font-size:12.5px; line-height:1.7; color:#1e293b;">
+                        <b>💡 Đề xuất tối ưu hóa từ AI:</b><br>
+                        "Khuyến nghị áp dụng gói khuyến mại liên kết giữa nhóm <b>${topCat.name}</b> và các nhóm phụ để kéo doanh số tổng thể tăng tối thiểu 12.5% trong vòng 60 ngày tới, đồng thời giữ vững biên lợi nhuận trên 35%."
+                    </div>
                 `;
             }
-
             // 8. Render Charts
             renderCharts(st);
         }
@@ -4580,6 +4959,105 @@
                 return String(str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
             }
 
+            // ========================================================
+            // CASE 0A: DELETE N FIRST ROWS ("Xóa 5 dòng dữ liệu đầu tiên", "Xóa 5 dòng đầu", "Bỏ 5 dòng đầu")
+            // ========================================================
+            let mTop = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ)\s+(\d+)\s+dòng.*?(?:đầu|dau|first)/i);
+            if (!mTop) mTop = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ)\s+(?:top|đầu)\s+(\d+)\s+dòng/i);
+            if (!mTop) mTop = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ).*?(\d+)\s+dòng\s+(?:đầu|đầu tiên)/i);
+            if (mTop) {
+                const count = parseInt(mTop[1]);
+                if (count > 0) {
+                    pushDataHistory('Xóa ' + count + ' dòng đầu tiên');
+                    const actualRemoved = Math.min(count, inspectorData.length);
+                    inspectorData = inspectorData.slice(actualRemoved);
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: '✅ Đã xóa thành công ' + actualRemoved + ' dòng dữ liệu đầu tiên! Dữ liệu còn lại: ' + inspectorData.length + ' dòng.'
+                    };
+                }
+            }
+
+            // ========================================================
+            // CASE 0B: DELETE N LAST ROWS ("Xóa 5 dòng dữ liệu cuối cùng", "Xóa 3 dòng cuối")
+            // ========================================================
+            let mLast = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ)\s+(\d+)\s+dòng.*?(?:cuối|cuoi|last)/i);
+            if (!mLast) mLast = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ).*?(\d+)\s+dòng\s+(?:cuối|cuối cùng)/i);
+            if (mLast) {
+                const count = parseInt(mLast[1]);
+                if (count > 0) {
+                    pushDataHistory('Xóa ' + count + ' dòng cuối cùng');
+                    const actualRemoved = Math.min(count, inspectorData.length);
+                    inspectorData = inspectorData.slice(0, inspectorData.length - actualRemoved);
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: '✅ Đã xóa thành công ' + actualRemoved + ' dòng dữ liệu cuối cùng! Dữ liệu còn lại: ' + inspectorData.length + ' dòng.'
+                    };
+                }
+            }
+
+            // ========================================================
+            // CASE 0C: DELETE SPECIFIC ROW ("Xóa dòng số 5", "Xóa dòng thứ 3", "Xóa dòng 2")
+            // ========================================================
+            let mRow = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ)\s+dòng\s*(?:số|thứ)?\s*(\d+)/i);
+            if (mRow) {
+                const rowNum = parseInt(mRow[1]);
+                if (rowNum >= 1 && rowNum <= inspectorData.length) {
+                    pushDataHistory('Xóa dòng số ' + rowNum);
+                    inspectorData.splice(rowNum - 1, 1);
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: '✅ Đã xóa thành công dòng số ' + rowNum + '! Dữ liệu còn lại: ' + inspectorData.length + ' dòng.'
+                    };
+                } else {
+                    return { ok: false, msg: '⚠️ Dòng số ' + rowNum + ' không tồn tại (tổng số dòng hiện có: ' + inspectorData.length + ').' };
+                }
+            }
+
+            // ========================================================
+            // CASE 0D: DELETE ROW RANGE ("Xóa từ dòng 3 đến dòng 7")
+            // ========================================================
+            let mRange = cmd.match(/(?:xóa|xoá|loại bỏ|bỏ)\s+từ\s+dòng\s*(\d+)\s*đến\s*(?:dòng\s*)?(\d+)/i);
+            if (mRange) {
+                const start = Math.max(1, parseInt(mRange[1]));
+                const end = Math.min(inspectorData.length, parseInt(mRange[2]));
+                if (start <= end) {
+                    pushDataHistory('Xóa từ dòng ' + start + ' đến ' + end);
+                    const deleteCount = end - start + 1;
+                    inspectorData.splice(start - 1, deleteCount);
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: '✅ Đã xóa ' + deleteCount + ' dòng (từ dòng ' + start + ' đến dòng ' + end + ')! Còn lại: ' + inspectorData.length + ' dòng.'
+                    };
+                }
+            }
+
+            // ========================================================
+            // CASE 0E: KEEP ONLY N FIRST ROWS ("Chỉ lấy 10 dòng đầu", "Giữ lại 20 dòng")
+            // ========================================================
+            let mKeep = cmd.match(/(?:chỉ lấy|giữ lại|lấy)\s+(\d+)\s+dòng.*?(?:đầu|dau|first)?/i);
+            if (mKeep) {
+                const count = parseInt(mKeep[1]);
+                if (count > 0 && count < inspectorData.length) {
+                    pushDataHistory('Chỉ giữ ' + count + ' dòng đầu');
+                    inspectorData = inspectorData.slice(0, count);
+                    renderEditableTable(inspectorColumns, inspectorData);
+                    scanDataErrors();
+                    return {
+                        ok: true,
+                        msg: '✅ Đã giữ lại ' + count + ' dòng đầu tiên. Đã loại bỏ các dòng phía sau.'
+                    };
+                }
+            }
+
             function findBestCol(hint) {
                 if (!hint) return null;
                 const hNorm = norm(hint).replace(/^(cột|column|trường|field|các dữ liệu|dữ liệu|các dòng|dòng)\s+/, '').trim();
@@ -4632,7 +5110,7 @@
             }
 
             // ========================================================
-            // CASE 1: DELETE / LOẠI BỎ / XÓA
+            // CASE 1: DELETE / LOẠI BỎ / XÓA THEO CỘT VÀ GIÁ TRỊ
             // ========================================================
             const delKws = ['loại bỏ', 'xóa', 'xoá', 'delete', 'remove', 'lọc bỏ', 'bỏ đi', 'bỏ những', 'bỏ'];
             if (delKws.some(k => cmd.includes(k))) {
@@ -4644,7 +5122,7 @@
                 for (const sep of seps) {
                     const idx = cmd.lastIndexOf(sep);
                     if (idx !== -1) {
-                        targetVal = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        targetVal = cmd.substring(idx + sep.length).replace(/["']/g, '').trim();
                         let beforeSep = cmd.substring(0, idx);
                         for (const k of delKws) beforeSep = beforeSep.replace(k, '');
                         beforeSep = beforeSep.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').trim();
@@ -4664,18 +5142,17 @@
                         const colStrip = stripAccents(col);
                         if (cleanCmd.includes(colNorm) || stripAccents(cleanCmd).includes(colStrip)) {
                             targetCol = col;
-                            targetVal = cleanCmd.replace(colNorm, '').replace(colStrip, '').replace(/["""'']/g, '').trim();
+                            targetVal = cleanCmd.replace(colNorm, '').replace(colStrip, '').replace(/["']/g, '').trim();
                             break;
                         }
                     }
                 }
 
                 // Subcase 1C: Value only, e.g. "Xóa Hà Nội" or "Loại bỏ Hà Nội"
-                // AI searches which column currently contains this value!
                 if (!targetCol || !targetVal) {
                     let cleanCmd = cmd;
                     for (const k of delKws) cleanCmd = cleanCmd.replace(k, '');
-                    cleanCmd = cleanCmd.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').replace(/["""'']/g, '').trim();
+                    cleanCmd = cleanCmd.replace(/các dữ liệu có|các dòng có|dữ liệu có|dòng có|hàng có|có|các|những|dữ liệu|dòng|hàng/g, '').replace(/["']/g, '').trim();
 
                     if (cleanCmd.length >= 2) {
                         for (const col of inspectorColumns) {
@@ -4689,6 +5166,7 @@
                 }
 
                 if (targetCol && targetVal) {
+                    pushDataHistory('Xóa ' + targetCol + ' = ' + targetVal);
                     const newData = inspectorData.filter(row => !norm(row[targetCol]).includes(norm(targetVal)));
                     const removed = inspectorData.length - newData.length;
                     inspectorData = newData;
@@ -4696,12 +5174,13 @@
                     scanDataErrors();
                     return {
                         ok: true,
-                        msg: `✅ Đã xóa ${removed} dòng có "${targetCol}" chứa "${targetVal}". Dữ liệu còn lại: ${inspectorData.length} dòng.`
+                        msg: '✅ Đã xóa ' + removed + ' dòng có "' + targetCol + '" chứa "' + targetVal + '". Dữ liệu còn lại: ' + inspectorData.length + ' dòng.'
                     };
                 }
 
                 // Subcase 1D: Delete empty rows: "xóa các dòng trống", "loại bỏ ô trống"
                 if (cmd.includes('trống') || cmd.includes('empty') || cmd.includes('null')) {
+                    pushDataHistory('Xóa các dòng chứa ô trống');
                     const newData = inspectorData.filter(row => {
                         return inspectorColumns.every(col => {
                             const v = String(row[col] !== undefined ? row[col] : '').trim();
@@ -4712,7 +5191,7 @@
                     inspectorData = newData;
                     renderEditableTable(inspectorColumns, inspectorData);
                     scanDataErrors();
-                    return { ok: true, msg: `✅ Đã xóa ${removed} dòng có chứa ô trống. Còn lại: ${inspectorData.length} dòng.` };
+                    return { ok: true, msg: '✅ Đã xóa ' + removed + ' dòng có chứa ô trống. Còn lại: ' + inspectorData.length + ' dòng.' };
                 }
             }
 
@@ -4727,7 +5206,7 @@
                 for (const sep of seps) {
                     const idx = cmd.lastIndexOf(sep);
                     if (idx !== -1) {
-                        fillVal = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        fillVal = cmd.substring(idx + sep.length).replace(/["']/g, '').trim();
                         let beforeSep = cmd.substring(0, idx);
                         beforeSep = beforeSep.replace(/điền|fill|thay thế|lấp đầy|ô trống|trong cột|ở cột|cột/g, '').trim();
                         fillCol = findBestCol(beforeSep);
@@ -4735,6 +5214,7 @@
                     }
                 }
 
+                pushDataHistory('Điền ô trống ' + (fillCol || 'toàn bộ') + ' = ' + fillVal);
                 inspectorData.forEach(r => {
                     inspectorColumns.forEach(c => {
                         if (fillCol && c !== fillCol) return;
@@ -4747,13 +5227,14 @@
                 });
                 renderEditableTable(inspectorColumns, inspectorData);
                 scanDataErrors();
-                return { ok: true, msg: `✅ Đã điền ${fixed} ô trống${fillCol ? ` trong cột "${fillCol}"` : ''} bằng "${fillVal}".` };
+                return { ok: true, msg: '✅ Đã điền ' + fixed + ' ô trống' + (fillCol ? ' trong cột "' + fillCol + '"' : '') + ' bằng "' + fillVal + '".' };
             }
 
             // ========================================================
             // CASE 3: REMOVE DUPLICATES / XÓA TRÙNG LẶP
             // ========================================================
             if (/trùng|duplicate|lặp/.test(cmd)) {
+                pushDataHistory('Xóa các dòng trùng lặp');
                 const seen = new Set();
                 inspectorData = inspectorData.filter(r => {
                     const key = JSON.stringify(r);
@@ -4764,13 +5245,14 @@
                 fixed = before - inspectorData.length;
                 renderEditableTable(inspectorColumns, inspectorData);
                 scanDataErrors();
-                return { ok: true, msg: `✅ Đã loại bỏ ${fixed} dòng trùng lặp. Dữ liệu còn lại: ${inspectorData.length} dòng.` };
+                return { ok: true, msg: '✅ Đã loại bỏ ' + fixed + ' dòng trùng lặp. Dữ liệu còn lại: ' + inspectorData.length + ' dòng.' };
             }
 
             // ========================================================
             // CASE 4: CAPITALIZE / CHUẨN HÓA VIẾT HOA
             // ========================================================
             if (/viết hoa|chuẩn hóa|capitalize|chỉnh hoa|in hoa/.test(cmd)) {
+                pushDataHistory('Chuẩn hóa viết hoa');
                 inspectorData.forEach(r => {
                     inspectorColumns.forEach(c => {
                         if (typeof r[c] === 'string') {
@@ -4780,13 +5262,14 @@
                     });
                 });
                 renderEditableTable(inspectorColumns, inspectorData);
-                return { ok: true, msg: `✅ Đã chuẩn hóa viết hoa và xóa lỗi khoảng trắng cho ${fixed} ô dữ liệu.` };
+                return { ok: true, msg: '✅ Đã chuẩn hóa viết hoa và xóa lỗi khoảng trắng cho ' + fixed + ' ô dữ liệu.' };
             }
 
             // ========================================================
             // CASE 5: FILL ZERO IN NUMBER COLUMNS
             // ========================================================
             if (/thành 0|= 0|số 0|fill.*0|điền 0/.test(cmd)) {
+                pushDataHistory('Điền số 0 vào ô trống');
                 const numCols = inspectorColumns.filter(c => /thu|phi|lợi|số lượng|giá|cost|rev|profit|amount/i.test(norm(c)));
                 (numCols.length ? numCols : inspectorColumns).forEach(c => {
                     inspectorData.forEach(r => {
@@ -4795,7 +5278,7 @@
                     });
                 });
                 renderEditableTable(inspectorColumns, inspectorData);
-                return { ok: true, msg: `✅ Đã điền số 0 cho ${fixed} ô số còn trống.` };
+                return { ok: true, msg: '✅ Đã điền số 0 cho ' + fixed + ' ô số còn trống.' };
             }
 
             // ========================================================
@@ -4806,16 +5289,17 @@
                 for (const sep of seps) {
                     const idx = cmd.lastIndexOf(sep);
                     if (idx !== -1) {
-                        const val = cmd.substring(idx + sep.length).replace(/["""'']/g, '').trim();
+                        const val = cmd.substring(idx + sep.length).replace(/["']/g, '').trim();
                         const colHint = cmd.substring(0, idx).replace(/giữ lại|chỉ giữ|lọc lấy|keep|các dòng có|có/g, '').trim();
                         const col = findBestCol(colHint);
                         if (col && val) {
+                            pushDataHistory('Chỉ giữ dòng ' + col + ' = ' + val);
                             const newData = inspectorData.filter(r => norm(r[col]).includes(norm(val)));
                             fixed = inspectorData.length - newData.length;
                             inspectorData = newData;
                             renderEditableTable(inspectorColumns, inspectorData);
                             scanDataErrors();
-                            return { ok: true, msg: `✅ Chỉ giữ ${inspectorData.length} dòng có "${col}" chứa "${val}". Đã loại bỏ ${fixed} dòng.` };
+                            return { ok: true, msg: '✅ Chỉ giữ ' + inspectorData.length + ' dòng có "' + col + '" chứa "' + val + '". Đã loại bỏ ' + fixed + ' dòng.' };
                         }
                     }
                 }
@@ -4823,10 +5307,9 @@
 
             return {
                 ok: false,
-                msg: `⚠️ AI chưa hiểu rõ lệnh: "${rawCmd}".\n\n💡 Gợi ý lệnh mẫu:\n• "Loại bỏ các dữ liệu có khu vực là Hà Nội"\n• "Xóa khu vực Hà Nội" hoặc "Xóa Hà Nội"\n• "Điền ô trống Khu vực bằng Toàn quốc"\n• "Xóa các dòng trùng lặp"\n• "Chuẩn hóa viết hoa toàn bộ"`
+                msg: '⚠️ AI chưa hiểu rõ lệnh: "' + rawCmd + '".\n\n💡 Gợi ý lệnh mẫu thông minh:\n• "Xóa 5 dòng dữ liệu đầu tiên" (hoặc xóa N dòng cuối)\n• "Xóa dòng số 3"\n• "Loại bỏ các dữ liệu có khu vực là Hà Nội" (hoặc "Xóa Hà Nội")\n• "Điền ô trống Khu vực bằng Toàn quốc"\n• "Xóa các dòng trùng lặp"\n• "Chuẩn hóa viết hoa toàn bộ"'
             };
         }
-
         function executeCleanCommand() {
             const inp = document.getElementById('cmd-clean-input');
             if (!inp || !inp.value.trim()) {
